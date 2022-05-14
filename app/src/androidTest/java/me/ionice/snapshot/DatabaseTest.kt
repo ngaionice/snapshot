@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.runBlocking
 import me.ionice.snapshot.database.*
 import org.junit.After
 import org.junit.Before
@@ -61,7 +62,7 @@ class DatabaseTest {
 
     @Test
     @Throws(IOException::class)
-    fun testDayInsertion() {
+    fun testDayInsertion() = runBlocking {
         val day = Day()
         dayDao.insert(day)
         val today = dayDao.getLatest()
@@ -70,7 +71,7 @@ class DatabaseTest {
 
     @Test(expected = SQLiteConstraintException::class)
     @Throws(IOException::class)
-    fun testDuplicateDayInsertion() {
+    fun testDuplicateDayInsertion() = runBlocking {
         val day = Day()
         dayDao.insert(day)
         dayDao.insert(day)
@@ -78,7 +79,7 @@ class DatabaseTest {
 
     @Test
     @Throws(IOException::class)
-    fun testDayAndMetricInsertion() {
+    fun testDayAndMetricInsertion() = runBlocking {
         val day = Day()
         dayDao.insert(day)
 

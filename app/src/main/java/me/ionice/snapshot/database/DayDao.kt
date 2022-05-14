@@ -7,21 +7,21 @@ import androidx.room.*
 interface DayDao {
 
     @Insert
-    fun insert(day: Day)
+    suspend fun insert(day: Day)
 
     @Update
-    fun update(day: Day)
+    suspend fun update(day: Day)
 
     @Query("select * from day_entry where id = :key")
-    fun get(key: Long): Day?
+    suspend fun get(key: Long): Day?
 
     @Query("select * from day_entry order by id desc limit 1")
-    fun getLatest(): Day?
+    suspend fun getLatest(): Day?
 
     @Query("select * from day_entry order by id desc")
     fun getAll(): LiveData<List<Day>>
 
     @Transaction
     @Query("select * from day_entry where id = :dayId")
-    fun getWithMetrics(dayId: Long) : DayWithMetrics?
+    suspend fun getWithMetrics(dayId: Long) : DayWithMetrics?
 }

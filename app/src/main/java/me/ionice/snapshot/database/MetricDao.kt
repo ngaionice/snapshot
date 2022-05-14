@@ -7,24 +7,24 @@ import androidx.room.*
 interface MetricDao {
 
     @Insert
-    fun insertKey(key: MetricKey)
+    suspend fun insertKey(key: MetricKey)
 
     @Update
-    fun updateKey(key: MetricKey)
+    suspend fun updateKey(key: MetricKey)
 
     @Query("select * from metric_key")
     fun getAllKeys(): LiveData<List<MetricKey>>
 
     @Insert
-    fun insertEntry(metricEntry: MetricEntry)
+    suspend fun insertEntry(metricEntry: MetricEntry)
 
     @Update
-    fun updateEntry(metricEntry: MetricEntry)
+    suspend fun updateEntry(metricEntry: MetricEntry)
 
     @Delete
-    fun deleteEntry(metricEntry: MetricEntry)
+    suspend fun deleteEntry(metricEntry: MetricEntry)
 
     @Transaction
     @Query("select * from metric_key where id = :keyId")
-    fun getMetric(keyId: Long) : Metric?
+    suspend fun getMetric(keyId: Long) : Metric?
 }
