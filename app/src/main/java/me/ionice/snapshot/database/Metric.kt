@@ -27,5 +27,5 @@ data class Metric(
         parentColumn = "id",
         entityColumn = "metric_id"
     )
-    val entries: List<MetricEntry>
+    val entries: MutableList<MetricEntry>
 )
