@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.dummydata
+package me.ionice.snapshot.ui.utils
 
 import me.ionice.snapshot.database.Day
 import me.ionice.snapshot.database.DayWithMetrics
@@ -51,7 +51,7 @@ object Data {
     val daysWithMetrics = days.map { d ->
         DayWithMetrics(
             d,
-            metricEntries.subList(0, (0..metricEntries.size).random())
+            metricEntries.subList(0, (0..metricEntries.size).random()) as MutableList<MetricEntry>
         )
     }
 }

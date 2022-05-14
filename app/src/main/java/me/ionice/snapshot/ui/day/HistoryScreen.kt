@@ -12,13 +12,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import me.ionice.snapshot.database.DayWithMetrics
+import me.ionice.snapshot.ui.utils.Utils
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 
 @Composable
-fun DayListScreen(modifier: Modifier = Modifier, dayListViewModel: DayListViewModel = viewModel()) {
-    DayList(days = dayListViewModel.days)
+fun HistoryScreen(modifier: Modifier = Modifier, historyViewModel: HistoryViewModel = viewModel()) {
+    DayList(days = historyViewModel.days)
 }
 
 @Composable
@@ -47,7 +47,7 @@ private fun DayListItem(dayWm: DayWithMetrics, onClick: () -> Unit) {
                     .fillMaxHeight()
             ) {
                 Text(
-                    text = getDateTimeFormatter().format(date),
+                    text = Utils.formatter.format(date),
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
@@ -69,10 +69,6 @@ private fun DayListItem(dayWm: DayWithMetrics, onClick: () -> Unit) {
 
 @Preview
 @Composable
-fun DayListScreenPreview() {
-    DayListScreen()
-}
-
-fun getDateTimeFormatter(): DateTimeFormatter {
-    return DateTimeFormatter.ofPattern("MMM dd, yyyy")
+fun HistoryScreenPreview() {
+    HistoryScreen()
 }
