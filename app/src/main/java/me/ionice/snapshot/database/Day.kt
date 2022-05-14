@@ -5,20 +5,17 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import java.time.LocalDate
-import java.util.*
 
 @Entity(tableName = "day_entry")
 data class Day(
 
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0L,
-
-    val date: LocalDate = LocalDate.now(),
+    @PrimaryKey
+    var id: Long = LocalDate.now().toEpochDay(),
     var summary: String = "",
     var location: String? = null
 )
 
-data class DayWithMetricEntries(
+data class DayWithMetrics(
     @Embedded val day: Day,
     @Relation(
         parentColumn = "id",
