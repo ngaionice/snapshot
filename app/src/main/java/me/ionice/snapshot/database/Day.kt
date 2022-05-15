@@ -21,5 +21,5 @@ data class DayWithMetrics(
         parentColumn = "id",
         entityColumn = "day_id"
     )
-    val metrics: MutableList<MetricEntry>
+    val metrics: List<MetricEntry>
 )
