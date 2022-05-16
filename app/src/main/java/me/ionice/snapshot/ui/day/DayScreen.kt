@@ -22,7 +22,8 @@ import java.time.LocalDate
 
 @Composable
 fun DayScreen(viewModel: DayViewModel = viewModel()) {
-    BaseScreen(headerText = Utils.formatter.format(LocalDate.ofEpochDay(viewModel.date))) {
+    val today = Utils.formatter.format(LocalDate.ofEpochDay(viewModel.date))
+    BaseScreen(headerText = today) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             LocationField(location = viewModel.location, setLocation = { viewModel.location = it })
             SummaryField(summary = viewModel.summary, setSummary = { viewModel.summary = it })
@@ -101,6 +102,13 @@ fun MetricListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
             Icon(Icons.Filled.AddCircle, contentDescription = "Add new item", modifier = Modifier.padding(8.dp))
         }
+    }
+}
+
+@Composable
+fun SaveButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    FloatingActionButton(onClick = onClick) {
+        Icon(Icons.Filled.Save, contentDescription = "Save")
     }
 }
 

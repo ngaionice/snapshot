@@ -8,13 +8,19 @@ import me.ionice.snapshot.ui.utils.Data
 import me.ionice.snapshot.ui.utils.SavableState
 
 // TODO: remove default DayWithMetrics, should always be passed in
-class DayViewModel(dayWithMetrics: DayWithMetrics = Data.daysWithMetrics[0], stateHandle: SavedStateHandle) : ViewModel() {
+class DayViewModel(dayWithMetrics: DayWithMetrics = Data.daysWithMetrics[0]
+//                   , stateHandle: SavedStateHandle
+) : ViewModel() {
 
     private var _day = dayWithMetrics.day
 
-    var summary by SavableState(stateHandle, "summary", _day.summary)
-    var date by SavableState(stateHandle, "date", _day.id)
-    var location by SavableState(stateHandle, "location", _day.location)
+    var summary by mutableStateOf(_day.summary)
+    var date by mutableStateOf( _day.id)
+    var location by mutableStateOf(_day.location)
+
+//    var summary by SavableState(stateHandle, "summary", _day.summary)
+//    var date by SavableState(stateHandle, "date", _day.id)
+//    var location by SavableState(stateHandle, "location", _day.location)
     var metrics = dayWithMetrics.metrics.toMutableStateList()
 
 

@@ -11,13 +11,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import me.ionice.snapshot.database.DayWithMetrics
 import me.ionice.snapshot.ui.utils.Utils
 import java.time.LocalDate
 
 
 @Composable
-fun HistoryScreen(modifier: Modifier = Modifier, historyViewModel: HistoryViewModel = viewModel()) {
+fun HistoryScreen(navController: NavHostController, modifier: Modifier = Modifier, historyViewModel: HistoryViewModel = viewModel()) {
     DayList(days = historyViewModel.days)
 }
 
@@ -65,10 +66,4 @@ private fun DayListItem(dayWm: DayWithMetrics, onClick: () -> Unit) {
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun HistoryScreenPreview() {
-    HistoryScreen()
 }
