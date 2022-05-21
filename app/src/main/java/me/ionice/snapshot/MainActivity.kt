@@ -17,7 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import me.ionice.snapshot.data.AppContainer
 import me.ionice.snapshot.ui.day.DayScreen
 import me.ionice.snapshot.ui.day.DayViewModel
-import me.ionice.snapshot.ui.day.HistoryScreen
+import me.ionice.snapshot.ui.history.HistoryScreen
 import me.ionice.snapshot.ui.navigation.BottomNavigation
 import me.ionice.snapshot.ui.navigation.Screen
 import me.ionice.snapshot.ui.theme.SnapshotTheme

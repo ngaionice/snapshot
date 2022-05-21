@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.day
+package me.ionice.snapshot.ui.history
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
