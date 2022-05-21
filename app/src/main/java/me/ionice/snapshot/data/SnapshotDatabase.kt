@@ -1,9 +1,14 @@
-package me.ionice.snapshot.database
+package me.ionice.snapshot.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import me.ionice.snapshot.data.day.Day
+import me.ionice.snapshot.data.day.DayDao
+import me.ionice.snapshot.data.metric.MetricDao
+import me.ionice.snapshot.data.metric.MetricEntry
+import me.ionice.snapshot.data.metric.MetricKey
 
 @Database(
     entities = [Day::class, MetricKey::class, MetricEntry::class],

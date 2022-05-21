@@ -13,21 +13,22 @@ fun BottomNavigation(navController: NavHostController, options: List<Screen>) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     NavigationBar {
-        options.forEach {
-            screen -> NavigationBarItem(
-            selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
-            onClick = {
-                navController.navigate(screen.name) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+        options.forEach { screen ->
+            NavigationBarItem(
+                selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
+                onClick = {
+                    navController.navigate(screen.name) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            },
-            icon = {Icon(screen.icon, contentDescription = screen.name)},
-            label = {Text(screen.name)},
-            colors = NavigationBarItemDefaults.colors())
+                },
+                icon = { Icon(screen.icon, contentDescription = screen.name) },
+                label = { Text(screen.name) },
+                colors = NavigationBarItemDefaults.colors()
+            )
         }
     }
 }

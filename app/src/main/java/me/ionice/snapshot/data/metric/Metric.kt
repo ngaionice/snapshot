@@ -1,4 +1,4 @@
-package me.ionice.snapshot.database
+package me.ionice.snapshot.data.metric
 
 import android.os.Parcelable
 import androidx.room.*

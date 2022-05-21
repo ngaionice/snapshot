@@ -1,11 +1,11 @@
 package me.ionice.snapshot.ui.utils
 
-import me.ionice.snapshot.database.Day
-import me.ionice.snapshot.database.DayWithMetrics
-import me.ionice.snapshot.database.MetricEntry
-import me.ionice.snapshot.database.MetricKey
+import me.ionice.snapshot.data.day.Day
+import me.ionice.snapshot.data.day.DayWithMetrics
+import me.ionice.snapshot.data.metric.MetricEntry
+import me.ionice.snapshot.data.metric.MetricKey
 
-object Data {
+object FakeData {
     private val summaries = listOf(
         "",
         "Didn't do much today",

@@ -1,4 +1,4 @@
-package me.ionice.snapshot.database
+package me.ionice.snapshot.data.day
 
 import android.os.Parcelable
 import androidx.room.Embedded
@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import kotlinx.parcelize.Parcelize
+import me.ionice.snapshot.data.metric.MetricEntry
 import java.time.LocalDate
 
 @Parcelize
@@ -16,7 +17,7 @@ data class Day(
 
     var summary: String = "",
 
-    var location: String? = null
+    var location: String = ""
 ) : Parcelable
 
 data class DayWithMetrics(
@@ -27,3 +28,5 @@ data class DayWithMetrics(
     )
     val metrics: List<MetricEntry>
 )
+
+
