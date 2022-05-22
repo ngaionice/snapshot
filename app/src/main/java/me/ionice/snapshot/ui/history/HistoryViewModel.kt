@@ -25,10 +25,6 @@ class HistoryViewModel(private val dayRepository: DayRepository) : ViewModel() {
         .map { it.toUiState() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
-    // the co-routine job reading from the flow for the current year's data;
-    // cancelled when the year is changed
-    var dayJob: Job? = null
-
     init {
         changeYear(LocalDate.now().year)
     }
@@ -36,12 +32,13 @@ class HistoryViewModel(private val dayRepository: DayRepository) : ViewModel() {
     fun changeYear(year: Int) {
         viewModelState.update { it.copy(year = year, loading = true) }
 
-        dayJob?.cancel()
-        dayJob = viewModelScope.launch {
+        viewModelScope.launch {
             dayRepository.observeDays(
                 LocalDate.of(year, 1, 1).toEpochDay(),
                 LocalDate.of(year, 12, 31).toEpochDay()
-            ).cancellable().collect { days ->
+            )
+                .takeWhile { viewModelState.value.year == year } // when the year changes, this flow gets cancelled automatically
+                .collect { days ->
                 viewModelState.update {
                     it.copy(days = days, loading = false)
                 }
