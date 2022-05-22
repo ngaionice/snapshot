@@ -26,7 +26,7 @@ class DayViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
     init {
-        switchAndLoadDay(LocalDate.now().toEpochDay())
+        switchDay(LocalDate.now().toEpochDay())
 
         // observe the flow and update keys whenever they change
         viewModelScope.launch {
@@ -49,10 +49,11 @@ class DayViewModel(
         }
     }
 
-    fun switchAndLoadDay(epochDay: Long) {
+    fun switchDay(epochDay: Long) {
         viewModelState.update { it.copy(loading = true) }
 
         viewModelScope.launch {
+            // save the current data if it exists
             if (viewModelState.value.mDay != null) {
                 dayRepository.upsertDay(viewModelState.value.mDay!!)
             }
@@ -108,6 +109,11 @@ class DayViewModel(
                 }))
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // TODO: use WorkManager here to save the current day to database if it exists
     }
 
     companion object {

@@ -79,7 +79,7 @@ class DatabaseTest {
 
         metricDao.insertKey(key)
 
-//        val keys = metricDao.getAllKeys()
+        val keys = metricDao.getAllKeys()
 //
 //        val insertedKeyId = keys!![0].id
 //        val entry = MetricEntry(insertedKeyId, day.id, "test metric entry")

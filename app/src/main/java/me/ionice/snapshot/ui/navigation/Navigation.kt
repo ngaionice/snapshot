@@ -8,12 +8,19 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
+val navOptions = listOf(
+    Screen.Day,
+    Screen.History,
+    Screen.Metrics,
+    Screen.Settings
+)
+
 @Composable
-fun BottomNavigation(navController: NavHostController, options: List<Screen>) {
+fun BottomNavigation(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     NavigationBar {
-        options.forEach { screen ->
+        navOptions.forEach { screen ->
             NavigationBarItem(
                 selected = currentDestination?.hierarchy?.any { it.route == screen.name } == true,
                 onClick = {

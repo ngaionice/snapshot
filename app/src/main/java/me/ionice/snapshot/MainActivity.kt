@@ -3,6 +3,7 @@ package me.ionice.snapshot
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -33,13 +34,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-val navOptions = listOf(
-    Screen.Today,
-    Screen.History,
-    Screen.Metrics,
-    Screen.Settings
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SnapshotApp(appContainer: AppContainer) {
@@ -48,15 +42,15 @@ fun SnapshotApp(appContainer: AppContainer) {
         val backstackEntry = navController.currentBackStackEntryAsState()
         Scaffold(bottomBar = {
             BottomNavigation(
-                navController = navController,
-                options = navOptions
+                navController = navController
             )
         }) { innerPadding ->
-            SnapshotNavHost(
-                navController = navController,
-                modifier = Modifier.padding(innerPadding),
-                appContainer = appContainer
-            )
+            Box(modifier = Modifier.padding(innerPadding)) {
+                SnapshotNavHost(
+                    navController = navController,
+                    appContainer = appContainer
+                )
+            }
         }
     }
 }
@@ -64,11 +58,10 @@ fun SnapshotApp(appContainer: AppContainer) {
 @Composable
 fun SnapshotNavHost(
     navController: NavHostController,
-    modifier: Modifier = Modifier,
     appContainer: AppContainer
 ) {
-    NavHost(navController = navController, startDestination = Screen.Today.name) {
-        composable(Screen.Today.name) {
+    NavHost(navController = navController, startDestination = Screen.Day.name) {
+        composable(Screen.Day.name) {
             DayScreen(
                 viewModel = viewModel(
                     factory = DayViewModel.provideFactory(

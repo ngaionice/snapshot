@@ -1,27 +1,39 @@
 package me.ionice.snapshot.ui.day
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.metric.MetricEntry
-import me.ionice.snapshot.data.metric.MetricKey
 import me.ionice.snapshot.ui.common.BaseScreen
 import me.ionice.snapshot.ui.common.LoadingScreen
 import me.ionice.snapshot.ui.utils.Utils
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DayScreen(viewModel: DayViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
+    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val scope = rememberCoroutineScope()
 
     if (uiState.loading) {
         LoadingScreen()
@@ -35,9 +47,20 @@ fun DayScreen(viewModel: DayViewModel) {
             is DayUiState.Available -> {
                 DayAvailableScreen(
                     uiState = uiState as DayUiState.Available,
+                    sheetState = sheetState,
                     onLocationChange = { viewModel.setLocation(it) },
                     onSummaryChange = { viewModel.setSummary(it) },
-                    onMetricAdd = { viewModel.addMetric(it) },
+                    onShowAddMetricSheet = {
+                        scope.launch {
+                            sheetState.show()
+                        }
+                    },
+                    onMetricAdd = {
+                        viewModel.addMetric(it)
+                        scope.launch {
+                            sheetState.hide()
+                        }
+                    },
                     onMetricDelete = { viewModel.removeMetric(it) },
                     onMetricChange = { index, value -> viewModel.updateMetric(index, value) })
             }
@@ -70,145 +93,43 @@ fun DayNotAvailableScreen(uiState: DayUiState.NotAvailable, onDayAdd: (Long) -> 
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DayAvailableScreen(
     uiState: DayUiState.Available,
+    sheetState: ModalBottomSheetState,
     onLocationChange: (String) -> Unit,
     onSummaryChange: (String) -> Unit,
+    onShowAddMetricSheet: () -> Unit,
     onMetricAdd: (MetricEntry) -> Unit,
     onMetricDelete: (MetricEntry) -> Unit,
     onMetricChange: (Int, String) -> Unit
 ) {
-    BaseScreen(headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.epochDay))) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            LocationField(
-                location = uiState.location,
-                setLocation = onLocationChange
+    BottomSheetScaffold(sheetState = sheetState, sheetContent = {
+        MetricKeySelectionDialog(metricKeys = uiState.metricKeys, onSelection = {
+            onMetricAdd(
+                MetricEntry(it, uiState.epochDay, "")
             )
-            SummaryField(
-                summary = uiState.summary,
-                setSummary = onSummaryChange
-            )
-            MetricList(
-                entries = uiState.metrics,
-                keys = uiState.metricKeys,
-                onMetricAdd = onMetricAdd,
-                onMetricChange = onMetricChange,
-                onMetricDelete = onMetricDelete
-            )
-        }
-    }
-}
-
-@Composable
-fun SectionHeader(imageVector: ImageVector, headerText: String, modifier: Modifier = Modifier) {
-    Row(
-        modifier.padding(start = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Icon(imageVector, contentDescription = headerText)
-        Text(headerText, style = MaterialTheme.typography.labelMedium)
-    }
-}
-
-@Composable
-fun SummaryField(summary: String, setSummary: (String) -> Unit, modifier: Modifier = Modifier) {
-    SectionHeader(imageVector = Icons.Filled.EditNote, headerText = "Summary")
-    TextField(value = summary, onValueChange = {
-        if (it.length <= 140) {
-            setSummary(it)
-        }
-    }, modifier = modifier.fillMaxWidth())
-}
-
-@Composable
-fun LocationField(location: String?, setLocation: (String) -> Unit, modifier: Modifier = Modifier) {
-    SectionHeader(imageVector = Icons.Filled.PinDrop, headerText = "Location")
-    TextField(value = location ?: "", onValueChange = {
-        if (it.length <= 50) {
-            setLocation(it)
-        }
-    }, modifier = modifier.fillMaxWidth())
-}
-
-@Composable
-fun MetricList(
-    entries: List<MetricEntry>,
-    keys: List<MetricKey>,
-    modifier: Modifier = Modifier,
-    onMetricAdd: (MetricEntry) -> Unit,
-    onMetricDelete: (MetricEntry) -> Unit,
-    onMetricChange: (Int, String) -> Unit
-) {
-
-    val keyMap by remember(keys) {
-        derivedStateOf {
-            mutableMapOf<Long, MetricKey>().apply {
-                putAll(
-                    keys.associateBy(
-                        { it.id },
-                        { it })
+        })
+    }) {
+        BaseScreen(headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.epochDay))) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                LocationField(
+                    location = uiState.location,
+                    setLocation = onLocationChange
+                )
+                SummaryField(
+                    summary = uiState.summary,
+                    setSummary = onSummaryChange
+                )
+                MetricList(
+                    entries = uiState.metrics,
+                    keys = uiState.metricKeys,
+                    onShowAddMetricSheet = onShowAddMetricSheet,
+                    onMetricChange = onMetricChange,
+                    onMetricDelete = onMetricDelete
                 )
             }
-        }
-    }
-
-    SectionHeader(imageVector = Icons.Filled.List, headerText = "Metrics")
-    entries.mapIndexed { index, entry ->
-        val key = keyMap[entry.metricId]
-        if (key != null) {
-            MetricListItem(
-                entry = entry,
-                key = key,
-                onChange = { onMetricChange(index, it) },
-                onDelete = { onMetricDelete(it) })
-        }
-    }
-    MetricListAdd(onClick = { /*TODO*/ })
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MetricListItem(
-    entry: MetricEntry,
-    key: MetricKey,
-    onChange: (String) -> Unit,
-    onDelete: (MetricEntry) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(modifier = modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.weight(1f)
-            ) {
-                TextField(
-                    value = entry.value,
-                    onValueChange = onChange,
-                    label = { Text(key.name, style = MaterialTheme.typography.labelMedium) })
-            }
-            IconButton(onClick = { onDelete(entry) }) {
-                Icon(Icons.Filled.Close, contentDescription = "Delete")
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MetricListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Card(modifier = modifier, onClick = onClick) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                Icons.Filled.AddCircle,
-                contentDescription = "Add new item",
-                modifier = Modifier.padding(8.dp)
-            )
         }
     }
 }
