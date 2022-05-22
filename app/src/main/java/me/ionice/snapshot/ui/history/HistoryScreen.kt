@@ -12,8 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import me.ionice.snapshot.data.day.DayWithMetrics
 import me.ionice.snapshot.ui.common.BaseScreen
 import me.ionice.snapshot.ui.utils.Utils
@@ -21,33 +19,27 @@ import java.time.LocalDate
 
 
 @Composable
-fun HistoryScreen(
-    navController: NavHostController,
-    modifier: Modifier = Modifier,
-    historyViewModel: HistoryViewModel = viewModel()
-) {
+fun HistoryScreen(viewModel: HistoryViewModel, onDayClick: (Long) -> Unit) {
     BaseScreen(headerText = "History") {
-        DayList(days = historyViewModel.days)
+        DayList(days = viewModel.days, onDayClick = { onDayClick(it) })
     }
 }
 
 @Composable
-private fun DayList(days: List<DayWithMetrics>, modifier: Modifier = Modifier) {
+private fun DayList(days: List<DayWithMetrics>, modifier: Modifier = Modifier, onDayClick: (Long) -> Unit) {
     LazyColumn(modifier = modifier) {
-        items(items = days, key = { dayWm -> dayWm.day.id }) { day ->
-            DayListItem(dayWm = day) {
-                // TODO: add onClick function to move to page
-            }
+        items(items = days, key = { day -> day.day.id }) { day ->
+            DayListItem(day = day) { onDayClick(day.day.id) }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DayListItem(dayWm: DayWithMetrics, onClick: () -> Unit) {
-    val date = LocalDate.ofEpochDay(dayWm.day.id)
-    val location: String = dayWm.day.location
-    val metricCount = dayWm.metrics.size
+private fun DayListItem(day: DayWithMetrics, onClick: () -> Unit) {
+    val date = LocalDate.ofEpochDay(day.day.id)
+    val location: String = day.day.location
+    val metricCount = day.metrics.size
 
     Card(modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp), onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(24.dp)) {
