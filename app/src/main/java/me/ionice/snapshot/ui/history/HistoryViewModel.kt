@@ -1,23 +1,15 @@
 package me.ionice.snapshot.ui.history
 
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.day.DayRepository
 import me.ionice.snapshot.data.day.DayWithMetrics
-import me.ionice.snapshot.ui.utils.FakeData
 import java.time.LocalDate
 
 class HistoryViewModel(private val dayRepository: DayRepository) : ViewModel() {
-
-    // TODO: update _days to fetch from Room
-    private val _days = FakeData.daysWithMetrics.toMutableStateList()
-    val days: List<DayWithMetrics>
-        get() = _days
 
     private val viewModelState = MutableStateFlow(HistoryViewModelState(loading = true))
 
