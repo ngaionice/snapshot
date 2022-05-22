@@ -2,14 +2,10 @@ package me.ionice.snapshot.ui.day
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,17 +80,26 @@ fun DayNotAvailableScreen(uiState: DayUiState.NotAvailable, onDayAdd: (Long) -> 
         }
     } else {
         BaseScreen(headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.epochDay))) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                modifier = Modifier.fillMaxSize()
+            Scaffold(
+                floatingActionButton = {
+                    androidx.compose.material3.FloatingActionButton(onClick = { onDayAdd(uiState.epochDay) }) {
+                        Icon(Icons.Filled.Add, contentDescription = "Add day entry")
+                    }
+                },
+                floatingActionButtonPosition = FabPosition.Center,
+                backgroundColor = MaterialTheme.colorScheme.background
             ) {
-                Text(
-                    text = "No entry found. Would you like to create one?",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                IconButton(onClick = { onDayAdd(uiState.epochDay) }) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add day entry")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                    modifier = Modifier
+                        .padding(it)
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        text = "No entry found.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }
