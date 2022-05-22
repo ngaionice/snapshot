@@ -1,5 +1,6 @@
 package me.ionice.snapshot.ui.day
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
@@ -34,6 +35,13 @@ fun DayScreen(viewModel: DayViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
+
+    // change back button action to hide bottom sheet instead when it is visible
+    BackHandler(enabled = sheetState.isVisible) {
+        scope.launch {
+            sheetState.hide()
+        }
+    }
 
     if (uiState.loading) {
         LoadingScreen()
@@ -106,7 +114,7 @@ fun DayAvailableScreen(
     onMetricChange: (Int, String) -> Unit
 ) {
     BottomSheetScaffold(sheetState = sheetState, sheetContent = {
-        MetricKeySelectionDialog(metricKeys = uiState.metricKeys, onSelection = {
+        MetricKeySelector(metricKeys = uiState.metricKeys, onSelection = {
             onMetricAdd(
                 MetricEntry(it, uiState.epochDay, "")
             )
