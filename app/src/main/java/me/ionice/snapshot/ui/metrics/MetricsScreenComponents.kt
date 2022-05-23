@@ -86,7 +86,7 @@ fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
 
 @Composable
 fun MetricEntriesList(entries: List<MetricEntry>) {
-    LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
+    LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
         itemsIndexed(items = entries) { index, it ->
             MetricEntriesListItem(entry = it)
             if (index < entries.lastIndex) {
@@ -98,7 +98,7 @@ fun MetricEntriesList(entries: List<MetricEntry>) {
 
 @Composable
 fun MetricEntriesListItem(entry: MetricEntry) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 16.dp)) {
         Column(verticalArrangement = Arrangement.Center) {
             Text(
                 text = Utils.formatter.format(LocalDate.ofEpochDay(entry.dayId)),

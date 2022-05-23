@@ -16,6 +16,8 @@ fun BaseScreen(
     headerText: String,
     modifier: Modifier = Modifier,
     navigationIcon: (@Composable () -> Unit)? = null,
+    floatingActionButton: (@Composable () -> Unit)? = null,
+    floatingActionButtonPosition: FabPosition = FabPosition.End,
     actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -41,7 +43,11 @@ fun BaseScreen(
                 },
                 scrollBehavior = scrollBehavior
             )
-        }) {
+        }, floatingActionButton = {
+            if (floatingActionButton != null) {
+                floatingActionButton()
+            }
+        }, floatingActionButtonPosition = floatingActionButtonPosition) {
         Box(modifier = modifier.padding(it).padding(horizontal = 16.dp)) {
             content()
         }

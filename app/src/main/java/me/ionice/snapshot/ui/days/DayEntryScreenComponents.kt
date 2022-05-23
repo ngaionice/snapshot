@@ -1,5 +1,6 @@
 package me.ionice.snapshot.ui.days
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,20 +19,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
 
 @Composable
-fun SectionHeader(imageVector: ImageVector, headerText: String, modifier: Modifier = Modifier) {
+private fun SectionHeader(
+    imageVector: ImageVector,
+    headerText: String,
+    modifier: Modifier = Modifier
+) {
     Row(
-        modifier.padding(start = 8.dp),
+        modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Icon(imageVector, contentDescription = headerText)
         Text(headerText, style = MaterialTheme.typography.labelMedium)
     }
+}
+
+@Composable
+fun SummaryText(summary: String, modifier: Modifier = Modifier) {
+    SectionHeader(imageVector = Icons.Filled.EditNote, headerText = "Summary")
+    Text(text = summary, modifier = modifier.fillMaxWidth())
+}
+
+@Composable
+fun LocationText(location: String, modifier: Modifier = Modifier) {
+    SectionHeader(imageVector = Icons.Filled.PinDrop, headerText = "Location")
+    Text(text = location, modifier = modifier.fillMaxWidth())
 }
 
 @Composable
@@ -55,7 +73,52 @@ fun LocationField(location: String?, setLocation: (String) -> Unit, modifier: Mo
 }
 
 @Composable
-fun MetricList(
+fun MetricViewList(
+    entries: List<MetricEntry>,
+    keys: List<MetricKey>,
+    modifier: Modifier = Modifier
+) {
+    val keyMap by remember(keys) {
+        derivedStateOf {
+            keys.associateBy({ it.id }, { it })
+        }
+    }
+
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(imageVector = Icons.Filled.List, headerText = "Metrics")
+        entries.mapIndexed { index, entry ->
+            val key = keyMap[entry.metricId]
+            if (key != null) {
+                MetricViewListItem(
+                    entry = entry,
+                    key = key
+                )
+                if (index < entries.lastIndex) {
+                    Divider()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MetricViewListItem(entry: MetricEntry, key: MetricKey) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(verticalArrangement = Arrangement.Center) {
+            Text(
+                text = key.name,
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal)
+            )
+            Text(
+                text = entry.value,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+    }
+}
+
+@Composable
+fun MetricEditList(
     entries: List<MetricEntry>,
     keys: List<MetricKey>,
     showAddButton: Boolean,
@@ -76,7 +139,7 @@ fun MetricList(
         entries.mapIndexed { index, entry ->
             val key = keyMap[entry.metricId]
             if (key != null) {
-                MetricListItem(
+                MetricEditListItem(
                     entry = entry,
                     key = key,
                     onChange = { onMetricChange(index, it) },
@@ -84,14 +147,14 @@ fun MetricList(
             }
         }
         if (showAddButton) {
-            MetricListAdd(onClick = { onShowAddMetricSheet() })
+            MetricEditListAdd(onClick = { onShowAddMetricSheet() })
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MetricListItem(
+private fun MetricEditListItem(
     entry: MetricEntry,
     key: MetricKey,
     onChange: (String) -> Unit,
@@ -118,7 +181,7 @@ private fun MetricListItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MetricListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun MetricEditListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(modifier = modifier, onClick = onClick) {
         Row(
             modifier = Modifier.fillMaxWidth(),

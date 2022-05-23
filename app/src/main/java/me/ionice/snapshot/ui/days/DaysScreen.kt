@@ -8,15 +8,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.metric.MetricEntry
@@ -26,11 +28,13 @@ import me.ionice.snapshot.ui.common.LoadingScreen
 import me.ionice.snapshot.ui.utils.Utils
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DaysScreen(viewModel: DaysViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
+    var editing by remember { mutableStateOf(false) }
 
     if (uiState.loading) {
         BaseScreen(headerText = "Day") {
@@ -49,20 +53,35 @@ fun DaysScreen(viewModel: DaysViewModel) {
                     onDayAdd = { viewModel.addDay(it) }, onBack = { viewModel.deselectDay() })
             }
             is DayUiState.DayEntryFound -> {
-                DayEntryAvailableScreen(
-                    uiState = uiState as DayUiState.DayEntryFound,
-                    scope = scope,
-                    onLocationChange = { viewModel.setLocation(it) },
-                    onSummaryChange = { viewModel.setSummary(it) },
-                    onMetricAdd = { viewModel.addMetric(it) },
-                    onMetricDelete = { viewModel.removeMetric(it) },
-                    onMetricChange = { index, value -> viewModel.updateMetric(index, value) },
-                    onBack = { viewModel.deselectDay() })
+                if (editing) {
+                    DayEntryEditScreen(
+                        uiState = uiState as DayUiState.DayEntryFound,
+                        scope = scope,
+                        onLocationChange = { viewModel.setLocation(it) },
+                        onSummaryChange = { viewModel.setSummary(it) },
+                        onMetricAdd = { viewModel.addMetric(it) },
+                        onMetricDelete = { viewModel.removeMetric(it) },
+                        onMetricChange = { index, value -> viewModel.updateMetric(index, value) },
+                        onSave = {
+                            editing = false
+                            viewModel.saveDay()
+                        },
+                        onBack = {
+                            editing = false
+                            viewModel.selectDay((uiState as DayUiState.DayEntryFound).date)
+                        })
+                } else {
+                    DayEntryViewScreen(
+                        uiState = uiState as DayUiState.DayEntryFound,
+                        onEdit = { editing = true },
+                        onBack = { viewModel.deselectDay() })
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DayListScreen(uiState: DayUiState.DayList, onDaySelect: (Long) -> Unit) {
     BaseScreen(headerText = uiState.year.toString()) {
@@ -70,6 +89,7 @@ private fun DayListScreen(uiState: DayUiState.DayList, onDaySelect: (Long) -> Un
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DayEntryNotAvailableScreen(
     uiState: DayUiState.DayEntryNotFound,
@@ -78,35 +98,62 @@ private fun DayEntryNotAvailableScreen(
 ) {
     BaseScreen(
         headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.date)),
-        navigationIcon = { BackButton(onBack) }) {
-        Scaffold(
-            floatingActionButton = {
-                androidx.compose.material3.FloatingActionButton(onClick = { onDayAdd(uiState.date) }) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add day entry")
-                }
-            },
-            floatingActionButtonPosition = FabPosition.Center,
-            backgroundColor = MaterialTheme.colorScheme.background
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize()
-            ) {
-                Text(
-                    text = "No entry found.",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+        navigationIcon = { BackButton(onBack) }, floatingActionButton = {
+            androidx.compose.material3.FloatingActionButton(onClick = { onDayAdd(uiState.date) }) {
+                Icon(Icons.Filled.Add, contentDescription = "Add day entry")
             }
+        },
+        floatingActionButtonPosition = FabPosition.End) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Text(
+                text = "No entry found.",
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DayEntryAvailableScreen(
+private fun DayEntryViewScreen(
+    uiState: DayUiState.DayEntryFound,
+    onEdit: () -> Unit,
+    onBack: () -> Unit
+) {
+
+    BackHandler {
+        onBack()
+    }
+
+    BaseScreen(
+        headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.date)),
+        navigationIcon = { BackButton(onBack) }, floatingActionButton = {
+            androidx.compose.material3.FloatingActionButton(onClick = onEdit) {
+                Icon(Icons.Filled.Edit, contentDescription = "Edit entry")
+            }
+        }) {
+        Column(modifier = Modifier.padding(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            LocationText(location = uiState.location)
+            SummaryText(summary = uiState.summary)
+            MetricViewList(
+                entries = uiState.metrics,
+                keys = uiState.metricKeys
+            )
+        }
+
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun DayEntryEditScreen(
     uiState: DayUiState.DayEntryFound,
     scope: CoroutineScope,
     onLocationChange: (String) -> Unit,
@@ -114,6 +161,7 @@ private fun DayEntryAvailableScreen(
     onMetricAdd: (MetricEntry) -> Unit,
     onMetricDelete: (MetricEntry) -> Unit,
     onMetricChange: (Int, String) -> Unit,
+    onSave: () -> Unit,
     onBack: () -> Unit
 ) {
     val existingMetricIds by derivedStateOf {
@@ -148,8 +196,15 @@ private fun DayEntryAvailableScreen(
     }) {
         BaseScreen(
             headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.date)),
-            navigationIcon = { BackButton(onBack) }) {
-            Column(Modifier.padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            navigationIcon = { BackButton(onBack) }, floatingActionButton = {
+                androidx.compose.material3.FloatingActionButton(onClick = onSave) {
+                    Icon(Icons.Filled.Save, contentDescription = "Save")
+                }
+            },) {
+            Column(
+                Modifier.padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 LocationField(
                     location = uiState.location,
                     setLocation = onLocationChange
@@ -158,7 +213,7 @@ private fun DayEntryAvailableScreen(
                     summary = uiState.summary,
                     setSummary = onSummaryChange
                 )
-                MetricList(
+                MetricEditList(
                     entries = uiState.metrics,
                     keys = uiState.metricKeys,
                     showAddButton = existingMetricIds.size < uiState.metricKeys.size,
@@ -173,10 +228,4 @@ private fun DayEntryAvailableScreen(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun DayScreenPreview() {
-    DaysScreen(viewModel())
 }
