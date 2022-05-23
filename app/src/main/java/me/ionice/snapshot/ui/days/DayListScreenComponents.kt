@@ -36,7 +36,7 @@ private fun EntryListItem(day: DayWithMetrics, onClick: () -> Unit) {
     val location: String = day.day.location
     val metricCount = day.metrics.size
 
-    Card(modifier = Modifier.padding(8.dp), onClick = onClick) {
+    Card(modifier = Modifier.padding(vertical = 8.dp), onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp)) {
             Column(
                 verticalArrangement = Arrangement.Center, modifier = Modifier

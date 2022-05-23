@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +42,7 @@ fun BaseScreen(
                 scrollBehavior = scrollBehavior
             )
         }) {
-        Box(modifier = modifier.padding(it)) {
+        Box(modifier = modifier.padding(it).padding(horizontal = 16.dp)) {
             content()
         }
     }

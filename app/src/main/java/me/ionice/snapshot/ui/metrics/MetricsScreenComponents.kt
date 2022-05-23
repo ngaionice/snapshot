@@ -34,7 +34,7 @@ fun MetricsListItem(key: MetricKey, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp), onClick = onClick
+            .padding(vertical = 8.dp), onClick = onClick
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Text(text = key.name, style = MaterialTheme.typography.titleMedium)

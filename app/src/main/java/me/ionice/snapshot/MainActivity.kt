@@ -21,6 +21,8 @@ import me.ionice.snapshot.ui.metrics.MetricsScreen
 import me.ionice.snapshot.ui.metrics.MetricsViewModel
 import me.ionice.snapshot.ui.navigation.BottomNavigation
 import me.ionice.snapshot.ui.navigation.Screen
+import me.ionice.snapshot.ui.settings.SettingsScreen
+import me.ionice.snapshot.ui.settings.SettingsViewModel
 import me.ionice.snapshot.ui.theme.SnapshotTheme
 
 class MainActivity : ComponentActivity() {
@@ -71,6 +73,8 @@ fun SnapshotNavHost(
     val metricsViewModel: MetricsViewModel =
         viewModel(factory = MetricsViewModel.provideFactory(appContainer.metricRepository))
 
+    val settingsViewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.provideFactory())
+
     NavHost(navController = navController, startDestination = Screen.Days.name) {
         composable(Screen.Days.name) {
             DaysScreen(viewModel = daysViewModel)
@@ -81,7 +85,7 @@ fun SnapshotNavHost(
         }
 
         composable(Screen.Settings.name) {
-
+            SettingsScreen(viewModel = settingsViewModel)
         }
     }
 }

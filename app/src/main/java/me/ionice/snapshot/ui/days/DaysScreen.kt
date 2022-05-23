@@ -64,14 +64,14 @@ fun DaysScreen(viewModel: DaysViewModel) {
 }
 
 @Composable
-fun DayListScreen(uiState: DayUiState.DayList, onDaySelect: (Long) -> Unit) {
+private fun DayListScreen(uiState: DayUiState.DayList, onDaySelect: (Long) -> Unit) {
     BaseScreen(headerText = uiState.year.toString()) {
         EntryList(days = uiState.entries, onDaySelect = onDaySelect)
     }
 }
 
 @Composable
-fun DayEntryNotAvailableScreen(
+private fun DayEntryNotAvailableScreen(
     uiState: DayUiState.DayEntryNotFound,
     onDayAdd: (Long) -> Unit,
     onBack: () -> Unit
@@ -106,7 +106,7 @@ fun DayEntryNotAvailableScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DayEntryAvailableScreen(
+private fun DayEntryAvailableScreen(
     uiState: DayUiState.DayEntryFound,
     scope: CoroutineScope,
     onLocationChange: (String) -> Unit,
@@ -149,7 +149,7 @@ fun DayEntryAvailableScreen(
         BaseScreen(
             headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.date)),
             navigationIcon = { BackButton(onBack) }) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(Modifier.padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 LocationField(
                     location = uiState.location,
                     setLocation = onLocationChange
