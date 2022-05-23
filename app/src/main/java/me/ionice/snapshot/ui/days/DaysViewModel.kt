@@ -60,11 +60,14 @@ class DaysViewModel(
         viewModelState.update { it.copy(loading = true) }
 
         viewModelScope.launch {
-            val newDay = DayWithMetrics(Day(id = epochDay), emptyList())
-            dayRepository.upsertDay(newDay)
+            var newDay = dayRepository.getDay(epochDay)
+            if (newDay == null) {
+                newDay = DayWithMetrics(Day(id = epochDay), emptyList())
+                dayRepository.upsertDay(newDay)
+            }
 
             viewModelState.update {
-                DayViewModelState(selectedDate = epochDay, selectedEntry = newDay, loading = false)
+                it.copy(selectedDate = epochDay, selectedEntry = newDay, loading = false)
             }
         }
     }

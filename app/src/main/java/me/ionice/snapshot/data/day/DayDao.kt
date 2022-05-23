@@ -20,9 +20,11 @@ interface DayDao {
     @Query("select * from day_entry where id = :key")
     suspend fun get(key: Long): Day?
 
+    @Transaction
     @Query("select * from day_entry where id >= :startDay and id <= :endDayInclusive order by id desc")
     suspend fun getInRangeWithMetrics(startDay: Long, endDayInclusive: Long): List<DayWithMetrics>
 
+    @Transaction
     @Query("select * from day_entry where id >= :startDay and id <= :endDayInclusive order by id desc")
     fun observeInRangeWithMetrics(startDay: Long, endDayInclusive: Long): Flow<List<DayWithMetrics>>
 
