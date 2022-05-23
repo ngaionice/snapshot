@@ -1,8 +1,13 @@
 package me.ionice.snapshot.ui.metrics
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -14,8 +19,6 @@ import me.ionice.snapshot.ui.common.LoadingScreen
 fun MetricsScreen(viewModel: MetricsViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
-
-
 
     if (uiState.loading) {
         BaseScreen(headerText = "Metrics") {
@@ -30,7 +33,9 @@ fun MetricsScreen(viewModel: MetricsViewModel) {
                     onAddKey = { viewModel.addKey(it) })
             }
             is MetricsScreenState.MetricDetails -> {
-                MetricDetailsScreen(uiState as MetricsScreenState.MetricDetails)
+                MetricDetailsScreen(
+                    uiState = uiState as MetricsScreenState.MetricDetails,
+                    onBack = {viewModel.deselectMetric()})
             }
         }
     }
@@ -65,6 +70,27 @@ private fun MetricListScreen(
 }
 
 @Composable
-private fun MetricDetailsScreen(uiState: MetricsScreenState.MetricDetails) {
+private fun MetricDetailsScreen(uiState: MetricsScreenState.MetricDetails, onBack: () -> Unit) {
 
+    BackHandler {
+        onBack()
+    }
+
+    BaseScreen(headerText = uiState.selectedMetric.key.name, navigationIcon = {
+        IconButton(onClick = onBack) {
+            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+        }
+    }) {
+        Scaffold(backgroundColor = MaterialTheme.colorScheme.background) {
+            Box(modifier = Modifier.padding(it)) {
+                MetricEntriesList(entries = uiState.selectedMetric.entries)
+            }
+        }
+    }
+
+    DisposableEffect(true) {
+        onDispose {
+            onBack()
+        }
+    }
 }
