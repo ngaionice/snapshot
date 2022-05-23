@@ -31,9 +31,11 @@ fun MetricsList(keys: List<MetricKey>, onItemClick: (MetricKey) -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MetricsListItem(key: MetricKey, onClick: () -> Unit) {
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp), onClick = onClick) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp), onClick = onClick
+    ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Text(text = key.name, style = MaterialTheme.typography.titleMedium)
         }
@@ -56,7 +58,10 @@ fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
         onDismissRequest = { onDismiss() },
         title = { Text(text = "Add metric type") },
         text = {
-            OutlinedTextField(value = name, onValueChange = { name = it }, label = {Text("Metric name")})
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Metric name") })
         },
         confirmButton = {
             TextButton(

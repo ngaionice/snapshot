@@ -13,6 +13,8 @@ interface DayRepository {
 
     suspend fun upsertDay(day: DayWithMetrics)
 
+    suspend fun getDays(startDay: Long, endDayInclusive: Long): List<DayWithMetrics>
+
     /**
      * Returns a `Flow` of a list of `DayWithMetrics` in the specified date range.
      *

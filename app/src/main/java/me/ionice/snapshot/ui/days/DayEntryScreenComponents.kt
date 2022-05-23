@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.day
+package me.ionice.snapshot.ui.days
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -91,7 +91,7 @@ fun MetricList(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MetricListItem(
+private fun MetricListItem(
     entry: MetricEntry,
     key: MetricKey,
     onChange: (String) -> Unit,
@@ -118,7 +118,7 @@ fun MetricListItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MetricListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun MetricListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(modifier = modifier, onClick = onClick) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -135,7 +135,7 @@ fun MetricListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MetricKeySelectionListItem(metricKey: MetricKey, onSelection: () -> Unit) {
+private fun MetricKeySelectionListItem(metricKey: MetricKey, onSelection: () -> Unit) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .clickable { onSelection() }

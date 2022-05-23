@@ -9,8 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 val navOptions = listOf(
-    Screen.Day,
-    Screen.History,
+    Screen.Days,
     Screen.Metrics,
     Screen.Settings
 )

@@ -4,14 +4,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import me.ionice.snapshot.data.metric.MetricKey
+import me.ionice.snapshot.ui.common.BackButton
 import me.ionice.snapshot.ui.common.BaseScreen
 import me.ionice.snapshot.ui.common.LoadingScreen
 
@@ -35,7 +32,7 @@ fun MetricsScreen(viewModel: MetricsViewModel) {
             is MetricsScreenState.MetricDetails -> {
                 MetricDetailsScreen(
                     uiState = uiState as MetricsScreenState.MetricDetails,
-                    onBack = {viewModel.deselectMetric()})
+                    onBack = { viewModel.deselectMetric() })
             }
         }
     }
@@ -76,11 +73,9 @@ private fun MetricDetailsScreen(uiState: MetricsScreenState.MetricDetails, onBac
         onBack()
     }
 
-    BaseScreen(headerText = uiState.selectedMetric.key.name, navigationIcon = {
-        IconButton(onClick = onBack) {
-            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
-        }
-    }) {
+    BaseScreen(
+        headerText = uiState.selectedMetric.key.name,
+        navigationIcon = { BackButton(onBack) }) {
         Scaffold(backgroundColor = MaterialTheme.colorScheme.background) {
             Box(modifier = Modifier.padding(it)) {
                 MetricEntriesList(entries = uiState.selectedMetric.entries)

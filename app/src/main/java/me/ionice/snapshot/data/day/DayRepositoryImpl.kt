@@ -33,11 +33,17 @@ class DayRepositoryImpl(private val database: SnapshotDatabase) : DayRepository 
         }
     }
 
+    override suspend fun getDays(startDay: Long, endDayInclusive: Long): List<DayWithMetrics> {
+        return withContext(Dispatchers.IO) {
+            database.dayDao.getInRangeWithMetrics(startDay, endDayInclusive)
+        }
+    }
+
     override fun observeDays(
         startDay: Long,
         endDayInclusive: Long
     ): Flow<List<DayWithMetrics>> {
-        return database.dayDao.getInRangeWithMetrics(startDay, endDayInclusive)
+        return database.dayDao.observeInRangeWithMetrics(startDay, endDayInclusive)
     }
 
 }

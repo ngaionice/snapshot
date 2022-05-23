@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.history
+package me.ionice.snapshot.ui.days
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,40 +8,30 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.data.day.DayWithMetrics
-import me.ionice.snapshot.ui.common.BaseScreen
 import me.ionice.snapshot.ui.utils.Utils
 import java.time.LocalDate
 
-
 @Composable
-fun HistoryScreen(viewModel: HistoryViewModel, onDayClick: (Long) -> Unit) {
-
-    val uiState by viewModel.uiState.collectAsState()
-
-    BaseScreen(headerText = "History") {
-        DayList(days = uiState.days, onDayClick = { onDayClick(it) })
-    }
-}
-
-@Composable
-private fun DayList(days: List<DayWithMetrics>, modifier: Modifier = Modifier, onDayClick: (Long) -> Unit) {
+fun EntryList(
+    days: List<DayWithMetrics>,
+    modifier: Modifier = Modifier,
+    onDaySelect: (Long) -> Unit
+) {
     LazyColumn(modifier = modifier) {
         items(items = days, key = { day -> day.day.id }) { day ->
-            DayListItem(day = day) { onDayClick(day.day.id) }
+            EntryListItem(day = day) { onDaySelect(day.day.id) }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DayListItem(day: DayWithMetrics, onClick: () -> Unit) {
+private fun EntryListItem(day: DayWithMetrics, onClick: () -> Unit) {
     val date = LocalDate.ofEpochDay(day.day.id)
     val location: String = day.day.location
     val metricCount = day.metrics.size

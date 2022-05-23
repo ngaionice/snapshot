@@ -13,13 +13,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import me.ionice.snapshot.data.AppContainer
-import me.ionice.snapshot.ui.day.DayScreen
-import me.ionice.snapshot.ui.day.DayViewModel
-import me.ionice.snapshot.ui.history.HistoryScreen
-import me.ionice.snapshot.ui.history.HistoryViewModel
+import me.ionice.snapshot.ui.days.DaysScreen
+import me.ionice.snapshot.ui.days.DaysViewModel
 import me.ionice.snapshot.ui.metrics.MetricsScreen
 import me.ionice.snapshot.ui.metrics.MetricsViewModel
 import me.ionice.snapshot.ui.navigation.BottomNavigation
@@ -42,7 +39,7 @@ class MainActivity : ComponentActivity() {
 fun SnapshotApp(appContainer: AppContainer) {
     SnapshotTheme {
         val navController = rememberNavController()
-        val backstackEntry = navController.currentBackStackEntryAsState()
+//        val backstackEntry = navController.currentBackStackEntryAsState()
         Scaffold(bottomBar = {
             BottomNavigation(
                 navController = navController
@@ -64,30 +61,19 @@ fun SnapshotNavHost(
     appContainer: AppContainer
 ) {
 
-    val dayViewModel: DayViewModel = viewModel(
-        factory = DayViewModel.provideFactory(
+    val daysViewModel: DaysViewModel = viewModel(
+        factory = DaysViewModel.provideFactory(
             appContainer.dayRepository,
             appContainer.metricRepository
         )
     )
 
-    val historyViewModel: HistoryViewModel =
-        viewModel(factory = HistoryViewModel.provideFactory(appContainer.dayRepository))
+    val metricsViewModel: MetricsViewModel =
+        viewModel(factory = MetricsViewModel.provideFactory(appContainer.metricRepository))
 
-    val metricsViewModel: MetricsViewModel = viewModel(factory = MetricsViewModel.provideFactory(appContainer.metricRepository))
-
-    NavHost(navController = navController, startDestination = Screen.Day.name) {
-        composable(Screen.Day.name) {
-            DayScreen(viewModel = dayViewModel)
-        }
-
-        composable(Screen.History.name) {
-            HistoryScreen(viewModel = historyViewModel, onDayClick = {
-                dayViewModel.switchDay(it)
-                navController.navigate(Screen.Day.name) {
-                    launchSingleTop = true
-                }
-            })
+    NavHost(navController = navController, startDestination = Screen.Days.name) {
+        composable(Screen.Days.name) {
+            DaysScreen(viewModel = daysViewModel)
         }
 
         composable(Screen.Metrics.name) {
