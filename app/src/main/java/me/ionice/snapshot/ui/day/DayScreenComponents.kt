@@ -58,6 +58,7 @@ fun LocationField(location: String?, setLocation: (String) -> Unit, modifier: Mo
 fun MetricList(
     entries: List<MetricEntry>,
     keys: List<MetricKey>,
+    showAddButton: Boolean,
     onShowAddMetricSheet: () -> Unit,
     onMetricDelete: (MetricEntry) -> Unit,
     onMetricChange: (Int, String) -> Unit,
@@ -82,7 +83,9 @@ fun MetricList(
                     onDelete = { onMetricDelete(it) })
             }
         }
-        MetricListAdd(onClick = { onShowAddMetricSheet() })
+        if (showAddButton) {
+            MetricListAdd(onClick = { onShowAddMetricSheet() })
+        }
     }
 }
 

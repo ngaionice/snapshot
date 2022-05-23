@@ -15,8 +15,21 @@ class DayRepositoryImpl(private val database: SnapshotDatabase) : DayRepository 
 
     override suspend fun upsertDay(day: DayWithMetrics) {
         withContext(Dispatchers.IO) {
+            val existing = database.dayDao.getWithMetrics(day.day.id)
+
+            // delete removed keys
+            if (existing != null) {
+                val newKeys = day.metrics.map { entry -> entry.metricId }.toSet()
+                val deleted = existing.metrics.filter { entry -> !newKeys.contains(entry.metricId) }
+                deleted.forEach {
+                    database.metricDao.deleteEntry(it)
+                }
+            }
+
+            // update existing data
             database.dayDao.upsert(day.day)
             database.metricDao.upsertManyEntries(day.metrics)
+
         }
     }
 

@@ -8,10 +8,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -120,8 +117,10 @@ fun DayAvailableScreen(
     onMetricDelete: (MetricEntry) -> Unit,
     onMetricChange: (Int, String) -> Unit
 ) {
+    val existingMetricIds by derivedStateOf { uiState.metrics.map { entry -> entry.metricId }.toSet() }
+
     BottomSheetScaffold(sheetState = sheetState, sheetContent = {
-        MetricKeySelector(metricKeys = uiState.metricKeys, onSelection = {
+        MetricKeySelector(metricKeys = uiState.metricKeys.filter { key -> !existingMetricIds.contains(key.id) }, onSelection = {
             onMetricAdd(
                 MetricEntry(it, uiState.epochDay, "")
             )
@@ -140,6 +139,7 @@ fun DayAvailableScreen(
                 MetricList(
                     entries = uiState.metrics,
                     keys = uiState.metricKeys,
+                    showAddButton = existingMetricIds.size < uiState.metricKeys.size,
                     onShowAddMetricSheet = onShowAddMetricSheet,
                     onMetricChange = onMetricChange,
                     onMetricDelete = onMetricDelete
