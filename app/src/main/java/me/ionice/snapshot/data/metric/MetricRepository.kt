@@ -12,5 +12,7 @@ interface MetricRepository {
 
     suspend fun deleteEntry(entry: MetricEntry)
 
+    suspend fun getKeys() : List<MetricKey>
+
     fun observeKeys(): Flow<List<MetricKey>>
 }

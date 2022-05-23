@@ -31,7 +31,13 @@ class MetricRepositoryImpl(private val database: SnapshotDatabase) : MetricRepos
         }
     }
 
+    override suspend fun getKeys(): List<MetricKey> {
+        return withContext(Dispatchers.IO) {
+            database.metricDao.getKeys()
+        }
+    }
+
     override fun observeKeys(): Flow<List<MetricKey>> {
-        return database.metricDao.getAllKeys()
+        return database.metricDao.observeKeys()
     }
 }

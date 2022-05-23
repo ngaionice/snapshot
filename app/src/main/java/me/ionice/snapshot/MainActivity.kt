@@ -10,7 +10,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,6 +20,8 @@ import me.ionice.snapshot.ui.day.DayScreen
 import me.ionice.snapshot.ui.day.DayViewModel
 import me.ionice.snapshot.ui.history.HistoryScreen
 import me.ionice.snapshot.ui.history.HistoryViewModel
+import me.ionice.snapshot.ui.metrics.MetricsScreen
+import me.ionice.snapshot.ui.metrics.MetricsViewModel
 import me.ionice.snapshot.ui.navigation.BottomNavigation
 import me.ionice.snapshot.ui.navigation.Screen
 import me.ionice.snapshot.ui.theme.SnapshotTheme
@@ -73,6 +74,8 @@ fun SnapshotNavHost(
     val historyViewModel: HistoryViewModel =
         viewModel(factory = HistoryViewModel.provideFactory(appContainer.dayRepository))
 
+    val metricsViewModel: MetricsViewModel = viewModel(factory = MetricsViewModel.provideFactory(appContainer.metricRepository))
+
     NavHost(navController = navController, startDestination = Screen.Day.name) {
         composable(Screen.Day.name) {
             DayScreen(viewModel = dayViewModel)
@@ -88,7 +91,7 @@ fun SnapshotNavHost(
         }
 
         composable(Screen.Metrics.name) {
-
+            MetricsScreen(viewModel = metricsViewModel)
         }
 
         composable(Screen.Settings.name) {

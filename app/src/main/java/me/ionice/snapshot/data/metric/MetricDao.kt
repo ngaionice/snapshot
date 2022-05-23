@@ -13,7 +13,10 @@ interface MetricDao {
     suspend fun updateKey(key: MetricKey)
 
     @Query("select * from metric_key")
-    fun getAllKeys(): Flow<List<MetricKey>>
+    fun getKeys(): List<MetricKey>
+
+    @Query("select * from metric_key")
+    fun observeKeys(): Flow<List<MetricKey>>
 
     @Insert
     suspend fun insertEntry(metricEntry: MetricEntry): Long

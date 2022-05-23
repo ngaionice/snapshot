@@ -2,8 +2,6 @@ package me.ionice.snapshot
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import android.database.sqlite.SQLiteConstraintException
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -12,7 +10,6 @@ import me.ionice.snapshot.data.*
 import me.ionice.snapshot.data.day.Day
 import me.ionice.snapshot.data.day.DayDao
 import me.ionice.snapshot.data.metric.MetricDao
-import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
 import org.junit.After
 import org.junit.Before
@@ -21,8 +18,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 import java.time.LocalDate
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class DatabaseTest {
@@ -79,7 +74,7 @@ class DatabaseTest {
 
         metricDao.insertKey(key)
 
-        val keys = metricDao.getAllKeys()
+        val keys = metricDao.observeKeys()
 //
 //        val insertedKeyId = keys!![0].id
 //        val entry = MetricEntry(insertedKeyId, day.id, "test metric entry")
