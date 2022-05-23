@@ -61,9 +61,9 @@ class DayViewModel(
             val data = dayRepository.getDay(epochDay)
             viewModelState.update {
                 if (data == null) {
-                    DayViewModelState(epochDay = epochDay, loading = false)
+                    it.copy(epochDay = epochDay, loading = false)
                 } else {
-                    DayViewModelState(epochDay = epochDay, mDay = data, loading = false)
+                    it.copy(epochDay = epochDay, mDay = data, loading = false)
                 }
             }
         }

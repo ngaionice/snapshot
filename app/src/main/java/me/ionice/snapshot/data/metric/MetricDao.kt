@@ -18,7 +18,7 @@ interface MetricDao {
     @Query("select * from metric_key")
     fun observeKeys(): Flow<List<MetricKey>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertEntry(metricEntry: MetricEntry): Long
 
     @Update
