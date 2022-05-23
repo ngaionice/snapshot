@@ -40,7 +40,9 @@ fun DayScreen(viewModel: DayViewModel) {
     }
 
     if (uiState.loading) {
-        LoadingScreen()
+        BaseScreen(headerText = "Day") {
+            LoadingScreen()
+        }
     } else {
         when (uiState) {
             is DayUiState.NotAvailable -> {

@@ -14,8 +14,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 fun BaseScreen(
     headerText: String,
     modifier: Modifier = Modifier,
-    navigationIcon: @Composable () -> Unit = { },
-    actions: @Composable () -> Unit = { },
+    navigationIcon: (@Composable () -> Unit)? = null,
+    actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
 
@@ -28,8 +28,16 @@ fun BaseScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
             LargeTopAppBar(
                 title = { Text(headerText) },
-                navigationIcon = { navigationIcon() },
-                actions = { actions() },
+                navigationIcon = {
+                    if (navigationIcon != null) {
+                        navigationIcon()
+                    }
+                },
+                actions = {
+                    if (actions != null) {
+                        actions()
+                    }
+                },
                 scrollBehavior = scrollBehavior
             )
         }) {
