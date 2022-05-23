@@ -70,7 +70,7 @@ fun MetricList(
         }
     }
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(imageVector = Icons.Filled.List, headerText = "Metrics")
         entries.mapIndexed { index, entry ->
             val key = keyMap[entry.metricId]
