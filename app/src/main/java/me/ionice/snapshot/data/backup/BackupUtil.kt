@@ -16,6 +16,8 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.Constants
@@ -39,20 +41,13 @@ class BackupUtil(private val context: Context) {
 
     fun getLoggedInAccountEmail(): String? = GoogleSignIn.getLastSignedInAccount(context)?.email
 
-    suspend fun getLastBackupTime(): LocalDateTime? {
-        val backupIds = getExistingBackupIds()
-        if (preferences == null || !isBackupEnabled() || backupIds == null) return null
+    fun getLastBackupTime(): LocalDateTime? {
+        val backupId = getExistingBackupId()
+        if (preferences == null || !isBackupEnabled() || backupId == null) return null
 
         return getDriveService()?.let { service ->
-            withContext(Dispatchers.IO) {
-                val minTime = backupIds.map { service.Files().get(it).execute().modifiedTime.value }
-                    .minOrNull()
-                minTime?.let {
-                    LocalDateTime.ofInstant(
-                        Instant.ofEpochMilli(minTime),
-                        ZoneId.systemDefault()
-                    )
-                }
+            service.Files().get(backupId).execute().modifiedTime.value.let {
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
             }
         }
     }
@@ -64,12 +59,13 @@ class BackupUtil(private val context: Context) {
         }
     }
 
-    fun backupDatabase(): Result<Unit> {
+    suspend fun backupDatabase(): Result<Unit> {
         if (getLoggedInAccountEmail() == null) {
             return Result.failure(Exception("User is not logged in."))
         }
+        val mutex = Mutex()
 
-        synchronized(this) {
+        mutex.withLock {
             SnapshotDatabase.closeAndLockInstance()
             val uploadResult = uploadDatabase()
             SnapshotDatabase.unlockInstance()
@@ -92,39 +88,37 @@ class BackupUtil(private val context: Context) {
     /**
      * Returns a Result indicating whether upload was successful.
      */
-    private fun uploadDatabase(): Result<Unit> {
-        val basePath = context.getDatabasePath(Constants.databaseName).absolutePath
-
+    private suspend fun uploadDatabase(): Result<Unit> {
         println("Checking backup prerequisites")
-        val dbFiles = Constants.dbNames.map { File("$basePath$it") }
+        val dbFile = context.getDatabasePath(Constants.databaseName)
         val service =
             getDriveService() ?: return Result.failure(Exception("User is not logged in."))
 
         println("Found Google Drive service.")
-        if (dbFiles.map { it.exists() }.contains(false)) {
+        if (!dbFile.exists()) {
             return Result.failure(Exception("One or more database files are missing."))
         }
 
         val parentFolder = listOf(Constants.gDriveBackupFolder)
 
-        val models = dbFiles.map { getGDriveFileModel(it, parentFolder) }
-        val backupIds = getExistingBackupIds()
+        val model = getGDriveFileModel(dbFile, parentFolder)
+        val backupId = getExistingBackupId()
 
         println("Starting backup")
-        try {
-            val uploadedFiles = if (backupIds == null) {
-                models.map { service.Files().create(it).execute() }
-            } else {
-                models.mapIndexed { index, it ->
-                    service.Files().update(backupIds[index], it).execute()
+        return withContext(Dispatchers.IO) {
+            try {
+                val uploadedFiles = if (backupId == null) {
+                    service.Files().create(model).execute()
+                } else {
+                    service.Files().update(backupId, model).execute()
                 }
+                upsertBackupId(uploadedFiles)
+            } catch (e: IOException) {
+                Result.failure<Unit>(e)
             }
-            upsertBackupIds(uploadedFiles)
-        } catch (e: IOException) {
-            return Result.failure(e)
+            println("Backup complete")
+            Result.success(Unit)
         }
-        println("Backup complete")
-        return Result.success(Unit)
     }
 
     private fun downloadDatabase(): Result<Unit> {
@@ -141,18 +135,14 @@ class BackupUtil(private val context: Context) {
         return model
     }
 
-    private fun getExistingBackupIds(): List<String>? {
-        if (preferences == null ||
-            Constants.dbIds.map { preferences.contains(it) }.contains(false)
-        ) {
-            return null
-        }
-        return Constants.dbIds.map { preferences.getString(it, null)!! }
+    private fun getExistingBackupId(): String? {
+        if (preferences == null) return null
+        return preferences.getString(Constants.dbId, null)
     }
 
-    private fun upsertBackupIds(files: List<com.google.api.services.drive.model.File>) {
+    private fun upsertBackupId(file: com.google.api.services.drive.model.File) {
         with(preferences.edit()) {
-            Constants.dbIds.forEachIndexed { index, idName -> putString(idName, files[index].id) }
+            putString(Constants.dbId, file.id)
             apply()
         }
     }

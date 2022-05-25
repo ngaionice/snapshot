@@ -5,7 +5,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import kotlinx.coroutines.launch
 import me.ionice.snapshot.ui.common.BaseScreen
 import me.ionice.snapshot.ui.common.LoadingScreen
 
@@ -14,6 +16,7 @@ import me.ionice.snapshot.ui.common.LoadingScreen
 fun SettingsScreen(viewModel: SettingsViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
+    val scope = rememberCoroutineScope()
 
     BaseScreen(headerText = "Settings") {
         if (uiState.loading) {
@@ -24,7 +27,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                     uiState as SettingsUiState.TempStateClass,
                     onEnableBackup = { viewModel.setBackupEnabled(it) },
                     onSuccessfulLogin = { viewModel.loggedInToGoogle(it) },
-                    onStartBackup = { viewModel.backup() })
+                    onStartBackup = { scope.launch { viewModel.backup() } })
             }
         }
     }

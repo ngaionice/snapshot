@@ -40,7 +40,7 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
         viewModelState.update { it.copy(signedInGoogleAccountEmail = account.email) }
     }
 
-    fun backup() {
+    suspend fun backup() {
         val result = backupUtil.backupDatabase()
         if (result.isFailure) {
             result.exceptionOrNull().let {

@@ -8,7 +8,5 @@ object Constants {
     const val backupPrefsName = "backup_preferences"
     const val backupEnabledName = "is_enabled"
 
-    // the order of the values in these 2 variables should always be the same
-    val dbIds = listOf("database_id", "database_shm_id", "database_wal_id")
-    val dbNames = listOf("", "-shm", "-wal")
+    const val dbId = "database_id"
 }
