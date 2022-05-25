@@ -25,15 +25,15 @@ fun MetricsScreen(viewModel: MetricsViewModel) {
         }
     } else {
         when (uiState) {
-            is MetricsScreenState.MetricList -> {
+            is MetricsUiState.MetricList -> {
                 MetricListScreen(
-                    uiState = uiState as MetricsScreenState.MetricList,
+                    uiState = uiState as MetricsUiState.MetricList,
                     onListItemClick = { viewModel.selectMetric(it) },
                     onAddKey = { viewModel.addKey(it) })
             }
-            is MetricsScreenState.MetricDetails -> {
+            is MetricsUiState.MetricDetails -> {
                 MetricDetailsScreen(
-                    uiState = uiState as MetricsScreenState.MetricDetails,
+                    uiState = uiState as MetricsUiState.MetricDetails,
                     onBack = { viewModel.deselectMetric() })
             }
         }
@@ -43,7 +43,7 @@ fun MetricsScreen(viewModel: MetricsViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MetricListScreen(
-    uiState: MetricsScreenState.MetricList,
+    uiState: MetricsUiState.MetricList,
     onListItemClick: (MetricKey) -> Unit,
     onAddKey: (String) -> Unit,
 ) {
@@ -71,7 +71,7 @@ private fun MetricListScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MetricDetailsScreen(uiState: MetricsScreenState.MetricDetails, onBack: () -> Unit) {
+private fun MetricDetailsScreen(uiState: MetricsUiState.MetricDetails, onBack: () -> Unit) {
 
     BackHandler {
         onBack()

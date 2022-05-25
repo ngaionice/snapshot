@@ -72,15 +72,15 @@ data class MetricsViewModelState(
     val selectedMetric: Metric? = null,
     val loading: Boolean
 ) {
-    fun toUiState(): MetricsScreenState =
+    fun toUiState(): MetricsUiState =
         if (selectedMetric == null) {
-            MetricsScreenState.MetricList(loading, keys)
+            MetricsUiState.MetricList(loading, keys)
         } else {
-            MetricsScreenState.MetricDetails(loading, keys, selectedMetric)
+            MetricsUiState.MetricDetails(loading, keys, selectedMetric)
         }
 }
 
-sealed interface MetricsScreenState {
+sealed interface MetricsUiState {
 
     val loading: Boolean
     val keys: List<MetricKey>
@@ -88,11 +88,11 @@ sealed interface MetricsScreenState {
     data class MetricList(
         override val loading: Boolean,
         override val keys: List<MetricKey>
-    ) : MetricsScreenState
+    ) : MetricsUiState
 
     data class MetricDetails(
         override val loading: Boolean,
         override val keys: List<MetricKey>,
         val selectedMetric: Metric
-    ) : MetricsScreenState
+    ) : MetricsUiState
 }
