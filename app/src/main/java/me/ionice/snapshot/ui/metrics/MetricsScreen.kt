@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import me.ionice.snapshot.data.metric.MetricKey
+import me.ionice.snapshot.ui.common.AddFAB
 import me.ionice.snapshot.ui.common.BackButton
 import me.ionice.snapshot.ui.common.BaseScreen
 import me.ionice.snapshot.ui.common.LoadingScreen
@@ -49,22 +50,15 @@ private fun MetricListScreen(
 ) {
     var showAddDialog by remember { mutableStateOf(false) }
 
-    BaseScreen(headerText = "Metrics") {
-        Scaffold(backgroundColor = MaterialTheme.colorScheme.background,
-            floatingActionButton = {
-                AddKeyFAB {
-                    showAddDialog = true
-                }
-            }) {
-            Box(modifier = Modifier.padding(it)) {
-                MetricsList(keys = uiState.keys, onItemClick = onListItemClick)
-                if (showAddDialog) {
-                    AddKeyDialog(onConfirm = { name ->
-                        onAddKey(name)
-                        showAddDialog = false
-                    }, onDismiss = { showAddDialog = false })
-                }
-            }
+    BaseScreen(headerText = "Metrics", floatingActionButton = {
+        AddFAB(onClick = { showAddDialog = true }, description = "Add metric type")
+    }) {
+        MetricsList(keys = uiState.keys, onItemClick = onListItemClick)
+        if (showAddDialog) {
+            AddKeyDialog(onConfirm = { name ->
+                onAddKey(name)
+                showAddDialog = false
+            }, onDismiss = { showAddDialog = false })
         }
     }
 }

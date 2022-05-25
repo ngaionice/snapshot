@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,6 +24,13 @@ import java.time.format.DateTimeFormatter
 fun BackButton(onBack: () -> Unit) {
     IconButton(onClick = onBack) {
         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+    }
+}
+
+@Composable
+fun AddFAB(onClick: () -> Unit, description: String) {
+    FloatingActionButton(onClick = onClick) {
+        Icon(imageVector = Icons.Filled.Add, contentDescription = description)
     }
 }
 

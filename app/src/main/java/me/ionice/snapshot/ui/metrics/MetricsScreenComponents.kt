@@ -43,13 +43,6 @@ fun MetricsListItem(key: MetricKey, onClick: () -> Unit) {
 }
 
 @Composable
-fun AddKeyFAB(onClick: () -> Unit) {
-    FloatingActionButton(onClick = onClick) {
-        Icon(imageVector = Icons.Filled.Add, contentDescription = "Add metric type")
-    }
-}
-
-@Composable
 fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
 
     var name by remember { mutableStateOf("") }

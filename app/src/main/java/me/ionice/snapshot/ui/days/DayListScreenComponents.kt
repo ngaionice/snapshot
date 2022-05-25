@@ -63,9 +63,3 @@ private fun EntryListItem(day: DayWithMetrics, onClick: () -> Unit) {
     }
 }
 
-@Composable
-fun AddFAB(onClick: () -> Unit, description: String) {
-    FloatingActionButton(onClick = onClick) {
-        Icon(imageVector = Icons.Filled.Add, contentDescription = description)
-    }
-}
