@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import me.ionice.snapshot.data.AppContainer
+import me.ionice.snapshot.data.backup.BackupUtil
 import me.ionice.snapshot.ui.navigation.BottomNavigation
 import me.ionice.snapshot.ui.navigation.SnapshotNavHost
 import me.ionice.snapshot.ui.theme.SnapshotTheme
@@ -20,15 +21,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val appContainer = (application as SnapshotApplication).container
+        val backupUtil = BackupUtil(application.applicationContext)
         setContent {
-            SnapshotApp(appContainer)
+            SnapshotApp(appContainer, backupUtil)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SnapshotApp(appContainer: AppContainer) {
+fun SnapshotApp(appContainer: AppContainer, backupUtil: BackupUtil) {
     SnapshotTheme {
         val navController = rememberNavController()
 //        val backstackEntry = navController.currentBackStackEntryAsState()
@@ -40,7 +42,8 @@ fun SnapshotApp(appContainer: AppContainer) {
             Box(modifier = Modifier.padding(innerPadding)) {
                 SnapshotNavHost(
                     navController = navController,
-                    appContainer = appContainer
+                    appContainer = appContainer,
+                    backupUtil = backupUtil
                 )
             }
         }

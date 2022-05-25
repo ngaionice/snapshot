@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import me.ionice.snapshot.data.day.Day
 import me.ionice.snapshot.data.day.DayDao
 import me.ionice.snapshot.data.metric.MetricDao
@@ -24,19 +26,40 @@ abstract class SnapshotDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: SnapshotDatabase? = null
 
+        @Volatile
+        private var LOCKED: Boolean = false
+
         fun getInstance(context: Context): SnapshotDatabase {
             synchronized(this) {
                 var instance = INSTANCE
+
+                // if locked, then don't create a new one until it is unlocked
+                while (LOCKED) {
+                    runBlocking {
+                        delay(1000)
+                    }
+                }
+
                 if (instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         SnapshotDatabase::class.java,
-                        "snapshot_database"
+                        Constants.databaseName
                     ).fallbackToDestructiveMigration().build()
                     INSTANCE = instance
                 }
                 return instance
             }
+        }
+
+        fun closeAndLockInstance() {
+            LOCKED = true
+            INSTANCE?.close()
+            INSTANCE = null
+        }
+
+        fun unlockInstance() {
+            LOCKED = false
         }
     }
 }
