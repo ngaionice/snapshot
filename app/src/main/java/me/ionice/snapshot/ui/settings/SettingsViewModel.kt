@@ -31,8 +31,10 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
 
     fun setBackupEnabled(value: Boolean) {
         backupUtil.setBackupEnabled(value)
-        viewModelState.update {
-            it.copy(backupEnabled = value)
+        viewModelScope.launch {
+            viewModelState.update {
+                it.copy(backupEnabled = value, lastBackupTime = backupUtil.getLastBackupTime())
+            }
         }
     }
 
