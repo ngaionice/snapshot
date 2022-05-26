@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import me.ionice.snapshot.data.backup.AuthResultContract
+import me.ionice.snapshot.ui.common.SectionHeader
 import java.time.LocalDateTime
 
 @Composable
@@ -72,7 +73,8 @@ private fun SwitchSetting(
     Row(
         modifier = Modifier
             .clickable(onClick = { onCheckedChange(!checked) })
-            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth()
+            .padding(16.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = mainLabel, style = MaterialTheme.typography.titleLarge)
@@ -104,7 +106,7 @@ private fun SettingsRow(
     Row(
         modifier = baseModifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(16.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         if (loading) {
             CircularProgressIndicator(modifier = Modifier.fillMaxWidth())
@@ -122,12 +124,7 @@ private fun SettingsRow(
 @Composable
 private fun Section(headerText: String, content: @Composable () -> Unit) {
     Column {
-        Text(
-            text = headerText,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
+        SectionHeader(displayText = headerText)
         content()
     }
 }

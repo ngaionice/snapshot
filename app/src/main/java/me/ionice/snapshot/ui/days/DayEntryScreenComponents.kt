@@ -17,58 +17,43 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
+import me.ionice.snapshot.ui.common.SectionHeader
 
-@Composable
-private fun SectionHeader(
-    imageVector: ImageVector,
-    headerText: String,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Icon(imageVector, contentDescription = headerText)
-        Text(headerText, style = MaterialTheme.typography.labelMedium)
-    }
-}
 
 @Composable
 fun SummaryText(summary: String, modifier: Modifier = Modifier) {
-    SectionHeader(imageVector = Icons.Filled.EditNote, headerText = "Summary")
-    Text(text = summary, modifier = modifier.fillMaxWidth())
+    SectionHeader(icon = Icons.Filled.EditNote, displayText = "Summary")
+    Text(text = summary, modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp))
 }
 
 @Composable
 fun LocationText(location: String, modifier: Modifier = Modifier) {
-    SectionHeader(imageVector = Icons.Filled.PinDrop, headerText = "Location")
-    Text(text = location, modifier = modifier.fillMaxWidth())
+    SectionHeader(icon = Icons.Filled.PinDrop, displayText = "Location")
+    Text(text = location, modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp))
 }
 
 @Composable
 fun SummaryField(summary: String, setSummary: (String) -> Unit, modifier: Modifier = Modifier) {
-    SectionHeader(imageVector = Icons.Filled.EditNote, headerText = "Summary")
+    SectionHeader(icon = Icons.Filled.EditNote, displayText = "Summary")
     TextField(value = summary, onValueChange = {
         if (it.length <= 140) {
             setSummary(it)
         }
-    }, modifier = modifier.fillMaxWidth())
+    }, modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp))
 }
 
 @Composable
 fun LocationField(location: String?, setLocation: (String) -> Unit, modifier: Modifier = Modifier) {
-    SectionHeader(imageVector = Icons.Filled.PinDrop, headerText = "Location")
+    SectionHeader(icon = Icons.Filled.PinDrop, displayText = "Location")
     TextField(value = location ?: "", onValueChange = {
         if (it.length <= 50) {
             setLocation(it)
         }
-    }, modifier = modifier.fillMaxWidth())
+    }, modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp))
 }
 
 @Composable
@@ -84,7 +69,7 @@ fun MetricViewList(
     }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(imageVector = Icons.Filled.List, headerText = "Metrics")
+        SectionHeader(icon = Icons.Filled.List, displayText = "Metrics")
         entries.mapIndexed { index, entry ->
             val key = keyMap[entry.metricId]
             if (key != null) {
@@ -134,7 +119,7 @@ fun MetricEditList(
     }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(imageVector = Icons.Filled.List, headerText = "Metrics")
+        SectionHeader(icon = Icons.Filled.List, displayText = "Metrics")
         entries.mapIndexed { index, entry ->
             val key = keyMap[entry.metricId]
             if (key != null) {

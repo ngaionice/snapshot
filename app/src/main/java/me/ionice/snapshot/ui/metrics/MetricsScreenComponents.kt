@@ -34,7 +34,7 @@ fun MetricsListItem(key: MetricKey, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp), onClick = onClick
+            .padding(vertical = 8.dp, horizontal = 16.dp), onClick = onClick
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             Text(text = key.name, style = MaterialTheme.typography.titleMedium)
@@ -80,18 +80,13 @@ fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
 @Composable
 fun MetricEntriesList(entries: List<MetricEntry>) {
     LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
-        itemsIndexed(items = entries) { index, it ->
-            MetricEntriesListItem(entry = it)
-            if (index < entries.lastIndex) {
-                Divider()
-            }
-        }
+        items(items = entries) { MetricEntriesListItem(entry = it) }
     }
 }
 
 @Composable
 fun MetricEntriesListItem(entry: MetricEntry) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 16.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
         Column(verticalArrangement = Arrangement.Center) {
             Text(
                 text = Utils.formatter.format(LocalDate.ofEpochDay(entry.dayId)),

@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -31,6 +32,20 @@ fun BackButton(onBack: () -> Unit) {
 fun AddFAB(onClick: () -> Unit, description: String) {
     FloatingActionButton(onClick = onClick) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = description)
+    }
+}
+
+@Composable
+fun SectionHeader(icon: ImageVector? = null, displayText: String) {
+    Row(
+        Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        if (icon != null) {
+            Icon(icon, contentDescription = displayText, tint = MaterialTheme.colorScheme.primary)
+        }
+        Text(displayText, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
     }
 }
 

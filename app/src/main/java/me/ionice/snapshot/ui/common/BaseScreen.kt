@@ -48,7 +48,7 @@ fun BaseScreen(
                 floatingActionButton()
             }
         }, floatingActionButtonPosition = floatingActionButtonPosition) {
-        Box(modifier = modifier.padding(it).padding(horizontal = 16.dp)) {
+        Box(modifier = modifier.padding(it)) {
             content()
         }
     }
