@@ -29,7 +29,8 @@ val navOptions = listOf(
 fun SnapshotNavHost(
     navController: NavHostController,
     appContainer: AppContainer,
-    backupUtil: BackupUtil
+    backupUtil: BackupUtil,
+    toggleBottomNav: (Boolean) -> Unit
 ) {
 
     val daysViewModel: DaysViewModel = viewModel(
@@ -46,11 +47,11 @@ fun SnapshotNavHost(
 
     NavHost(navController = navController, startDestination = Screen.Days.name) {
         composable(Screen.Days.name) {
-            DaysScreen(viewModel = daysViewModel)
+            DaysScreen(viewModel = daysViewModel, toggleBottomNav = toggleBottomNav)
         }
 
         composable(Screen.Metrics.name) {
-            MetricsScreen(viewModel = metricsViewModel)
+            MetricsScreen(viewModel = metricsViewModel, toggleBottomNav = toggleBottomNav)
         }
 
         composable(Screen.Settings.name) {

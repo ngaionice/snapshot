@@ -25,7 +25,7 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DaysScreen(viewModel: DaysViewModel) {
+fun DaysScreen(viewModel: DaysViewModel, toggleBottomNav: (Boolean) -> Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
@@ -70,10 +70,14 @@ fun DaysScreen(viewModel: DaysViewModel) {
                             viewModel.selectDay((uiState as DayUiState.DayEntryFound).date)
                         })
                 } else {
+                    toggleBottomNav(false)
                     DayEntryViewScreen(
                         uiState = uiState as DayUiState.DayEntryFound,
                         onEdit = { editing = true },
-                        onBack = { viewModel.deselectDay() })
+                        onBack = {
+                            viewModel.deselectDay()
+                            toggleBottomNav(true)
+                        })
                 }
             }
         }

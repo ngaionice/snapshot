@@ -16,7 +16,7 @@ import me.ionice.snapshot.ui.common.LoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MetricsScreen(viewModel: MetricsViewModel) {
+fun MetricsScreen(viewModel: MetricsViewModel, toggleBottomNav: (Boolean) -> Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -33,9 +33,13 @@ fun MetricsScreen(viewModel: MetricsViewModel) {
                     onAddKey = { viewModel.addKey(it) })
             }
             is MetricsUiState.MetricDetails -> {
+                toggleBottomNav(false)
                 MetricDetailsScreen(
                     uiState = uiState as MetricsUiState.MetricDetails,
-                    onBack = { viewModel.deselectMetric() })
+                    onBack = {
+                        viewModel.deselectMetric()
+                        toggleBottomNav(true)
+                    })
             }
         }
     }
