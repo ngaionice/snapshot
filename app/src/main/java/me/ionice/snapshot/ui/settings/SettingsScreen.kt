@@ -27,7 +27,8 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                     uiState as SettingsUiState.TempStateClass,
                     onEnableBackup = { viewModel.setBackupEnabled(it) },
                     onSuccessfulLogin = { viewModel.loggedInToGoogle(it) },
-                    onStartBackup = { scope.launch { viewModel.backup() } })
+                    onStartBackup = { scope.launch { viewModel.backupDatabase() } },
+                    onStartRestore = { scope.launch { viewModel.restoreDatabase() } })
             }
         }
     }
@@ -39,13 +40,16 @@ fun MainScreen(
     uiState: SettingsUiState.TempStateClass,
     onEnableBackup: (Boolean) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit,
-    onStartBackup: () -> Unit
+    onStartBackup: () -> Unit,
+    onStartRestore: () -> Unit
 ) {
     BackupSection(
         isEnabled = uiState.backupEnabled,
         accountEmail = uiState.signedInGoogleAccountEmail,
         setIsEnabled = { onEnableBackup(!uiState.backupEnabled) },
         onSuccessfulLogin = onSuccessfulLogin,
-        onStartBackup = onStartBackup
+        onStartBackup = onStartBackup,
+        onStartRestore = onStartRestore,
+        lastBackupTime = uiState.lastBackupTime
     )
 }

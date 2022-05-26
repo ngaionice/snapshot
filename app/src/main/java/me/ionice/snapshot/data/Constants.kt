@@ -7,6 +7,4 @@ object Constants {
 
     const val backupPrefsName = "backup_preferences"
     const val backupEnabledName = "is_enabled"
-
-    const val dbId = "database_id"
 }

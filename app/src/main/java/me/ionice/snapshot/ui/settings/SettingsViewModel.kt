@@ -40,10 +40,26 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
         viewModelState.update { it.copy(signedInGoogleAccountEmail = account.email) }
     }
 
-    suspend fun backup() {
+    suspend fun backupDatabase() {
         val result = backupUtil.backupDatabase()
         if (result.isFailure) {
             result.exceptionOrNull().let {
+                if (it != null) {
+                    viewModelState.update { state -> state.copy(errorMessage = it.message) }
+                }
+                it?.printStackTrace()
+            }
+        }
+        viewModelState.update { it.copy(lastBackupTime = backupUtil.getLastBackupTime()) }
+    }
+
+    suspend fun restoreDatabase() {
+        val result = backupUtil.restoreDatabase()
+        if (result.isFailure) {
+            result.exceptionOrNull().let {
+                if (it != null) {
+                    viewModelState.update { state -> state.copy(errorMessage = it.message) }
+                }
                 it?.printStackTrace()
             }
         }
@@ -64,7 +80,8 @@ data class SettingsViewModelState(
     val loading: Boolean,
     val backupEnabled: Boolean? = null,
     val signedInGoogleAccountEmail: String? = null,
-    val lastBackupTime: LocalDateTime? = null
+    val lastBackupTime: LocalDateTime? = null,
+    val errorMessage: String? = null
 ) {
     fun toUiState(): SettingsUiState =
         SettingsUiState.TempStateClass(
