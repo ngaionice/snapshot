@@ -38,14 +38,14 @@ fun AddFAB(onClick: () -> Unit, description: String) {
 @Composable
 fun SectionHeader(icon: ImageVector? = null, displayText: String) {
     Row(
-        Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         if (icon != null) {
             Icon(icon, contentDescription = displayText, tint = MaterialTheme.colorScheme.primary)
         }
-        Text(displayText, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+        Text(displayText, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
     }
 }
 

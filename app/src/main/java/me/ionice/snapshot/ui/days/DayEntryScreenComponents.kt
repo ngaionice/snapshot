@@ -68,18 +68,15 @@ fun MetricViewList(
         }
     }
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier = modifier) {
         SectionHeader(icon = Icons.Filled.List, displayText = "Metrics")
-        entries.mapIndexed { index, entry ->
+        entries.map { entry ->
             val key = keyMap[entry.metricId]
             if (key != null) {
                 MetricViewListItem(
                     entry = entry,
                     key = key
                 )
-                if (index < entries.lastIndex) {
-                    Divider()
-                }
             }
         }
     }
@@ -87,7 +84,7 @@ fun MetricViewList(
 
 @Composable
 private fun MetricViewListItem(entry: MetricEntry, key: MetricKey) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)) {
         Column(verticalArrangement = Arrangement.Center) {
             Text(
                 text = key.name,
@@ -118,7 +115,7 @@ fun MetricEditList(
         }
     }
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier = modifier) {
         SectionHeader(icon = Icons.Filled.List, displayText = "Metrics")
         entries.mapIndexed { index, entry ->
             val key = keyMap[entry.metricId]
@@ -145,7 +142,7 @@ private fun MetricEditListItem(
     onDelete: (MetricEntry) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier = modifier) {
+    Card(modifier = modifier.padding(vertical = 4.dp, horizontal = 16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -166,7 +163,7 @@ private fun MetricEditListItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MetricEditListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Card(modifier = modifier, onClick = onClick) {
+    Card(modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp), onClick = onClick) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
