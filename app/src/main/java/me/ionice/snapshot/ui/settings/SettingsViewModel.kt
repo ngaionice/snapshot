@@ -47,12 +47,13 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
         if (result.isFailure) {
             result.exceptionOrNull().let {
                 if (it != null) {
-                    viewModelState.update { state -> state.copy(errorMessage = it.message) }
+                    viewModelState.update { state -> state.copy(snackbarMessage = "Backup failed: ${it.message}") }
                 }
                 it?.printStackTrace()
             }
+        } else {
+            viewModelState.update { it.copy(lastBackupTime = backupUtil.getLastBackupTime(), snackbarMessage = "Backup successful") }
         }
-        viewModelState.update { it.copy(lastBackupTime = backupUtil.getLastBackupTime()) }
     }
 
     suspend fun restoreDatabase() {
@@ -60,11 +61,17 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
         if (result.isFailure) {
             result.exceptionOrNull().let {
                 if (it != null) {
-                    viewModelState.update { state -> state.copy(errorMessage = it.message) }
+                    viewModelState.update { state -> state.copy(snackbarMessage = "Restore failed: ${it.message}") }
                 }
                 it?.printStackTrace()
             }
+        } else {
+            viewModelState.update { it.copy(snackbarMessage = "Restore successful") }
         }
+    }
+
+    fun clearErrorMessage() {
+        viewModelState.update { it.copy(snackbarMessage = null) }
     }
 
     companion object {
@@ -83,24 +90,27 @@ data class SettingsViewModelState(
     val backupEnabled: Boolean? = null,
     val signedInGoogleAccountEmail: String? = null,
     val lastBackupTime: LocalDateTime? = null,
-    val errorMessage: String? = null
+    val snackbarMessage: String? = null
 ) {
     fun toUiState(): SettingsUiState =
         SettingsUiState.TempStateClass(
             loading = loading,
             backupEnabled = backupEnabled == true,
             signedInGoogleAccountEmail = signedInGoogleAccountEmail,
-            lastBackupTime = lastBackupTime
+            lastBackupTime = lastBackupTime,
+            snackbarMessage = snackbarMessage
         )
 }
 
 sealed interface SettingsUiState {
 
     val loading: Boolean
+    val snackbarMessage: String?
 
     // TODO: need to re-evaluate how to properly represent UI state
     data class TempStateClass(
         override val loading: Boolean,
+        override val snackbarMessage: String?,
         val backupEnabled: Boolean,
         val signedInGoogleAccountEmail: String?,
         val lastBackupTime: LocalDateTime?

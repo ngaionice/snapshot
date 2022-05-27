@@ -2,17 +2,15 @@ package me.ionice.snapshot.ui.settings
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Battery4Bar
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -21,46 +19,49 @@ import me.ionice.snapshot.ui.common.SectionHeader
 import java.time.LocalDateTime
 
 @Composable
-fun BackupSection(
-    isEnabled: Boolean,
+fun BackupScreenOptions(
+    isBackupInProgress: Boolean,
     accountEmail: String?,
     lastBackupTime: LocalDateTime?,
-    setIsEnabled: (Boolean) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit,
     onStartBackup: () -> Unit,
     onStartRestore: () -> Unit
 ) {
+    if (accountEmail != null) {
+        // Show email or something
+        SettingsRow(mainLabel = "Current selected account", secondaryLabel = accountEmail)
+        SettingsRow(mainLabel = "Last backup", secondaryLabel = lastBackupTime?.toString() ?: "Never")
 
-    var syncInProgress by remember {
-        mutableStateOf(false)
-    }
+        Divider()
 
-    Section(headerText = "Backup & Restore") {
-        SwitchSetting(
-            mainLabel = "Use backups",
-            checked = isEnabled,
-            onCheckedChange = setIsEnabled
-        )
-        if (isEnabled) {
-            if (accountEmail != null) {
-                // Show email or something
-                SettingsRow(mainLabel = "Current selected account", secondaryLabel = accountEmail)
-                SettingsRow(mainLabel = "Last backup", secondaryLabel = lastBackupTime?.toString() ?: "Never")
-                BackupButton(enabled = !syncInProgress, onClick = {
-                    syncInProgress = true
-                    onStartBackup()
-                    syncInProgress = false
-                })
-                RestoreButton(enabled = !syncInProgress, onClick = {
-                    syncInProgress = true
-                    onStartRestore()
-                    syncInProgress = false
-                })
-            } else {
-                SignInButton(onSuccessfulLogin = onSuccessfulLogin)
+        if (!isBackupInProgress) {
+            SettingsRow(mainLabel = "Backup now", onClick = { onStartBackup() })
+            SettingsRow(mainLabel = "Restore cloud backup", onClick = { onStartRestore() })
+        } else {
+            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp), horizontalArrangement = Arrangement.Center) {
+                CircularProgressIndicator()
             }
         }
+    } else {
+        SignInButton(onSuccessfulLogin = onSuccessfulLogin)
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProminentSwitchSetting(mainLabel: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Card(onClick = { onCheckedChange(!checked) }, modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
+        Row(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = mainLabel, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+            Switch(checked = checked, onCheckedChange = onCheckedChange)
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ProminentSwitchPreview() {
+    ProminentSwitchSetting(mainLabel = "Use location", checked = true, onCheckedChange = { })
 }
 
 @Composable
@@ -74,7 +75,7 @@ private fun SwitchSetting(
         modifier = Modifier
             .clickable(onClick = { onCheckedChange(!checked) })
             .fillMaxWidth()
-            .padding(16.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 24.dp, 16.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = mainLabel, style = MaterialTheme.typography.titleLarge)
@@ -95,6 +96,7 @@ private fun SwitchSetting(
 private fun SettingsRow(
     mainLabel: String,
     secondaryLabel: String? = null,
+    icon: ImageVector? = null,
     loading: Boolean = false,
     onClick: (() -> Unit)? = null
 ) {
@@ -106,18 +108,36 @@ private fun SettingsRow(
     Row(
         modifier = baseModifier
             .fillMaxWidth()
-            .padding(16.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 24.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         if (loading) {
-            CircularProgressIndicator(modifier = Modifier.fillMaxWidth())
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                CircularProgressIndicator()
+            }
         } else {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = mainLabel, style = MaterialTheme.typography.titleLarge)
-                if (secondaryLabel != null) {
-                    Text(text = secondaryLabel, style = MaterialTheme.typography.labelMedium)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (icon != null) {
+                    Icon(imageVector = icon, contentDescription = mainLabel, modifier = Modifier.padding(end = 24.dp))
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    val textColor = if (onClick == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
+                    Text(text = mainLabel, style = MaterialTheme.typography.titleLarge, color = textColor)
+                    if (secondaryLabel != null) {
+                        Text(text = secondaryLabel, style = MaterialTheme.typography.labelMedium, color = textColor)
+                    }
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun SwitchRowPreview() {
+    Column {
+        SettingsRow(mainLabel = "Battery", secondaryLabel = "100%", icon = Icons.Filled.Battery4Bar)
+        SettingsRow(mainLabel = "Battery", icon = Icons.Filled.Battery4Bar)
+        SettingsRow(mainLabel = "Battery")
     }
 }
 
@@ -140,12 +160,12 @@ private fun SignInButton(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
             try {
                 val account = task?.getResult(ApiException::class.java)
                 if (account == null) {
-                    helperText = "Google sign in failed"
+                    helperText = "Google sign in failed, tap to retry"
                 } else {
                     onSuccessfulLogin(account)
                 }
             } catch (e: ApiException) {
-                helperText = "Google sign in failed"
+                helperText = "Google sign in failed, tap to retry"
             }
         }
 
@@ -158,22 +178,4 @@ private fun SignInButton(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
             authResultLauncher.launch(signInRequestCode)
             enabled = true
         })
-}
-
-@Composable
-private fun BackupButton(enabled: Boolean, onClick: () -> Unit) {
-    SettingsRow(
-        mainLabel = "Backup now",
-        loading = !enabled,
-        onClick = onClick
-    )
-}
-
-@Composable
-private fun RestoreButton(enabled: Boolean, onClick: () -> Unit) {
-    SettingsRow(
-        mainLabel = "Restore cloud backup",
-        loading = !enabled,
-        onClick = onClick
-    )
 }

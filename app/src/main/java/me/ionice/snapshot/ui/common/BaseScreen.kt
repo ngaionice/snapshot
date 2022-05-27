@@ -17,6 +17,7 @@ fun BaseScreen(
     modifier: Modifier = Modifier,
     navigationIcon: (@Composable () -> Unit)? = null,
     floatingActionButton: (@Composable () -> Unit)? = null,
+    snackbarHostState: SnackbarHostState? = null,
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
@@ -30,7 +31,7 @@ fun BaseScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
             LargeTopAppBar(
-                title = { Text(headerText) },
+                title = { Text(text = headerText, modifier = Modifier.padding(horizontal = 8.dp), style = MaterialTheme.typography.displaySmall) },
                 navigationIcon = {
                     if (navigationIcon != null) {
                         navigationIcon()
@@ -47,7 +48,8 @@ fun BaseScreen(
             if (floatingActionButton != null) {
                 floatingActionButton()
             }
-        }, floatingActionButtonPosition = floatingActionButtonPosition) {
+        }, floatingActionButtonPosition = floatingActionButtonPosition,
+        snackbarHost = { if (snackbarHostState != null) SnackbarHost(snackbarHostState) }) {
         Box(modifier = modifier.padding(it)) {
             content()
         }

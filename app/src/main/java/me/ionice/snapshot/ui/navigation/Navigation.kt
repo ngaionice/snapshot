@@ -55,7 +55,7 @@ fun SnapshotNavHost(
         }
 
         composable(Screen.Settings.name) {
-            SettingsScreen(viewModel = settingsViewModel)
+            SettingsScreen(viewModel = settingsViewModel, toggleBottomNav = toggleBottomNav)
         }
     }
 }
