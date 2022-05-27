@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
@@ -100,7 +101,7 @@ private fun DayListScreen(
         EntryList(days = uiState.entries, onDaySelect = onDaySelect)
         if (showDatePicker) {
             DatePicker(
-                onSelect = { onDayAdd(it) },
+                onSelect = { day -> onDayAdd(day) },
                 onDismissRequest = { showDatePicker = false })
         }
     }
@@ -123,8 +124,7 @@ private fun DayEntryNotAvailableScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             Text(
                 text = "No entry found.",
@@ -153,16 +153,21 @@ private fun DayEntryViewScreen(
                 Icon(Icons.Filled.Edit, contentDescription = "Edit entry")
             }
         }) {
-        Column(
-            modifier = Modifier.padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        LazyColumn(
+            modifier = Modifier.padding(vertical = 16.dp)
         ) {
-            LocationText(location = uiState.location)
-            SummaryText(summary = uiState.summary)
-            MetricViewList(
-                entries = uiState.metrics,
-                keys = uiState.metricKeys
-            )
+            item {
+                LocationText(location = uiState.location)
+            }
+            item {
+                SummaryText(summary = uiState.summary)
+            }
+            item {
+                MetricViewList(
+                    entries = uiState.metrics,
+                    keys = uiState.metricKeys
+                )
+            }
         }
 
     }
@@ -220,30 +225,33 @@ private fun DayEntryEditScreen(
                 }
             },
         ) {
-            Column(
-                Modifier.padding(vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                LocationField(
-                    location = uiState.location,
-                    setLocation = onLocationChange
-                )
-                SummaryField(
-                    summary = uiState.summary,
-                    setSummary = onSummaryChange
-                )
-                MetricEditList(
-                    entries = uiState.metrics,
-                    keys = uiState.metricKeys,
-                    showAddButton = existingMetricIds.size < uiState.metricKeys.size,
-                    onShowAddMetricSheet = {
-                        scope.launch {
-                            sheetState.show()
-                        }
-                    },
-                    onMetricChange = onMetricChange,
-                    onMetricDelete = onMetricDelete
-                )
+            LazyColumn(Modifier.padding(vertical = 16.dp)) {
+                item {
+                    LocationField(
+                        location = uiState.location,
+                        setLocation = onLocationChange
+                    )
+                }
+                item {
+                    SummaryField(
+                        summary = uiState.summary,
+                        setSummary = onSummaryChange
+                    )
+                }
+                item {
+                    MetricEditList(
+                        entries = uiState.metrics,
+                        keys = uiState.metricKeys,
+                        showAddButton = existingMetricIds.size < uiState.metricKeys.size,
+                        onShowAddMetricSheet = {
+                            scope.launch {
+                                sheetState.show()
+                            }
+                        },
+                        onMetricChange = onMetricChange,
+                        onMetricDelete = onMetricDelete
+                    )
+                }
             }
         }
     }

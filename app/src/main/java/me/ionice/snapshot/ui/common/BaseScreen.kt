@@ -29,13 +29,13 @@ fun BaseScreen(
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
             LargeTopAppBar(
                 title = {
                     Text(
                         text = headerText,
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        style = MaterialTheme.typography.displaySmall
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 },
                 navigationIcon = {
@@ -50,12 +50,15 @@ fun BaseScreen(
                 },
                 scrollBehavior = scrollBehavior
             )
-        }, floatingActionButton = {
+        },
+        floatingActionButton = {
             if (floatingActionButton != null) {
                 floatingActionButton()
             }
-        }, floatingActionButtonPosition = floatingActionButtonPosition,
-        snackbarHost = { if (snackbarHostState != null) SnackbarHost(snackbarHostState) }) {
+        },
+        floatingActionButtonPosition = floatingActionButtonPosition,
+        snackbarHost = { if (snackbarHostState != null) SnackbarHost(snackbarHostState) })
+    {
         Box(modifier = modifier.padding(it)) {
             content()
         }

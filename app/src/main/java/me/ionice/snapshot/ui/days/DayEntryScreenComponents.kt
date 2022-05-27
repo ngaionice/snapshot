@@ -94,7 +94,7 @@ fun MetricViewList(
 private fun MetricViewListItem(entry: MetricEntry, key: MetricKey) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 24.dp)
     ) {
         Column(verticalArrangement = Arrangement.Center) {
             Text(
@@ -116,8 +116,7 @@ fun MetricEditList(
     showAddButton: Boolean,
     onShowAddMetricSheet: () -> Unit,
     onMetricDelete: (MetricEntry) -> Unit,
-    onMetricChange: (Int, String) -> Unit,
-    modifier: Modifier = Modifier
+    onMetricChange: (Int, String) -> Unit
 ) {
 
     val keyMap by remember(keys) {
@@ -126,25 +125,22 @@ fun MetricEditList(
         }
     }
 
-    Column(modifier = modifier) {
-        SectionHeader(icon = Icons.Filled.List, displayText = "Metrics")
-        entries.mapIndexed { index, entry ->
-            val key = keyMap[entry.metricId]
-            if (key != null) {
-                MetricEditListItem(
-                    entry = entry,
-                    key = key,
-                    onChange = { onMetricChange(index, it) },
-                    onDelete = { onMetricDelete(it) })
-            }
+    SectionHeader(icon = Icons.Filled.List, displayText = "Metrics")
+    entries.mapIndexed { index, entry ->
+        val key = keyMap[entry.metricId]
+        if (key != null) {
+            MetricEditListItem(
+                entry = entry,
+                key = key,
+                onChange = { onMetricChange(index, it) },
+                onDelete = { onMetricDelete(it) })
         }
-        if (showAddButton) {
-            MetricEditListAdd(onClick = { onShowAddMetricSheet() })
-        }
+    }
+    if (showAddButton) {
+        MetricEditListAdd(onClick = { onShowAddMetricSheet() })
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MetricEditListItem(
     entry: MetricEntry,
@@ -153,39 +149,34 @@ private fun MetricEditListItem(
     onDelete: (MetricEntry) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier = modifier.padding(vertical = 4.dp, horizontal = 24.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.weight(1f)
-            ) {
-                TextField(
-                    value = entry.value,
-                    onValueChange = onChange,
-                    label = { Text(key.name, style = MaterialTheme.typography.labelMedium) })
-            }
-            IconButton(onClick = { onDelete(entry) }) {
-                Icon(Icons.Filled.Close, contentDescription = "Delete")
-            }
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(vertical = 4.dp, horizontal = 24.dp)) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.weight(1f)
+        ) {
+            TextField(
+                value = entry.value,
+                onValueChange = onChange,
+                label = { Text(key.name, style = MaterialTheme.typography.labelMedium) })
+        }
+        IconButton(onClick = { onDelete(entry) }) {
+            Icon(Icons.Filled.Close, contentDescription = "Delete")
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MetricEditListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Card(modifier = modifier.padding(horizontal = 24.dp, vertical = 4.dp), onClick = onClick) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                Icons.Filled.AddCircle,
-                contentDescription = "Add new item",
-                modifier = Modifier.padding(8.dp)
-            )
-        }
+    Row(
+        modifier = modifier.clickable(onClick = onClick).fillMaxWidth().padding(horizontal = 24.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            Icons.Filled.AddCircle,
+            contentDescription = "Add new item",
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
 
@@ -194,7 +185,7 @@ private fun MetricKeySelectionListItem(metricKey: MetricKey, onSelection: () -> 
     Row(modifier = Modifier
         .fillMaxWidth()
         .clickable { onSelection() }
-        .padding(16.dp)
+        .padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
         Text(text = metricKey.name)
     }
@@ -202,7 +193,7 @@ private fun MetricKeySelectionListItem(metricKey: MetricKey, onSelection: () -> 
 
 @Composable
 fun MetricKeySelector(metricKeys: List<MetricKey>, onSelection: (Long) -> Unit) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn {
         items(items = metricKeys) { key ->
             MetricKeySelectionListItem(metricKey = key, onSelection = { onSelection(key.id) })
         }
