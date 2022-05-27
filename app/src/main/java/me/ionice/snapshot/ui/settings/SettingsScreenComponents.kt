@@ -11,10 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.network.AuthResultContract
 import me.ionice.snapshot.ui.common.SectionHeader
 import me.ionice.snapshot.utils.Utils
@@ -23,14 +25,14 @@ import java.time.LocalDateTime
 @Composable
 fun SettingsList(onBackupClick: () -> Unit, onNotificationsClick: () -> Unit) {
     SettingsRow(
-        mainLabel = "Backup & Restore",
-        secondaryLabel = "Backup account, frequency",
+        mainLabel = stringResource(R.string.settings_screen_backup_header),
+        secondaryLabel = stringResource(R.string.settings_screen_backup_subtitle),
         icon = Icons.Outlined.CloudSync,
         onClick = onBackupClick
     )
     SettingsRow(
-        mainLabel = "Notifications",
-        secondaryLabel = "Daily reminders, memories",
+        mainLabel = stringResource(R.string.settings_screen_notifs_header),
+        secondaryLabel = stringResource(R.string.settings_screen_notifs_subtitle),
         icon = Icons.Outlined.Notifications,
         onClick = onNotificationsClick
     )
@@ -47,17 +49,25 @@ fun BackupScreenOptions(
 ) {
     if (accountEmail != null) {
         // Show email or something
-        SettingsRow(mainLabel = "Current selected account", secondaryLabel = accountEmail)
         SettingsRow(
-            mainLabel = "Last backup",
-            secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter) ?: "Never"
+            mainLabel = stringResource(R.string.settings_screen_backup_selected_account),
+            secondaryLabel = accountEmail
+        )
+        SettingsRow(
+            mainLabel = stringResource(R.string.settings_screen_backup_last_backup),
+            secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter)
+                ?: stringResource(R.string.settings_screen_backup_last_backup_never)
         )
 
         Divider()
 
         if (!isBackupInProgress) {
-            SettingsRow(mainLabel = "Backup now", onClick = { onStartBackup() })
-            SettingsRow(mainLabel = "Restore cloud backup", onClick = { onStartRestore() })
+            SettingsRow(
+                mainLabel = stringResource(R.string.settings_screen_backup_start_backup),
+                onClick = { onStartBackup() })
+            SettingsRow(
+                mainLabel = stringResource(R.string.settings_screen_backup_start_restore),
+                onClick = { onStartRestore() })
         } else {
             Row(
                 modifier = Modifier
@@ -210,22 +220,24 @@ private fun SignInButton(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
     val signInRequestCode = 1
     var enabled by remember { mutableStateOf(true) }
 
+    val failedText = stringResource(R.string.settings_screen_backup_login_failed)
+
     val authResultLauncher =
         rememberLauncherForActivityResult(contract = AuthResultContract()) { task ->
             try {
                 val account = task?.getResult(ApiException::class.java)
                 if (account == null) {
-                    helperText = "Google sign in failed, tap to retry"
+                    helperText = failedText
                 } else {
                     onSuccessfulLogin(account)
                 }
             } catch (e: ApiException) {
-                helperText = "Google sign in failed, tap to retry"
+                helperText = failedText
             }
         }
 
     SettingsRow(
-        mainLabel = "Login to Google",
+        mainLabel = stringResource(R.string.settings_screen_backup_login),
         secondaryLabel = helperText,
         loading = !enabled,
         onClick = {

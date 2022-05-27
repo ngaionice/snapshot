@@ -7,9 +7,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
 import me.ionice.snapshot.utils.FakeData
@@ -46,12 +48,12 @@ fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
-        title = { Text(text = "Add metric type") },
+        title = { Text(text = stringResource(R.string.metrics_screen_add_key)) },
         text = {
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Metric name") })
+                label = { Text(stringResource(R.string.metrics_screen_add_name_helper)) })
         },
         confirmButton = {
             TextButton(
@@ -60,7 +62,7 @@ fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
                         onConfirm(name)
                     }
                 }) {
-                Text("Save")
+                Text(stringResource(R.string.metrics_screen_add_name_save))
             }
         },
         dismissButton = {
@@ -68,7 +70,7 @@ fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
                 onClick = {
                     onDismiss()
                 }) {
-                Text("Cancel")
+                Text(stringResource(R.string.metrics_screen_add_name_cancel))
             }
         }
     )

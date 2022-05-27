@@ -16,9 +16,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.ui.common.*
 import me.ionice.snapshot.utils.Utils
@@ -33,7 +35,7 @@ fun DaysScreen(viewModel: DaysViewModel, toggleBottomNav: (Boolean) -> Unit) {
     var editing by remember { mutableStateOf(false) }
 
     if (uiState.loading) {
-        BaseScreen(headerText = "Day") {
+        BaseScreen(headerText = stringResource(R.string.day_screen_placeholder_header)) {
             LoadingScreen()
         }
     } else {
@@ -96,7 +98,10 @@ private fun DayListScreen(
     var showDatePicker by remember { mutableStateOf(false) }
 
     BaseScreen(headerText = uiState.year.toString(), floatingActionButton = {
-        AddFAB(onClick = { showDatePicker = true }, description = "Add entry")
+        AddFAB(
+            onClick = { showDatePicker = true },
+            description = stringResource(R.string.day_screen_add_day)
+        )
     }) {
         EntryList(days = uiState.entries, onDaySelect = onDaySelect)
         if (showDatePicker) {
@@ -117,7 +122,10 @@ private fun DayEntryNotAvailableScreen(
     BaseScreen(
         headerText = Utils.dateFormatter.format(LocalDate.ofEpochDay(uiState.date)),
         navigationIcon = { BackButton(onBack) }, floatingActionButton = {
-            AddFAB(onClick = { onDayAdd(uiState.date) }, description = "Add day entry")
+            AddFAB(
+                onClick = { onDayAdd(uiState.date) },
+                description = stringResource(R.string.day_screen_add_day)
+            )
         },
         floatingActionButtonPosition = FabPosition.End
     ) {
@@ -127,7 +135,7 @@ private fun DayEntryNotAvailableScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Text(
-                text = "No entry found.",
+                text = stringResource(R.string.day_screen_not_found),
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -150,7 +158,10 @@ private fun DayEntryViewScreen(
         headerText = Utils.dateFormatter.format(LocalDate.ofEpochDay(uiState.date)),
         navigationIcon = { BackButton(onBack) }, floatingActionButton = {
             FloatingActionButton(onClick = onEdit) {
-                Icon(Icons.Filled.Edit, contentDescription = "Edit entry")
+                Icon(
+                    Icons.Filled.Edit,
+                    contentDescription = stringResource(R.string.day_screen_edit_day)
+                )
             }
         }) {
         LazyColumn(
@@ -221,7 +232,10 @@ private fun DayEntryEditScreen(
             navigationIcon = { BackButton(onBack) },
             floatingActionButton = {
                 FloatingActionButton(onClick = onSave) {
-                    Icon(Icons.Filled.Save, contentDescription = "Save")
+                    Icon(
+                        Icons.Filled.Save,
+                        contentDescription = stringResource(R.string.day_screen_save_day)
+                    )
                 }
             },
         ) {

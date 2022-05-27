@@ -9,9 +9,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.day.DayWithMetrics
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
@@ -29,7 +32,7 @@ fun EntryList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun EntryListItem(day: DayWithMetrics, onClick: () -> Unit) {
     val date = LocalDate.ofEpochDay(day.day.id)
@@ -48,7 +51,11 @@ private fun EntryListItem(day: DayWithMetrics, onClick: () -> Unit) {
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = "$metricCount metric${if (metricCount != 1) "s" else ""}",
+                    text = pluralStringResource(
+                        R.plurals.day_screen_metric_count,
+                        metricCount,
+                        metricCount
+                    ),
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal)
                 )
             }

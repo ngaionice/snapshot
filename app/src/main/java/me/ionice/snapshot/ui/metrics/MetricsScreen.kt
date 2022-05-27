@@ -8,6 +8,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.metric.MetricKey
 import me.ionice.snapshot.ui.common.AddFAB
 import me.ionice.snapshot.ui.common.BackButton
@@ -21,7 +23,7 @@ fun MetricsScreen(viewModel: MetricsViewModel, toggleBottomNav: (Boolean) -> Uni
     val uiState by viewModel.uiState.collectAsState()
 
     if (uiState.loading) {
-        BaseScreen(headerText = "Metrics") {
+        BaseScreen(headerText = stringResource(R.string.metrics_screen_header)) {
             LoadingScreen()
         }
     } else {
@@ -54,8 +56,11 @@ private fun MetricListScreen(
 ) {
     var showAddDialog by remember { mutableStateOf(false) }
 
-    BaseScreen(headerText = "Metrics", floatingActionButton = {
-        AddFAB(onClick = { showAddDialog = true }, description = "Add metric type")
+    BaseScreen(headerText = stringResource(R.string.metrics_screen_header), floatingActionButton = {
+        AddFAB(
+            onClick = { showAddDialog = true },
+            description = stringResource(R.string.metrics_screen_add_key)
+        )
     }) {
         MetricsList(keys = uiState.keys, onItemClick = onListItemClick)
         if (showAddDialog) {

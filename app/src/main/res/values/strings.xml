@@ -1,3 +1,53 @@
 <resources>
     <string name="app_name">snapshot</string>
+
+    <!--  day screen  -->
+    <string name="day_screen_placeholder_header">Day</string>
+    <string name="day_screen_add_day">Add day entry</string>
+    <string name="day_screen_not_found">No entry found.</string>
+    <string name="day_screen_edit_day">Edit day entry</string>
+    <string name="day_screen_save_day">Save</string>
+    <string name="day_screen_summary_header">Summary</string>
+    <string name="day_screen_location_header">Location</string>
+    <string name="day_screen_metrics_header">Metrics</string>
+    <string name="day_screen_delete_metric">Delete metric</string>
+    <string name="day_screen_add_metric">Add metric</string>
+
+    <plurals name="day_screen_metric_count">
+        <item quantity="one">%d metric</item>
+        <item quantity="other">%d metrics</item>
+    </plurals>
+
+    <!--  metrics screen  -->
+    <string name="metrics_screen_header">Metrics</string>
+    <string name="metrics_screen_add_key">Add metric type</string>
+    <string name="metrics_screen_add_name_helper">Metric name</string>
+    <string name="metrics_screen_add_name_save">Save</string>
+    <string name="metrics_screen_add_name_cancel">Cancel</string>
+
+    <!--  common components  -->
+    <string name="common_back">Back</string>
+    <string name="common_functionality_na_with_reason">Functionality not available as %s.</string>
+    <string name="common_functionality_soon">Functionality not yet implemented!</string>
+    <string name="common_calendar_select_date">SELECT DATE</string>
+    <string name="common_calendar_cancel">Cancel</string>
+    <string name="common_calendar_ok">OK</string>
+
+    <!--  settings screen  -->
+    <string name="settings_screen_header">Settings</string>
+
+    <string name="settings_screen_notifs_header">Notifications</string>
+    <string name="settings_screen_notifs_subtitle">Daily reminders, memories</string>
+
+    <string name="settings_screen_backup_header"><![CDATA[Backup & Restore]]></string>
+    <string name="settings_screen_backup_subtitle">Backup account, frequency</string>
+    <string name="settings_screen_backup_na_reason">the device is offline</string>
+    <string name="settings_screen_backup_main_switch">Use cloud backups</string>
+    <string name="settings_screen_backup_login">Login to Google</string>
+    <string name="settings_screen_backup_login_failed">Google sign in failed, tap to retry</string>
+    <string name="settings_screen_backup_selected_account">Current selected account</string>
+    <string name="settings_screen_backup_last_backup">Last backup</string>
+    <string name="settings_screen_backup_last_backup_never">Never</string>
+    <string name="settings_screen_backup_start_backup">Backup to Google Drive</string>
+    <string name="settings_screen_backup_start_restore">Restore backup from Google Drive</string>
 </resources>

@@ -14,17 +14,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import me.ionice.snapshot.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun BackButton(onBack: () -> Unit) {
     IconButton(onClick = onBack) {
-        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+        Icon(
+            imageVector = Icons.Filled.ArrowBack,
+            contentDescription = stringResource(R.string.common_back)
+        )
     }
 }
 
@@ -32,6 +37,16 @@ fun BackButton(onBack: () -> Unit) {
 fun AddFAB(onClick: () -> Unit, description: String) {
     FloatingActionButton(onClick = onClick) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = description)
+    }
+}
+
+@Composable
+fun FunctionalityNotYetAvailable() {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = stringResource(R.string.common_functionality_soon),
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 
@@ -56,7 +71,10 @@ fun SectionHeader(icon: ImageVector? = null, displayText: String) {
 @Composable
 fun FunctionalityNotAvailable(reason: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Functionality not available as $reason.", style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text = stringResource(R.string.common_functionality_na_with_reason, reason),
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }
 
@@ -87,7 +105,7 @@ fun DatePicker(onSelect: (Long) -> Unit, onDismissRequest: () -> Unit) {
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "SELECT DATE",
+                    text = stringResource(R.string.common_calendar_select_date),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -119,7 +137,7 @@ fun DatePicker(onSelect: (Long) -> Unit, onDismissRequest: () -> Unit) {
                     colors = ButtonDefaults.textButtonColors()
                 ) {
                     Text(
-                        text = "Cancel"
+                        text = stringResource(R.string.common_calendar_cancel)
                     )
                 }
 
@@ -131,7 +149,7 @@ fun DatePicker(onSelect: (Long) -> Unit, onDismissRequest: () -> Unit) {
                     colors = ButtonDefaults.textButtonColors()
                 ) {
                     Text(
-                        text = "OK"
+                        text = stringResource(R.string.common_calendar_ok)
                     )
                 }
 

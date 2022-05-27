@@ -17,8 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
 import me.ionice.snapshot.ui.common.SectionHeader
@@ -26,42 +28,62 @@ import me.ionice.snapshot.ui.common.SectionHeader
 
 @Composable
 fun SummaryText(summary: String, modifier: Modifier = Modifier) {
-    SectionHeader(icon = Icons.Filled.EditNote, displayText = "Summary")
-    Text(text = summary, modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 24.dp))
+    SectionHeader(
+        icon = Icons.Filled.EditNote,
+        displayText = stringResource(R.string.day_screen_summary_header)
+    )
+    Text(
+        text = summary, modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+    )
 }
 
 @Composable
 fun LocationText(location: String, modifier: Modifier = Modifier) {
-    SectionHeader(icon = Icons.Filled.PinDrop, displayText = "Location")
-    Text(text = location, modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 24.dp))
+    SectionHeader(
+        icon = Icons.Filled.PinDrop,
+        displayText = stringResource(R.string.day_screen_location_header)
+    )
+    Text(
+        text = location, modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+    )
 }
 
 @Composable
 fun SummaryField(summary: String, setSummary: (String) -> Unit, modifier: Modifier = Modifier) {
-    SectionHeader(icon = Icons.Filled.EditNote, displayText = "Summary")
-    TextField(value = summary, onValueChange = {
-        if (it.length <= 140) {
-            setSummary(it)
-        }
-    }, modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 24.dp))
+    SectionHeader(
+        icon = Icons.Filled.EditNote,
+        displayText = stringResource(R.string.day_screen_summary_header)
+    )
+    TextField(
+        value = summary, onValueChange = {
+            if (it.length <= 140) {
+                setSummary(it)
+            }
+        }, modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+    )
 }
 
 @Composable
 fun LocationField(location: String?, setLocation: (String) -> Unit, modifier: Modifier = Modifier) {
-    SectionHeader(icon = Icons.Filled.PinDrop, displayText = "Location")
-    TextField(value = location ?: "", onValueChange = {
-        if (it.length <= 50) {
-            setLocation(it)
-        }
-    }, modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 24.dp))
+    SectionHeader(
+        icon = Icons.Filled.PinDrop,
+        displayText = stringResource(R.string.day_screen_location_header)
+    )
+    TextField(
+        value = location ?: "", onValueChange = {
+            if (it.length <= 50) {
+                setLocation(it)
+            }
+        }, modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+    )
 }
 
 @Composable
@@ -77,7 +99,10 @@ fun MetricViewList(
     }
 
     Column(modifier = modifier) {
-        SectionHeader(icon = Icons.Filled.List, displayText = "Metrics")
+        SectionHeader(
+            icon = Icons.Filled.List,
+            displayText = stringResource(R.string.day_screen_metrics_header)
+        )
         entries.map { entry ->
             val key = keyMap[entry.metricId]
             if (key != null) {
@@ -125,7 +150,10 @@ fun MetricEditList(
         }
     }
 
-    SectionHeader(icon = Icons.Filled.List, displayText = "Metrics")
+    SectionHeader(
+        icon = Icons.Filled.List,
+        displayText = stringResource(R.string.day_screen_metrics_header)
+    )
     entries.mapIndexed { index, entry ->
         val key = keyMap[entry.metricId]
         if (key != null) {
@@ -149,7 +177,10 @@ private fun MetricEditListItem(
     onDelete: (MetricEntry) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(vertical = 4.dp, horizontal = 24.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(vertical = 4.dp, horizontal = 24.dp)
+    ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.weight(1f)
@@ -160,7 +191,10 @@ private fun MetricEditListItem(
                 label = { Text(key.name, style = MaterialTheme.typography.labelMedium) })
         }
         IconButton(onClick = { onDelete(entry) }) {
-            Icon(Icons.Filled.Close, contentDescription = "Delete")
+            Icon(
+                Icons.Filled.Close,
+                contentDescription = stringResource(R.string.day_screen_delete_metric)
+            )
         }
     }
 }
@@ -168,13 +202,16 @@ private fun MetricEditListItem(
 @Composable
 private fun MetricEditListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.clickable(onClick = onClick).fillMaxWidth().padding(horizontal = 24.dp, vertical = 4.dp),
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Icon(
             Icons.Filled.AddCircle,
-            contentDescription = "Add new item",
+            contentDescription = stringResource(R.string.day_screen_add_metric),
             modifier = Modifier.padding(8.dp)
         )
     }

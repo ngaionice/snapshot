@@ -4,20 +4,17 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import me.ionice.snapshot.ui.common.BackButton
-import me.ionice.snapshot.ui.common.BaseScreen
-import me.ionice.snapshot.ui.common.FunctionalityNotAvailable
-import me.ionice.snapshot.ui.common.LoadingScreen
+import me.ionice.snapshot.R
+import me.ionice.snapshot.ui.common.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +43,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
         // must keep: without it, the compiler is not able to cast the variable properly
         when (val currState = uiState) {
             is SettingsUiState.Home -> {
-                BaseScreen(headerText = "Settings") {
+                BaseScreen(headerText = stringResource(R.string.settings_screen_header)) {
                     HomeScreen(
                         onBackupClick = { viewModel.switchScreens(SettingsViewModelState.Subsection.Backup::class) },
                         onNotificationsClick = { viewModel.switchScreens(SettingsViewModelState.Subsection.Notifications::class) })
@@ -54,7 +51,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
             }
             is SettingsUiState.Backup -> {
                 BaseScreen(
-                    headerText = "Backup & Restore",
+                    headerText = stringResource(R.string.settings_screen_backup_header),
                     snackbarHostState = snackbarHostState,
                     navigationIcon = { BackButton(onBack = onBack) })
                 {
@@ -73,7 +70,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
             }
             is SettingsUiState.Notifications -> {
                 BaseScreen(
-                    headerText = "Notifications",
+                    headerText = stringResource(R.string.settings_screen_notifs_header),
                     snackbarHostState = snackbarHostState,
                     navigationIcon = { BackButton(onBack = onBack) }) {
                     NotificationsScreen()
@@ -111,16 +108,20 @@ fun BackupScreen(
     }
 
     if (!uiState.dataAvailable) {
-        FunctionalityNotAvailable(reason = "the device is offline")
+        FunctionalityNotAvailable(reason = stringResource(R.string.settings_screen_backup_na_reason))
     } else {
         Column {
             ProminentSwitchSetting(
-                mainLabel = "Use cloud backups",
+                mainLabel = stringResource(R.string.settings_screen_backup_main_switch),
                 checked = uiState.backupEnabled,
                 onCheckedChange = { onEnableBackup(!uiState.backupEnabled) }
             )
 
-            AnimatedVisibility(visible = uiState.backupEnabled, enter = fadeIn(), exit = fadeOut()) {
+            AnimatedVisibility(
+                visible = uiState.backupEnabled,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 Column {
                     BackupScreenOptions(
                         accountEmail = uiState.signedInGoogleAccountEmail,
@@ -154,10 +155,5 @@ fun BackupScreen(
 
 @Composable
 fun NotificationsScreen() {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = "Functionality not yet implemented!",
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
+    FunctionalityNotYetAvailable()
 }
