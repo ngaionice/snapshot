@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import me.ionice.snapshot.data.backup.AuthResultContract
 import me.ionice.snapshot.ui.common.SectionHeader
+import me.ionice.snapshot.ui.utils.Utils
 import java.time.LocalDateTime
 
 @Composable
@@ -30,7 +31,7 @@ fun BackupScreenOptions(
     if (accountEmail != null) {
         // Show email or something
         SettingsRow(mainLabel = "Current selected account", secondaryLabel = accountEmail)
-        SettingsRow(mainLabel = "Last backup", secondaryLabel = lastBackupTime?.toString() ?: "Never")
+        SettingsRow(mainLabel = "Last backup", secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter) ?: "Never")
 
         Divider()
 

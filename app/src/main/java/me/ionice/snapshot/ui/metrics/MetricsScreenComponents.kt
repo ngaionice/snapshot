@@ -3,9 +3,6 @@ package me.ionice.snapshot.ui.metrics
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -89,7 +86,7 @@ fun MetricEntriesListItem(entry: MetricEntry) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
         Column(verticalArrangement = Arrangement.Center) {
             Text(
-                text = Utils.formatter.format(LocalDate.ofEpochDay(entry.dayId)),
+                text = Utils.dateFormatter.format(LocalDate.ofEpochDay(entry.dayId)),
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal)
             )
             Text(

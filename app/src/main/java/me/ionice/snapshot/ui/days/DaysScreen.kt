@@ -114,7 +114,7 @@ private fun DayEntryNotAvailableScreen(
     onBack: () -> Unit
 ) {
     BaseScreen(
-        headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.date)),
+        headerText = Utils.dateFormatter.format(LocalDate.ofEpochDay(uiState.date)),
         navigationIcon = { BackButton(onBack) }, floatingActionButton = {
             AddFAB(onClick = { onDayAdd(uiState.date) }, description = "Add day entry")
         },
@@ -147,7 +147,7 @@ private fun DayEntryViewScreen(
     }
 
     BaseScreen(
-        headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.date)),
+        headerText = Utils.dateFormatter.format(LocalDate.ofEpochDay(uiState.date)),
         navigationIcon = { BackButton(onBack) }, floatingActionButton = {
             FloatingActionButton(onClick = onEdit) {
                 Icon(Icons.Filled.Edit, contentDescription = "Edit entry")
@@ -212,7 +212,7 @@ private fun DayEntryEditScreen(
         })
     }) {
         BaseScreen(
-            headerText = Utils.formatter.format(LocalDate.ofEpochDay(uiState.date)),
+            headerText = Utils.dateFormatter.format(LocalDate.ofEpochDay(uiState.date)),
             navigationIcon = { BackButton(onBack) },
             floatingActionButton = {
                 FloatingActionButton(onClick = onSave) {
