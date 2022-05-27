@@ -23,10 +23,8 @@ import kotlinx.coroutines.withContext
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.Constants
 import me.ionice.snapshot.data.SnapshotDatabase
-import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.nio.file.Files
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId

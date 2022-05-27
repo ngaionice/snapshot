@@ -12,8 +12,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
-import me.ionice.snapshot.ui.utils.FakeData
-import me.ionice.snapshot.ui.utils.Utils
+import me.ionice.snapshot.utils.FakeData
+import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
 @Composable
@@ -83,7 +83,10 @@ fun MetricEntriesList(entries: List<MetricEntry>) {
 
 @Composable
 fun MetricEntriesListItem(entry: MetricEntry) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp)
+    ) {
         Column(verticalArrangement = Arrangement.Center) {
             Text(
                 text = Utils.dateFormatter.format(LocalDate.ofEpochDay(entry.dayId)),

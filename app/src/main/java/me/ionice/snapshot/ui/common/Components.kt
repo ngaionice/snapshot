@@ -45,7 +45,11 @@ fun SectionHeader(icon: ImageVector? = null, displayText: String) {
         if (icon != null) {
             Icon(icon, contentDescription = displayText, tint = MaterialTheme.colorScheme.primary)
         }
-        Text(displayText, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+        Text(
+            displayText,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
 

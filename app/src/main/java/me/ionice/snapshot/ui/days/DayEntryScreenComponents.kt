@@ -27,13 +27,17 @@ import me.ionice.snapshot.ui.common.SectionHeader
 @Composable
 fun SummaryText(summary: String, modifier: Modifier = Modifier) {
     SectionHeader(icon = Icons.Filled.EditNote, displayText = "Summary")
-    Text(text = summary, modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp))
+    Text(text = summary, modifier = modifier
+        .fillMaxWidth()
+        .padding(horizontal = 24.dp))
 }
 
 @Composable
 fun LocationText(location: String, modifier: Modifier = Modifier) {
     SectionHeader(icon = Icons.Filled.PinDrop, displayText = "Location")
-    Text(text = location, modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp))
+    Text(text = location, modifier = modifier
+        .fillMaxWidth()
+        .padding(horizontal = 24.dp))
 }
 
 @Composable
@@ -43,7 +47,9 @@ fun SummaryField(summary: String, setSummary: (String) -> Unit, modifier: Modifi
         if (it.length <= 140) {
             setSummary(it)
         }
-    }, modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp))
+    }, modifier = modifier
+        .fillMaxWidth()
+        .padding(horizontal = 24.dp))
 }
 
 @Composable
@@ -53,7 +59,9 @@ fun LocationField(location: String?, setLocation: (String) -> Unit, modifier: Mo
         if (it.length <= 50) {
             setLocation(it)
         }
-    }, modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp))
+    }, modifier = modifier
+        .fillMaxWidth()
+        .padding(horizontal = 24.dp))
 }
 
 @Composable
@@ -84,7 +92,10 @@ fun MetricViewList(
 
 @Composable
 private fun MetricViewListItem(entry: MetricEntry, key: MetricKey) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
+    ) {
         Column(verticalArrangement = Arrangement.Center) {
             Text(
                 text = key.name,

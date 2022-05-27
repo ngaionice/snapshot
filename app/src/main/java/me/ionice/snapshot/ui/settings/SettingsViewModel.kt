@@ -25,7 +25,10 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
             viewModelState.update {
                 when (targetClass) {
                     SettingsViewModelState.Subsection.Home::class -> {
-                        it.copy(loading = false, subsection = SettingsViewModelState.Subsection.Home)
+                        it.copy(
+                            loading = false,
+                            subsection = SettingsViewModelState.Subsection.Home
+                        )
                     }
                     SettingsViewModelState.Subsection.Backup::class -> {
                         it.copy(loading = false, subsection = initializeBackupState())

@@ -31,7 +31,13 @@ fun BaseScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
             LargeTopAppBar(
-                title = { Text(text = headerText, modifier = Modifier.padding(horizontal = 8.dp), style = MaterialTheme.typography.displaySmall) },
+                title = {
+                    Text(
+                        text = headerText,
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                },
                 navigationIcon = {
                     if (navigationIcon != null) {
                         navigationIcon()

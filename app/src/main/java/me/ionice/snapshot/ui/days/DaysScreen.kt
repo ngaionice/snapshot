@@ -20,7 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.ui.common.*
-import me.ionice.snapshot.ui.utils.Utils
+import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)

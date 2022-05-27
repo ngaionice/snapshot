@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.utils
+package me.ionice.snapshot.utils
 
 import me.ionice.snapshot.data.day.Day
 import me.ionice.snapshot.data.day.DayWithMetrics

@@ -4,7 +4,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Battery4Bar
 import androidx.compose.material.icons.outlined.CloudSync
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
@@ -18,13 +17,23 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import me.ionice.snapshot.data.backup.AuthResultContract
 import me.ionice.snapshot.ui.common.SectionHeader
-import me.ionice.snapshot.ui.utils.Utils
+import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime
 
 @Composable
 fun SettingsList(onBackupClick: () -> Unit, onNotificationsClick: () -> Unit) {
-    SettingsRow(mainLabel = "Backup & Restore", secondaryLabel = "Backup account, frequency", icon = Icons.Outlined.CloudSync, onClick = onBackupClick)
-    SettingsRow(mainLabel = "Notifications", secondaryLabel = "Daily reminders, memories", icon = Icons.Outlined.Notifications, onClick = onNotificationsClick)
+    SettingsRow(
+        mainLabel = "Backup & Restore",
+        secondaryLabel = "Backup account, frequency",
+        icon = Icons.Outlined.CloudSync,
+        onClick = onBackupClick
+    )
+    SettingsRow(
+        mainLabel = "Notifications",
+        secondaryLabel = "Daily reminders, memories",
+        icon = Icons.Outlined.Notifications,
+        onClick = onNotificationsClick
+    )
 }
 
 @Composable
@@ -39,7 +48,10 @@ fun BackupScreenOptions(
     if (accountEmail != null) {
         // Show email or something
         SettingsRow(mainLabel = "Current selected account", secondaryLabel = accountEmail)
-        SettingsRow(mainLabel = "Last backup", secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter) ?: "Never")
+        SettingsRow(
+            mainLabel = "Last backup",
+            secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter) ?: "Never"
+        )
 
         Divider()
 
@@ -47,9 +59,11 @@ fun BackupScreenOptions(
             SettingsRow(mainLabel = "Backup now", onClick = { onStartBackup() })
             SettingsRow(mainLabel = "Restore cloud backup", onClick = { onStartRestore() })
         } else {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 24.dp), horizontalArrangement = Arrangement.Center) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp), horizontalArrangement = Arrangement.Center
+            ) {
                 CircularProgressIndicator()
             }
         }
@@ -60,10 +74,24 @@ fun BackupScreenOptions(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProminentSwitchSetting(mainLabel: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Card(onClick = { onCheckedChange(!checked) }, modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
-        Row(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = mainLabel, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+fun ProminentSwitchSetting(
+    mainLabel: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Card(
+        onClick = { onCheckedChange(!checked) },
+        modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = mainLabel,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.weight(1f)
+            )
             Switch(checked = checked, onCheckedChange = onCheckedChange)
         }
     }
@@ -114,12 +142,13 @@ private fun SettingsRow(
 
     // if a onClick is provided, enable button functionality
     val baseModifier =
-        if (onClick != null) Modifier.clickable(enabled = !loading, onClick = onClick) else Modifier
+        onClick?.let { Modifier.clickable(enabled = !loading, onClick = onClick) } ?: Modifier
 
     Row(
         modifier = baseModifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 24.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         if (loading) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -128,13 +157,26 @@ private fun SettingsRow(
         } else {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (icon != null) {
-                    Icon(imageVector = icon, contentDescription = mainLabel, modifier = Modifier.padding(end = 24.dp))
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = mainLabel,
+                        modifier = Modifier.padding(end = 24.dp)
+                    )
                 }
                 Column(modifier = Modifier.weight(1f)) {
-                    val textColor = if (onClick == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
-                    Text(text = mainLabel, style = MaterialTheme.typography.titleLarge, color = textColor)
+                    val textColor =
+                        if (onClick == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
+                    Text(
+                        text = mainLabel,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = textColor
+                    )
                     if (secondaryLabel != null) {
-                        Text(text = secondaryLabel, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = secondaryLabel,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }
@@ -146,18 +188,20 @@ private fun SettingsRow(
 @Composable
 private fun SwitchRowPreview() {
     Column {
-        SettingsRow(mainLabel = "Battery", secondaryLabel = "100%", icon = Icons.Filled.Battery4Bar)
-        SettingsRow(mainLabel = "Battery", icon = Icons.Filled.Battery4Bar)
-        SettingsRow(mainLabel = "Battery")
+        SettingsRow(
+            mainLabel = "Backup & Restore",
+            secondaryLabel = "100%",
+            icon = Icons.Outlined.CloudSync,
+            onClick = { })
+        SettingsRow(mainLabel = "Backup & Restore", icon = Icons.Outlined.CloudSync)
+        SettingsRow(mainLabel = "Backup & Restore")
     }
 }
 
 @Composable
-private fun Section(headerText: String, content: @Composable () -> Unit) {
-    Column {
-        SectionHeader(displayText = headerText)
-        content()
-    }
+private fun ScreenSubsection(headerText: String?, content: @Composable () -> Unit) {
+    headerText?.let { SectionHeader(displayText = headerText) }
+    content()
 }
 
 @Composable

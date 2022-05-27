@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.utils
+package me.ionice.snapshot.utils
 
 import java.time.format.DateTimeFormatter
 
