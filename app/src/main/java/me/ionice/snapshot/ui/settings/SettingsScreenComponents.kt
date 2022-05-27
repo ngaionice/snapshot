@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Battery4Bar
+import androidx.compose.material.icons.outlined.CloudSync
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +20,12 @@ import me.ionice.snapshot.data.backup.AuthResultContract
 import me.ionice.snapshot.ui.common.SectionHeader
 import me.ionice.snapshot.ui.utils.Utils
 import java.time.LocalDateTime
+
+@Composable
+fun SettingsList(onBackupClick: () -> Unit, onNotificationsClick: () -> Unit) {
+    SettingsRow(mainLabel = "Backup & Restore", secondaryLabel = "Backup account, frequency", icon = Icons.Outlined.CloudSync, onClick = onBackupClick)
+    SettingsRow(mainLabel = "Notifications", secondaryLabel = "Daily reminders, memories", icon = Icons.Outlined.Notifications, onClick = onNotificationsClick)
+}
 
 @Composable
 fun BackupScreenOptions(
@@ -39,7 +47,9 @@ fun BackupScreenOptions(
             SettingsRow(mainLabel = "Backup now", onClick = { onStartBackup() })
             SettingsRow(mainLabel = "Restore cloud backup", onClick = { onStartRestore() })
         } else {
-            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp), horizontalArrangement = Arrangement.Center) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp), horizontalArrangement = Arrangement.Center) {
                 CircularProgressIndicator()
             }
         }
@@ -124,7 +134,7 @@ private fun SettingsRow(
                     val textColor = if (onClick == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
                     Text(text = mainLabel, style = MaterialTheme.typography.titleLarge, color = textColor)
                     if (secondaryLabel != null) {
-                        Text(text = secondaryLabel, style = MaterialTheme.typography.labelMedium, color = textColor)
+                        Text(text = secondaryLabel, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }

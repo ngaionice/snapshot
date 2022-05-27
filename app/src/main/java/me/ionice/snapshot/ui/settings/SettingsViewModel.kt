@@ -8,38 +8,71 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.backup.BackupUtil
 import java.time.LocalDateTime
+import kotlin.reflect.KClass
 
 class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
 
-    private val viewModelState = MutableStateFlow(SettingsViewModelState(loading = true))
+    private val viewModelState = MutableStateFlow(SettingsViewModelState(loading = false))
     val uiState = viewModelState
         .map { it.toUiState() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
-    init {
+    fun <T : SettingsViewModelState.Subsection> switchScreens(targetClass: KClass<T>) {
+        viewModelState.update {
+            it.copy(loading = true)
+        }
         viewModelScope.launch {
             viewModelState.update {
-                it.copy(
-                    loading = false,
-                    backupEnabled = backupUtil.isBackupEnabled(),
-                    signedInGoogleAccountEmail = backupUtil.getLoggedInAccountEmail(),
-                    lastBackupTime = backupUtil.getLastBackupTime()
-                )
+                when (targetClass) {
+                    SettingsViewModelState.Subsection.Home::class -> {
+                        it.copy(loading = false, subsection = SettingsViewModelState.Subsection.Home)
+                    }
+                    SettingsViewModelState.Subsection.Backup::class -> {
+                        it.copy(loading = false, subsection = initializeBackupState())
+                    }
+                    SettingsViewModelState.Subsection.Notifications::class -> {
+                        it.copy(loading = false, subsection = initializeNotificationsState())
+                    }
+                    else -> throw IllegalArgumentException("Invalid class passed in.")
+                }
             }
         }
     }
 
     fun setBackupEnabled(value: Boolean) {
         backupUtil.setBackupEnabled(value)
+        check(viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup)
         viewModelScope.launch {
             viewModelState.update {
-                it.copy(backupEnabled = value, lastBackupTime = backupUtil.getLastBackupTime())
+                if (it.subsection is SettingsViewModelState.Subsection.Backup) {
+                    it.copy(
+                        subsection = it.subsection.copy(
+                            backupEnabled = value,
+                            lastBackupTime = backupUtil.getLastBackupTime()
+                        )
+                    )
+                } else {
+                    it.copy(subsection = initializeBackupState())
+                }
             }
         }
     }
 
     fun loggedInToGoogle(account: GoogleSignInAccount) {
-        viewModelState.update { it.copy(signedInGoogleAccountEmail = account.email) }
+        viewModelScope.launch {
+            viewModelState.update {
+                if (it.subsection is SettingsViewModelState.Subsection.Backup) {
+                    it.copy(
+                        subsection = it.subsection.copy(
+                            signedInGoogleAccountEmail = account.email,
+                            lastBackupTime = backupUtil.getLastBackupTime()
+                        )
+                    )
+                } else {
+                    it.copy(subsection = initializeBackupState())
+                }
+            }
+        }
     }
 
     suspend fun backupDatabase() {
@@ -52,7 +85,14 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
                 it?.printStackTrace()
             }
         } else {
-            viewModelState.update { it.copy(lastBackupTime = backupUtil.getLastBackupTime(), snackbarMessage = "Backup successful") }
+            viewModelState.update {
+                it.copy(
+                    snackbarMessage = "Backup successful",
+                    subsection = if (it.subsection is SettingsViewModelState.Subsection.Backup) it.subsection.copy(
+                        lastBackupTime = backupUtil.getLastBackupTime()
+                    ) else initializeBackupState()
+                )
+            }
         }
     }
 
@@ -70,9 +110,19 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
         }
     }
 
-    fun clearErrorMessage() {
+    fun clearSnackbarMessage() {
         viewModelState.update { it.copy(snackbarMessage = null) }
     }
+
+    private suspend fun initializeBackupState(): SettingsViewModelState.Subsection.Backup =
+        SettingsViewModelState.Subsection.Backup(
+            backupEnabled = backupUtil.isBackupEnabled(),
+            signedInGoogleAccountEmail = backupUtil.getLoggedInAccountEmail(),
+            lastBackupTime = backupUtil.getLastBackupTime()
+        )
+
+    private fun initializeNotificationsState(): SettingsViewModelState.Subsection.Notifications =
+        SettingsViewModelState.Subsection.Notifications("")
 
     companion object {
         fun provideFactory(backupUtil: BackupUtil): ViewModelProvider.Factory =
@@ -83,36 +133,77 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
                 }
             }
     }
+
+
 }
 
 data class SettingsViewModelState(
     val loading: Boolean,
-    val backupEnabled: Boolean? = null,
-    val signedInGoogleAccountEmail: String? = null,
-    val lastBackupTime: LocalDateTime? = null,
-    val snackbarMessage: String? = null
+    val snackbarMessage: String? = null,
+    val subsection: Subsection = Subsection.Home
 ) {
     fun toUiState(): SettingsUiState =
-        SettingsUiState.TempStateClass(
-            loading = loading,
-            backupEnabled = backupEnabled == true,
-            signedInGoogleAccountEmail = signedInGoogleAccountEmail,
-            lastBackupTime = lastBackupTime,
-            snackbarMessage = snackbarMessage
-        )
+        when (subsection) {
+            is Subsection.Home -> {
+                SettingsUiState.Home(
+                    loading = loading,
+                    snackbarMessage = snackbarMessage
+                )
+            }
+            is Subsection.Backup -> {
+                SettingsUiState.Backup(
+                    loading = loading,
+                    backupEnabled = subsection.backupEnabled,
+                    signedInGoogleAccountEmail = subsection.signedInGoogleAccountEmail,
+                    lastBackupTime = subsection.lastBackupTime,
+                    snackbarMessage = snackbarMessage
+                )
+            }
+            is Subsection.Notifications -> {
+                SettingsUiState.Notifications(
+                    loading = loading,
+                    snackbarMessage = snackbarMessage
+                )
+            }
+        }
+
+    sealed interface Subsection {
+
+        object Home : Subsection
+
+        data class Backup(
+            val backupEnabled: Boolean,
+            val signedInGoogleAccountEmail: String?,
+            val lastBackupTime: LocalDateTime?
+        ) : Subsection
+
+        data class Notifications(
+            val placeholder: Any
+        ) : Subsection
+    }
 }
+
 
 sealed interface SettingsUiState {
 
     val loading: Boolean
     val snackbarMessage: String?
 
-    // TODO: need to re-evaluate how to properly represent UI state
-    data class TempStateClass(
+    data class Home(
+        override val loading: Boolean,
+        override val snackbarMessage: String?
+    ) : SettingsUiState
+
+    data class Backup(
         override val loading: Boolean,
         override val snackbarMessage: String?,
         val backupEnabled: Boolean,
         val signedInGoogleAccountEmail: String?,
         val lastBackupTime: LocalDateTime?
+    ) : SettingsUiState
+
+    data class Notifications(
+        override val loading: Boolean,
+        override val snackbarMessage: String?
     ) : SettingsUiState
 }
