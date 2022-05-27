@@ -42,8 +42,8 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
     if (uiState.loading) {
         LoadingScreen()
     } else {
-        val currState = uiState
-        when (currState) {
+        // must keep: without it, the compiler is not able to cast the variable properly
+        when (val currState = uiState) {
             is SettingsUiState.Home -> {
                 BaseScreen(headerText = "Settings") {
                     HomeScreen(
