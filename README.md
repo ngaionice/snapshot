@@ -2,11 +2,11 @@
 
 A digital journal app that encourages a short summary of each day (maximum of 140 characters).
 
-Also has optional metrics tracking, which allows users to input things they would like to track over time, and presents a chronological list of all such instances .
+Also has optional metrics tracking, which allows users to input things they would like to track over time, and presents a chronological list of all such instances.
 
 ## Features
 - Manual backups to Google Drive
-- Automatic light/dark themes
+- Dynamic & light/dark themes (dynamic theming for Android 12+ only) 
 
 ## Planned features
 - Automatic backups

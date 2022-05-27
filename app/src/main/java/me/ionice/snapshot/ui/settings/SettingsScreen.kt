@@ -108,7 +108,7 @@ fun BackupScreen(
     }
 
     if (!uiState.dataAvailable) {
-        FunctionalityNotAvailable(reason = stringResource(R.string.settings_screen_backup_na_reason))
+        FunctionalityNotAvailableScreen(reason = stringResource(R.string.settings_screen_backup_na_reason))
     } else {
         Column {
             ProminentSwitchSetting(
@@ -155,5 +155,5 @@ fun BackupScreen(
 
 @Composable
 fun NotificationsScreen() {
-    FunctionalityNotYetAvailable()
+    FunctionalityNotYetAvailableScreen()
 }

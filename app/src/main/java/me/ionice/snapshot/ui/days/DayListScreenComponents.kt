@@ -3,21 +3,36 @@ package me.ionice.snapshot.ui.days
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.day.DayWithMetrics
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
+
+@Composable
+fun SearchButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.day_screen_search))
+    }
+}
+
+@Composable
+fun SwitchYearButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(Icons.Filled.CalendarMonth, contentDescription = stringResource(R.string.day_screen_switch_year))
+    }
+}
 
 @Composable
 fun EntryList(

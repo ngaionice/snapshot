@@ -12,6 +12,7 @@
     <string name="day_screen_metrics_header">Metrics</string>
     <string name="day_screen_delete_metric">Delete metric</string>
     <string name="day_screen_add_metric">Add metric</string>
+    <string name="day_screen_search">Search summaries</string>
 
     <plurals name="day_screen_metric_count">
         <item quantity="one">%d metric</item>
@@ -51,4 +52,6 @@
     <string name="settings_screen_backup_last_backup_never">Never</string>
     <string name="settings_screen_backup_start_backup">Backup to Google Drive</string>
     <string name="settings_screen_backup_start_restore">Restore backup from Google Drive</string>
+    <string name="day_screen_switch_year">Switch years</string>
+    <string name="common_functionality_na_dialog_close">Close</string>
 </resources>

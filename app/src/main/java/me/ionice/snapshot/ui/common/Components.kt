@@ -41,7 +41,7 @@ fun AddFAB(onClick: () -> Unit, description: String) {
 }
 
 @Composable
-fun FunctionalityNotYetAvailable() {
+fun FunctionalityNotYetAvailableScreen() {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         Text(
             text = stringResource(R.string.common_functionality_soon),
@@ -51,12 +51,27 @@ fun FunctionalityNotYetAvailable() {
 }
 
 @Composable
-fun FunctionalityNotAvailable(reason: String) {
+fun FunctionalityNotAvailableScreen(reason: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
             text = stringResource(R.string.common_functionality_na_with_reason, reason),
             style = MaterialTheme.typography.bodyMedium
         )
+    }
+}
+
+@Composable
+fun FunctionalityNotYetAvailableDialog(isOpen: Boolean, onClose: () -> Unit) {
+    if (isOpen) {
+        AlertDialog(onDismissRequest = onClose, confirmButton = {
+            TextButton(onClick = onClose) {
+                Text(
+                    text = stringResource(
+                        R.string.common_functionality_na_dialog_close
+                    )
+                )
+            }
+        }, text = { Text(stringResource(R.string.common_functionality_soon)) })
     }
 }
 

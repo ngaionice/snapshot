@@ -98,17 +98,26 @@ private fun DayListScreen(
 
     var showDatePicker by remember { mutableStateOf(false) }
 
+    var showNaDialog by remember { mutableStateOf(false) }
+
     BaseScreen(headerText = uiState.year.toString(), floatingActionButton = {
         AddFAB(
             onClick = { showDatePicker = true },
             description = stringResource(R.string.day_screen_add_day)
         )
-    }) {
+    },
+        actions = {
+            SearchButton { showNaDialog = true }
+            SwitchYearButton { showNaDialog = true }
+        }) {
         EntryList(days = uiState.entries, onDaySelect = onDaySelect)
         if (showDatePicker) {
             DatePicker(
                 onSelect = { day -> onDayAdd(day) },
                 onDismissRequest = { showDatePicker = false })
+        }
+        FunctionalityNotYetAvailableDialog(isOpen = showNaDialog) {
+            showNaDialog = false
         }
     }
 }
