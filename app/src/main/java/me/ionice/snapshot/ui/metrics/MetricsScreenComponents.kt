@@ -83,7 +83,7 @@ fun MetricEntriesList(entries: List<MetricEntry>) {
 
 @Composable
 fun MetricEntriesListItem(entry: MetricEntry) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp)) {
         Column(verticalArrangement = Arrangement.Center) {
             Text(
                 text = Utils.dateFormatter.format(LocalDate.ofEpochDay(entry.dayId)),

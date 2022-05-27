@@ -27,13 +27,13 @@ import me.ionice.snapshot.ui.common.SectionHeader
 @Composable
 fun SummaryText(summary: String, modifier: Modifier = Modifier) {
     SectionHeader(icon = Icons.Filled.EditNote, displayText = "Summary")
-    Text(text = summary, modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp))
+    Text(text = summary, modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp))
 }
 
 @Composable
 fun LocationText(location: String, modifier: Modifier = Modifier) {
     SectionHeader(icon = Icons.Filled.PinDrop, displayText = "Location")
-    Text(text = location, modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp))
+    Text(text = location, modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp))
 }
 
 @Composable
@@ -43,7 +43,7 @@ fun SummaryField(summary: String, setSummary: (String) -> Unit, modifier: Modifi
         if (it.length <= 140) {
             setSummary(it)
         }
-    }, modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp))
+    }, modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp))
 }
 
 @Composable
@@ -53,7 +53,7 @@ fun LocationField(location: String?, setLocation: (String) -> Unit, modifier: Mo
         if (it.length <= 50) {
             setLocation(it)
         }
-    }, modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp))
+    }, modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp))
 }
 
 @Composable
@@ -142,7 +142,7 @@ private fun MetricEditListItem(
     onDelete: (MetricEntry) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier = modifier.padding(vertical = 4.dp, horizontal = 16.dp)) {
+    Card(modifier = modifier.padding(vertical = 4.dp, horizontal = 24.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -163,7 +163,7 @@ private fun MetricEditListItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MetricEditListAdd(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Card(modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp), onClick = onClick) {
+    Card(modifier = modifier.padding(horizontal = 24.dp, vertical = 4.dp), onClick = onClick) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
