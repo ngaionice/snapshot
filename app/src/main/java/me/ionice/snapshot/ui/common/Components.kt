@@ -53,6 +53,13 @@ fun SectionHeader(icon: ImageVector? = null, displayText: String) {
     }
 }
 
+@Composable
+fun FunctionalityNotAvailable(reason: String) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = "Functionality not available as $reason.", style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
 /**
  * Based on code from Joao Gavazzi.
  */

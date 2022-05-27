@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.ui.common.BackButton
 import me.ionice.snapshot.ui.common.BaseScreen
+import me.ionice.snapshot.ui.common.FunctionalityNotAvailable
 import me.ionice.snapshot.ui.common.LoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,39 +110,43 @@ fun BackupScreen(
         mutableStateOf(false)
     }
 
-    Column {
-        ProminentSwitchSetting(
-            mainLabel = "Use cloud backups",
-            checked = uiState.backupEnabled,
-            onCheckedChange = { onEnableBackup(!uiState.backupEnabled) }
-        )
+    if (!uiState.dataAvailable) {
+        FunctionalityNotAvailable(reason = "the device is offline")
+    } else {
+        Column {
+            ProminentSwitchSetting(
+                mainLabel = "Use cloud backups",
+                checked = uiState.backupEnabled,
+                onCheckedChange = { onEnableBackup(!uiState.backupEnabled) }
+            )
 
-        AnimatedVisibility(visible = uiState.backupEnabled, enter = fadeIn(), exit = fadeOut()) {
-            Column {
-                BackupScreenOptions(
-                    accountEmail = uiState.signedInGoogleAccountEmail,
-                    isBackupInProgress = isBackupInProgress,
-                    onSuccessfulLogin = onSuccessfulLogin,
-                    onStartBackup = {
-                        isBackupInProgress = true
-                        toggleBottomNav(false)
-                        scope.launch {
-                            onStartBackup()
-                            isBackupInProgress = false
-                            toggleBottomNav(true)
-                        }
-                    },
-                    onStartRestore = {
-                        isBackupInProgress = true
-                        toggleBottomNav(false)
-                        scope.launch {
-                            onStartRestore()
-                            isBackupInProgress = false
-                            toggleBottomNav(true)
-                        }
-                    },
-                    lastBackupTime = uiState.lastBackupTime
-                )
+            AnimatedVisibility(visible = uiState.backupEnabled, enter = fadeIn(), exit = fadeOut()) {
+                Column {
+                    BackupScreenOptions(
+                        accountEmail = uiState.signedInGoogleAccountEmail,
+                        isBackupInProgress = isBackupInProgress,
+                        onSuccessfulLogin = onSuccessfulLogin,
+                        onStartBackup = {
+                            isBackupInProgress = true
+                            toggleBottomNav(false)
+                            scope.launch {
+                                onStartBackup()
+                                isBackupInProgress = false
+                                toggleBottomNav(true)
+                            }
+                        },
+                        onStartRestore = {
+                            isBackupInProgress = true
+                            toggleBottomNav(false)
+                            scope.launch {
+                                onStartRestore()
+                                isBackupInProgress = false
+                                toggleBottomNav(true)
+                            }
+                        },
+                        lastBackupTime = uiState.lastBackupTime
+                    )
+                }
             }
         }
     }

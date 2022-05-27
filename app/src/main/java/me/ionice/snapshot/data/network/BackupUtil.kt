@@ -1,4 +1,4 @@
-package me.ionice.snapshot.data.backup
+package me.ionice.snapshot.data.network
 
 import android.app.Activity
 import android.content.Context

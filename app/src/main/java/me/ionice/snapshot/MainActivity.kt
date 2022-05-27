@@ -1,5 +1,6 @@
 package me.ionice.snapshot
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,8 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import me.ionice.snapshot.data.AppContainer
-import me.ionice.snapshot.data.backup.BackupUtil
 import me.ionice.snapshot.ui.navigation.BottomNavigation
 import me.ionice.snapshot.ui.navigation.SnapshotNavHost
 import me.ionice.snapshot.ui.theme.SnapshotTheme
@@ -24,18 +23,18 @@ import me.ionice.snapshot.ui.theme.SnapshotTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val appContainer = (application as SnapshotApplication).container
-        val backupUtil = BackupUtil(application.applicationContext)
         setContent {
-            SnapshotApp(appContainer, backupUtil)
+            SnapshotApp(application)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SnapshotApp(appContainer: AppContainer, backupUtil: BackupUtil) {
+fun SnapshotApp(application: Application) {
+
+    val appContainer = (application as SnapshotApplication).container
+
     SnapshotTheme {
         val navController = rememberNavController()
 
@@ -56,7 +55,6 @@ fun SnapshotApp(appContainer: AppContainer, backupUtil: BackupUtil) {
                 SnapshotNavHost(
                     navController = navController,
                     appContainer = appContainer,
-                    backupUtil = backupUtil,
                     toggleBottomNav = { bottomNavBarState.value = it }
                 )
             }

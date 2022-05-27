@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import me.ionice.snapshot.data.backup.BackupUtil
+import me.ionice.snapshot.data.network.NetworkRepository
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
-class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
+class SettingsViewModel(private val networkRepository: NetworkRepository) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(SettingsViewModelState(loading = false))
     val uiState = viewModelState
@@ -43,7 +43,7 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
     }
 
     fun setBackupEnabled(value: Boolean) {
-        backupUtil.setBackupEnabled(value)
+        networkRepository.setBackupEnabled(value)
         check(viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup)
         viewModelScope.launch {
             viewModelState.update {
@@ -51,7 +51,7 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
                     it.copy(
                         subsection = it.subsection.copy(
                             backupEnabled = value,
-                            lastBackupTime = backupUtil.getLastBackupTime()
+                            lastBackupTime = networkRepository.getLastBackupTime()
                         )
                     )
                 } else {
@@ -68,7 +68,7 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
                     it.copy(
                         subsection = it.subsection.copy(
                             signedInGoogleAccountEmail = account.email,
-                            lastBackupTime = backupUtil.getLastBackupTime()
+                            lastBackupTime = networkRepository.getLastBackupTime()
                         )
                     )
                 } else {
@@ -79,7 +79,7 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
     }
 
     suspend fun backupDatabase() {
-        val result = backupUtil.backupDatabase()
+        val result = networkRepository.backupDatabase()
         if (result.isFailure) {
             result.exceptionOrNull().let {
                 if (it != null) {
@@ -92,7 +92,7 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
                 it.copy(
                     snackbarMessage = "Backup successful",
                     subsection = if (it.subsection is SettingsViewModelState.Subsection.Backup) it.subsection.copy(
-                        lastBackupTime = backupUtil.getLastBackupTime()
+                        lastBackupTime = networkRepository.getLastBackupTime()
                     ) else initializeBackupState()
                 )
             }
@@ -100,7 +100,7 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
     }
 
     suspend fun restoreDatabase() {
-        val result = backupUtil.restoreDatabase()
+        val result = networkRepository.restoreDatabase()
         if (result.isFailure) {
             result.exceptionOrNull().let {
                 if (it != null) {
@@ -118,21 +118,27 @@ class SettingsViewModel(private val backupUtil: BackupUtil) : ViewModel() {
     }
 
     private suspend fun initializeBackupState(): SettingsViewModelState.Subsection.Backup =
-        SettingsViewModelState.Subsection.Backup(
-            backupEnabled = backupUtil.isBackupEnabled(),
-            signedInGoogleAccountEmail = backupUtil.getLoggedInAccountEmail(),
-            lastBackupTime = backupUtil.getLastBackupTime()
-        )
+        if (!networkRepository.isOnline()) {
+            SettingsViewModelState.Subsection.Backup(dataAvailable = false, backupEnabled = false)
+        } else {
+            SettingsViewModelState.Subsection.Backup(
+                dataAvailable = true,
+                backupEnabled = networkRepository.isBackupEnabled(),
+                signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
+                lastBackupTime = networkRepository.getLastBackupTime()
+            )
+        }
+
 
     private fun initializeNotificationsState(): SettingsViewModelState.Subsection.Notifications =
         SettingsViewModelState.Subsection.Notifications("")
 
     companion object {
-        fun provideFactory(backupUtil: BackupUtil): ViewModelProvider.Factory =
+        fun provideFactory(networkRepository: NetworkRepository): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SettingsViewModel(backupUtil) as T
+                    return SettingsViewModel(networkRepository) as T
                 }
             }
     }
@@ -156,6 +162,7 @@ data class SettingsViewModelState(
             is Subsection.Backup -> {
                 SettingsUiState.Backup(
                     loading = loading,
+                    dataAvailable = subsection.dataAvailable,
                     backupEnabled = subsection.backupEnabled,
                     signedInGoogleAccountEmail = subsection.signedInGoogleAccountEmail,
                     lastBackupTime = subsection.lastBackupTime,
@@ -175,9 +182,10 @@ data class SettingsViewModelState(
         object Home : Subsection
 
         data class Backup(
+            val dataAvailable: Boolean,
             val backupEnabled: Boolean,
-            val signedInGoogleAccountEmail: String?,
-            val lastBackupTime: LocalDateTime?
+            val signedInGoogleAccountEmail: String? = null,
+            val lastBackupTime: LocalDateTime? = null
         ) : Subsection
 
         data class Notifications(
@@ -200,6 +208,7 @@ sealed interface SettingsUiState {
     data class Backup(
         override val loading: Boolean,
         override val snackbarMessage: String?,
+        val dataAvailable: Boolean,
         val backupEnabled: Boolean,
         val signedInGoogleAccountEmail: String?,
         val lastBackupTime: LocalDateTime?

@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
-import me.ionice.snapshot.data.backup.AuthResultContract
+import me.ionice.snapshot.data.network.AuthResultContract
 import me.ionice.snapshot.ui.common.SectionHeader
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime

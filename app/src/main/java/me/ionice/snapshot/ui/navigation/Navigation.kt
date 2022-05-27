@@ -11,7 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import me.ionice.snapshot.data.AppContainer
-import me.ionice.snapshot.data.backup.BackupUtil
 import me.ionice.snapshot.ui.days.DaysScreen
 import me.ionice.snapshot.ui.days.DaysViewModel
 import me.ionice.snapshot.ui.metrics.MetricsScreen
@@ -29,7 +28,6 @@ val navOptions = listOf(
 fun SnapshotNavHost(
     navController: NavHostController,
     appContainer: AppContainer,
-    backupUtil: BackupUtil,
     toggleBottomNav: (Boolean) -> Unit
 ) {
 
@@ -44,7 +42,7 @@ fun SnapshotNavHost(
         viewModel(factory = MetricsViewModel.provideFactory(appContainer.metricRepository))
 
     val settingsViewModel: SettingsViewModel =
-        viewModel(factory = SettingsViewModel.provideFactory(backupUtil))
+        viewModel(factory = SettingsViewModel.provideFactory(appContainer.networkRepository))
 
     NavHost(navController = navController, startDestination = Screen.Days.name) {
         composable(Screen.Days.name) {
