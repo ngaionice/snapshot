@@ -51,6 +51,16 @@ fun FunctionalityNotYetAvailable() {
 }
 
 @Composable
+fun FunctionalityNotAvailable(reason: String) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            text = stringResource(R.string.common_functionality_na_with_reason, reason),
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
+@Composable
 fun SectionHeader(icon: ImageVector? = null, displayText: String) {
     Row(
         Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
@@ -64,16 +74,6 @@ fun SectionHeader(icon: ImageVector? = null, displayText: String) {
             displayText,
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary
-        )
-    }
-}
-
-@Composable
-fun FunctionalityNotAvailable(reason: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = stringResource(R.string.common_functionality_na_with_reason, reason),
-            style = MaterialTheme.typography.bodyLarge
         )
     }
 }

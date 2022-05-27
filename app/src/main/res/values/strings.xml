@@ -24,6 +24,7 @@
     <string name="metrics_screen_add_name_helper">Metric name</string>
     <string name="metrics_screen_add_name_save">Save</string>
     <string name="metrics_screen_add_name_cancel">Cancel</string>
+    <string name="metrics_screen_no_results">No entries found.</string>
 
     <!--  common components  -->
     <string name="common_back">Back</string>

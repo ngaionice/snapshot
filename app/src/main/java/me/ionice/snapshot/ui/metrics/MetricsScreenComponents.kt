@@ -78,9 +78,16 @@ fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
 
 @Composable
 fun MetricEntriesList(entries: List<MetricEntry>) {
-    LazyColumn {
-        items(items = entries) { MetricEntriesListItem(entry = it) }
+    if (entries.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(stringResource(R.string.metrics_screen_no_results), style = MaterialTheme.typography.bodyMedium)
+        }
+    } else {
+        LazyColumn {
+            items(items = entries) { MetricEntriesListItem(entry = it) }
+        }
     }
+
 }
 
 @Composable
