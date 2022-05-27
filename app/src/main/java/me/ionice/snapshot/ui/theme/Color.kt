@@ -1,4 +1,5 @@
 package me.ionice.snapshot.ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 
@@ -57,7 +58,6 @@ val md_theme_dark_inverseOnSurface = Color(0xFF1f1b16)
 val md_theme_dark_inverseSurface = Color(0xFFebe1d9)
 val md_theme_dark_inversePrimary = Color(0xFF855300)
 val md_theme_dark_shadow = Color(0xFF000000)
-
 
 
 val seed = Color(0xFFffa500)
