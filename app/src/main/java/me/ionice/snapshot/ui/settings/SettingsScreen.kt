@@ -86,6 +86,8 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
                     navigationIcon = { BackButton(onBack = onBack) }) {
                     ThemingScreen()
                 }
+
+                BackHandler(onBack = onBack)
             }
         }
     }
