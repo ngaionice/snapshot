@@ -25,7 +25,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val onBack = { viewModel.switchScreens(SettingsViewModelState.Subsection.Home::class) }
+    val onBack = { viewModel.switchScreens(SettingsScreenSection.Home) }
 
     LaunchedEffect(key1 = uiState.snackbarMessage) {
         if (uiState.snackbarMessage != null) {
@@ -45,8 +45,9 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
             is SettingsUiState.Home -> {
                 BaseScreen(headerText = stringResource(R.string.settings_screen_header)) {
                     HomeScreen(
-                        onBackupClick = { viewModel.switchScreens(SettingsViewModelState.Subsection.Backup::class) },
-                        onNotificationsClick = { viewModel.switchScreens(SettingsViewModelState.Subsection.Notifications::class) })
+                        onBackupClick = { viewModel.switchScreens(SettingsScreenSection.Backup) },
+                        onNotificationsClick = { viewModel.switchScreens(SettingsScreenSection.Notifications) },
+                        onThemingClick = {viewModel.switchScreens(SettingsScreenSection.Theming)})
                 }
             }
             is SettingsUiState.Backup -> {
@@ -78,6 +79,14 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
 
                 BackHandler(onBack = onBack)
             }
+            is SettingsUiState.Theming -> {
+                BaseScreen(
+                    headerText = stringResource(R.string.settings_screen_theming_header),
+                    snackbarHostState = snackbarHostState,
+                    navigationIcon = { BackButton(onBack = onBack) }) {
+                    ThemingScreen()
+                }
+            }
         }
     }
 
@@ -85,9 +94,9 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
 }
 
 @Composable
-fun HomeScreen(onBackupClick: () -> Unit, onNotificationsClick: () -> Unit) {
+fun HomeScreen(onBackupClick: () -> Unit, onNotificationsClick: () -> Unit, onThemingClick: () -> Unit) {
     Column {
-        SettingsList(onBackupClick = onBackupClick, onNotificationsClick = onNotificationsClick)
+        SettingsList(onBackupClick = onBackupClick, onNotificationsClick = onNotificationsClick, onThemingClick = onThemingClick)
     }
 }
 
@@ -155,5 +164,10 @@ fun BackupScreen(
 
 @Composable
 fun NotificationsScreen() {
+    FunctionalityNotYetAvailableScreen()
+}
+
+@Composable
+fun ThemingScreen() {
     FunctionalityNotYetAvailableScreen()
 }

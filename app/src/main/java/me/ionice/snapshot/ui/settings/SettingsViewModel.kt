@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.network.NetworkRepository
 import java.time.LocalDateTime
-import kotlin.reflect.KClass
 
 class SettingsViewModel(private val networkRepository: NetworkRepository) : ViewModel() {
 
@@ -17,26 +16,28 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
         .map { it.toUiState() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
-    fun <T : SettingsViewModelState.Subsection> switchScreens(targetClass: KClass<T>) {
+    fun switchScreens(targetScreen: SettingsScreenSection) {
         viewModelState.update {
             it.copy(loading = true)
         }
         viewModelScope.launch {
             viewModelState.update {
-                when (targetClass) {
-                    SettingsViewModelState.Subsection.Home::class -> {
+                when (targetScreen) {
+                    SettingsScreenSection.Home -> {
                         it.copy(
                             loading = false,
                             subsection = SettingsViewModelState.Subsection.Home
                         )
                     }
-                    SettingsViewModelState.Subsection.Backup::class -> {
-                        it.copy(loading = false, subsection = initializeBackupState())
+                    SettingsScreenSection.Backup -> {
+                        it.copy(loading = false, subsection = initBackupState())
                     }
-                    SettingsViewModelState.Subsection.Notifications::class -> {
-                        it.copy(loading = false, subsection = initializeNotificationsState())
+                    SettingsScreenSection.Notifications -> {
+                        it.copy(loading = false, subsection = initNotificationsState())
                     }
-                    else -> throw IllegalArgumentException("Invalid class passed in.")
+                    SettingsScreenSection.Theming -> {
+                        it.copy(loading = false, subsection = initThemingState())
+                    }
                 }
             }
         }
@@ -55,7 +56,7 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
                         )
                     )
                 } else {
-                    it.copy(subsection = initializeBackupState())
+                    it.copy(subsection = initBackupState())
                 }
             }
         }
@@ -72,7 +73,7 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
                         )
                     )
                 } else {
-                    it.copy(subsection = initializeBackupState())
+                    it.copy(subsection = initBackupState())
                 }
             }
         }
@@ -93,7 +94,7 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
                     snackbarMessage = "Backup successful",
                     subsection = if (it.subsection is SettingsViewModelState.Subsection.Backup) it.subsection.copy(
                         lastBackupTime = networkRepository.getLastBackupTime()
-                    ) else initializeBackupState()
+                    ) else initBackupState()
                 )
             }
         }
@@ -117,7 +118,7 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
         viewModelState.update { it.copy(snackbarMessage = null) }
     }
 
-    private suspend fun initializeBackupState(): SettingsViewModelState.Subsection.Backup =
+    private suspend fun initBackupState(): SettingsViewModelState.Subsection.Backup =
         if (!networkRepository.isOnline()) {
             SettingsViewModelState.Subsection.Backup(dataAvailable = false, backupEnabled = false)
         } else {
@@ -130,8 +131,11 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
         }
 
 
-    private fun initializeNotificationsState(): SettingsViewModelState.Subsection.Notifications =
+    private fun initNotificationsState(): SettingsViewModelState.Subsection.Notifications =
         SettingsViewModelState.Subsection.Notifications("")
+
+    private fun initThemingState(): SettingsViewModelState.Subsection.Theming =
+        SettingsViewModelState.Subsection.Theming("")
 
     companion object {
         fun provideFactory(networkRepository: NetworkRepository): ViewModelProvider.Factory =
@@ -142,8 +146,13 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
                 }
             }
     }
+}
 
-
+enum class SettingsScreenSection {
+    Home,
+    Backup,
+    Notifications,
+    Theming
 }
 
 data class SettingsViewModelState(
@@ -175,6 +184,12 @@ data class SettingsViewModelState(
                     snackbarMessage = snackbarMessage
                 )
             }
+            is Subsection.Theming -> {
+                SettingsUiState.Theming(
+                    loading = loading,
+                    snackbarMessage = snackbarMessage
+                )
+            }
         }
 
     sealed interface Subsection {
@@ -189,6 +204,10 @@ data class SettingsViewModelState(
         ) : Subsection
 
         data class Notifications(
+            val placeholder: Any
+        ) : Subsection
+
+        data class Theming(
             val placeholder: Any
         ) : Subsection
     }
@@ -215,6 +234,11 @@ sealed interface SettingsUiState {
     ) : SettingsUiState
 
     data class Notifications(
+        override val loading: Boolean,
+        override val snackbarMessage: String?
+    ) : SettingsUiState
+
+    data class Theming(
         override val loading: Boolean,
         override val snackbarMessage: String?
     ) : SettingsUiState

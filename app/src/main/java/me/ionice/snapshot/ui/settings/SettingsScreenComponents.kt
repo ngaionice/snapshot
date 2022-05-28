@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CloudSync
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,7 +26,7 @@ import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime
 
 @Composable
-fun SettingsList(onBackupClick: () -> Unit, onNotificationsClick: () -> Unit) {
+fun SettingsList(onBackupClick: () -> Unit, onNotificationsClick: () -> Unit, onThemingClick: () -> Unit) {
     SettingsRow(
         mainLabel = stringResource(R.string.settings_screen_backup_header),
         secondaryLabel = stringResource(R.string.settings_screen_backup_subtitle),
@@ -37,6 +38,12 @@ fun SettingsList(onBackupClick: () -> Unit, onNotificationsClick: () -> Unit) {
         secondaryLabel = stringResource(R.string.settings_screen_notifs_subtitle),
         icon = Icons.Outlined.Notifications,
         onClick = onNotificationsClick
+    )
+    SettingsRow(
+        mainLabel = stringResource(R.string.settings_screen_theming_header),
+        secondaryLabel = stringResource(R.string.settings_screen_theming_subtitle),
+        icon = Icons.Outlined.Palette,
+        onClick = onThemingClick
     )
 }
 

@@ -60,4 +60,7 @@
     <string name="settings_screen_backup_dialog_content">Confirm that you want to backup data to Google Drive.</string>
     <string name="settings_screen_restore_dialog_header">Confirm restore</string>
     <string name="settings_screen_restore_dialog_content">Confirm that you want to restore data from Google Drive.</string>
+
+    <string name="settings_screen_theming_header">Theming</string>
+    <string name="settings_screen_theming_subtitle"><![CDATA[Dynamic & custom themes]]></string>
 </resources>
