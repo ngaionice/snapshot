@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.CloudSync
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -18,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.network.AuthResultContract
+import me.ionice.snapshot.ui.common.ConfirmationDialog
 import me.ionice.snapshot.ui.common.SectionHeader
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime
@@ -47,6 +49,10 @@ fun BackupScreenOptions(
     onStartBackup: () -> Unit,
     onStartRestore: () -> Unit
 ) {
+
+    var showBackupConfirmDialog by rememberSaveable { mutableStateOf(false) }
+    var showRestoreConfirmDialog by rememberSaveable { mutableStateOf(false) }
+
     if (accountEmail != null) {
         // Show email or something
         SettingsRow(
@@ -64,10 +70,31 @@ fun BackupScreenOptions(
         if (!isBackupInProgress) {
             SettingsRow(
                 mainLabel = stringResource(R.string.settings_screen_backup_start_backup),
-                onClick = { onStartBackup() })
+                onClick = { showBackupConfirmDialog = true })
             SettingsRow(
                 mainLabel = stringResource(R.string.settings_screen_backup_start_restore),
-                onClick = { onStartRestore() })
+                onClick = { showRestoreConfirmDialog = true })
+            ConfirmationDialog(
+                isOpen = showBackupConfirmDialog,
+                titleText = stringResource(R.string.settings_screen_backup_dialog_header),
+                contentText = stringResource(R.string.settings_screen_backup_dialog_content),
+                onConfirm = {
+                    onStartBackup()
+                    showBackupConfirmDialog = false
+                }, onCancel = {
+                    showBackupConfirmDialog = false
+                })
+            ConfirmationDialog(
+                isOpen = showRestoreConfirmDialog,
+                titleText = stringResource(R.string.settings_screen_restore_dialog_header),
+                contentText = stringResource(R.string.settings_screen_restore_dialog_content),
+                onConfirm = {
+                    onStartRestore()
+                    showRestoreConfirmDialog = false
+                }, onCancel = {
+                    showRestoreConfirmDialog = false
+                })
+
         } else {
             Row(
                 modifier = Modifier

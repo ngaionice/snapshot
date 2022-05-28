@@ -41,6 +41,32 @@ fun AddFAB(onClick: () -> Unit, description: String) {
 }
 
 @Composable
+fun ConfirmationDialog(
+    isOpen: Boolean,
+    titleText: String?,
+    contentText: String?,
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit
+) {
+    if (isOpen) {
+        AlertDialog(
+            onDismissRequest = onCancel,
+            dismissButton = {
+                TextButton(onClick = onCancel) {
+                    Text(stringResource(R.string.common_confirm_dialog_cancel))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = onConfirm) {
+                    Text(stringResource(R.string.common_confirm_dialog_confirm))
+                }
+            },
+            title = { titleText?.let { Text(titleText) } },
+            text = { Text(contentText ?: "") })
+    }
+}
+
+@Composable
 fun FunctionalityNotYetAvailableScreen() {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         Text(
