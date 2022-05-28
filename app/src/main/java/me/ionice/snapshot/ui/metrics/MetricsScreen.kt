@@ -85,7 +85,7 @@ private fun MetricDetailsScreen(uiState: MetricsUiState.MetricDetails, onBack: (
         navigationIcon = { BackButton(onBack) }) {
         Scaffold(backgroundColor = MaterialTheme.colorScheme.background) {
             Box(modifier = Modifier.padding(it)) {
-                MetricEntriesList(entries = uiState.selectedMetric.entries)
+                MetricEntryList(entries = uiState.selectedMetric.entries)
             }
         }
     }

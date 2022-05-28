@@ -77,21 +77,21 @@ fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
 }
 
 @Composable
-fun MetricEntriesList(entries: List<MetricEntry>) {
+fun MetricEntryList(entries: List<MetricEntry>) {
     if (entries.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(stringResource(R.string.metrics_screen_no_results), style = MaterialTheme.typography.bodyMedium)
         }
     } else {
         LazyColumn {
-            items(items = entries) { MetricEntriesListItem(entry = it) }
+            items(items = entries) { MetricEntryListItem(entry = it) }
         }
     }
 
 }
 
 @Composable
-fun MetricEntriesListItem(entry: MetricEntry) {
+fun MetricEntryListItem(entry: MetricEntry) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 6.dp)
@@ -112,5 +112,5 @@ fun MetricEntriesListItem(entry: MetricEntry) {
 @Preview
 @Composable
 fun MetricEntriesListPreview() {
-    MetricEntriesList(entries = FakeData.metricEntries)
+    MetricEntryList(entries = FakeData.metricEntries)
 }
