@@ -53,12 +53,12 @@ fun ConfirmationDialog(
             onDismissRequest = onCancel,
             dismissButton = {
                 TextButton(onClick = onCancel) {
-                    Text(stringResource(R.string.common_confirm_dialog_cancel))
+                    Text(stringResource(R.string.common_dialog_cancel))
                 }
             },
             confirmButton = {
                 TextButton(onClick = onConfirm) {
-                    Text(stringResource(R.string.common_confirm_dialog_confirm))
+                    Text(stringResource(R.string.common_dialog_confirm))
                 }
             },
             title = { titleText?.let { Text(titleText) } },
@@ -178,7 +178,7 @@ fun DatePicker(onSelect: (Long) -> Unit, onDismissRequest: () -> Unit) {
                     colors = ButtonDefaults.textButtonColors()
                 ) {
                     Text(
-                        text = stringResource(R.string.common_calendar_cancel)
+                        text = stringResource(R.string.common_dialog_cancel)
                     )
                 }
 
@@ -190,7 +190,7 @@ fun DatePicker(onSelect: (Long) -> Unit, onDismissRequest: () -> Unit) {
                     colors = ButtonDefaults.textButtonColors()
                 ) {
                     Text(
-                        text = stringResource(R.string.common_calendar_ok)
+                        text = stringResource(R.string.common_dialog_ok)
                     )
                 }
 

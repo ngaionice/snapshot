@@ -26,7 +26,7 @@
     <string name="metrics_screen_add_name_helper">Metric name</string>
     <string name="metrics_screen_add_name_save">Save</string>
     <string name="metrics_screen_add_name_cancel">Cancel</string>
-    <string name="metrics_screen_no_results">No entries found.</string>
+    <string name="common_no_results">No entries found.</string>
 
     <!--  common components  -->
     <string name="common_back">Back</string>
@@ -34,10 +34,9 @@
     <string name="common_functionality_soon">Functionality not yet implemented!</string>
     <string name="common_functionality_na_dialog_close">Close</string>
     <string name="common_calendar_select_date">SELECT DATE</string>
-    <string name="common_calendar_cancel">Cancel</string>
-    <string name="common_calendar_ok">OK</string>
-    <string name="common_confirm_dialog_cancel">Cancel</string>
-    <string name="common_confirm_dialog_confirm">Confirm</string>
+    <string name="common_dialog_cancel">Cancel</string>
+    <string name="common_dialog_ok">OK</string>
+    <string name="common_dialog_confirm">Confirm</string>
 
     <!--  settings screen  -->
     <string name="settings_screen_header">Settings</string>

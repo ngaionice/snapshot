@@ -80,7 +80,10 @@ fun AddKeyDialog(onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
 fun MetricEntryList(entries: List<MetricEntry>) {
     if (entries.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(stringResource(R.string.metrics_screen_no_results), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                stringResource(R.string.common_no_results),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     } else {
         LazyColumn {

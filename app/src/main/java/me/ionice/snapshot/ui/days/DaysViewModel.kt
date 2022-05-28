@@ -33,10 +33,10 @@ class DaysViewModel(
             }
         }
 
-        changeYear(LocalDate.now().year)
+        switchYear(LocalDate.now().year)
     }
 
-    fun changeYear(year: Int) {
+    fun switchYear(year: Int) {
         viewModelState.update { it.copy(listYear = year, loading = true) }
 
         viewModelScope.launch {

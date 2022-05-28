@@ -45,7 +45,8 @@ fun DaysScreen(viewModel: DaysViewModel, toggleBottomNav: (Boolean) -> Unit) {
                 DayListScreen(
                     uiState = uiState as DayUiState.DayList,
                     onDaySelect = { viewModel.selectDay(it) },
-                    onDayAdd = { viewModel.addDay(it) })
+                    onDayAdd = { viewModel.addDay(it) },
+                    onSwitchYear = { viewModel.switchYear(it) })
             }
             is DayUiState.DayEntryNotFound -> {
                 DayEntryNotAvailableScreen(
@@ -93,7 +94,8 @@ fun DaysScreen(viewModel: DaysViewModel, toggleBottomNav: (Boolean) -> Unit) {
 private fun DayListScreen(
     uiState: DayUiState.DayList,
     onDaySelect: (Long) -> Unit,
-    onDayAdd: (Long) -> Unit
+    onDayAdd: (Long) -> Unit,
+    onSwitchYear: (Int) -> Unit
 ) {
 
     var showDatePicker by remember { mutableStateOf(false) }
@@ -108,7 +110,7 @@ private fun DayListScreen(
     },
         actions = {
             SearchButton { showNaDialog = true }
-            SwitchYearButton { showNaDialog = true }
+            SwitchYearButton(onSwitch = onSwitchYear)
         }) {
         EntryList(days = uiState.entries, onDaySelect = onDaySelect)
         if (showDatePicker) {
