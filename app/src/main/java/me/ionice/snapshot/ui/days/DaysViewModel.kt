@@ -19,7 +19,12 @@ class DaysViewModel(
 ) : ViewModel() {
 
     private val viewModelState =
-        MutableStateFlow(DayViewModelState(loading = true))
+        MutableStateFlow(
+            DayViewModelState(
+                loading = true,
+                subscreen = DayViewModelState.Subscreen.DayList()
+            )
+        )
 
     val uiState = viewModelState
         .map { it.toUiState() }
@@ -43,14 +48,14 @@ class DaysViewModel(
             val startDay = LocalDate.of(year, 1, 1).toEpochDay()
             val endDay = LocalDate.of(year, 12, 31).toEpochDay()
             val data = dayRepository.getDays(startDay, endDay)
-            viewModelState.update { it.copy(entries = data, loading = false) }
+            viewModelState.update { it.copy(allEntries = data, loading = false) }
 
             // observe for changes
             dayRepository.observeDays(startDay, endDay)
                 .takeWhile { viewModelState.value.listYear == year } // when the year changes, this flow gets cancelled automatically
                 .collect { days ->
                     viewModelState.update {
-                        it.copy(entries = days)
+                        it.copy(allEntries = days)
                     }
                 }
         }
@@ -67,7 +72,10 @@ class DaysViewModel(
             }
 
             viewModelState.update {
-                it.copy(selectedDate = epochDay, selectedEntry = newDay, loading = false)
+                it.copy(
+                    loading = false,
+                    subscreen = DayViewModelState.Subscreen.DayEntry(epochDay, newDay)
+                )
             }
         }
     }
@@ -78,33 +86,41 @@ class DaysViewModel(
         viewModelScope.launch {
             val data = dayRepository.getDay(epochDay)
             viewModelState.update {
-                it.copy(selectedDate = epochDay, selectedEntry = data, loading = false)
+                it.copy(
+                    loading = false,
+                    subscreen = DayViewModelState.Subscreen.DayEntry(epochDay, data)
+                )
             }
         }
     }
 
     fun deselectDay() {
-        viewModelState.update { it.copy(selectedDate = null, selectedEntry = null) }
+        // TODO: figure out how to preserve state if previously searching
+        viewModelState.update { it.copy(subscreen = DayViewModelState.Subscreen.DayList(query = null)) }
     }
 
     fun saveDay() {
         viewModelState.update { it.copy(loading = true) }
 
         viewModelScope.launch {
-            if (viewModelState.value.selectedEntry != null) {
-                dayRepository.upsertDay(viewModelState.value.selectedEntry!!)
+            val subscreen = viewModelState.value.subscreen
+            if (subscreen is DayViewModelState.Subscreen.DayEntry && subscreen.entry != null) {
+                dayRepository.upsertDay(subscreen.entry)
             }
             viewModelState.update { it.copy(loading = false) }
         }
     }
 
     fun setSummary(value: String) {
-        if (viewModelState.value.selectedEntry != null) {
+        val subscreen = viewModelState.value.subscreen
+        if (subscreen is DayViewModelState.Subscreen.DayEntry && subscreen.entry != null) {
             viewModelState.update {
                 it.copy(
-                    selectedEntry = it.selectedEntry!!.copy(
-                        day = it.selectedEntry.day.copy(
-                            summary = value
+                    subscreen = subscreen.copy(
+                        entry = subscreen.entry.copy(
+                            day = subscreen.entry.day.copy(
+                                summary = value
+                            )
                         )
                     )
                 )
@@ -113,12 +129,15 @@ class DaysViewModel(
     }
 
     fun setLocation(value: String) {
-        if (viewModelState.value.selectedEntry != null) {
+        val subscreen = viewModelState.value.subscreen
+        if (subscreen is DayViewModelState.Subscreen.DayEntry && subscreen.entry != null) {
             viewModelState.update {
                 it.copy(
-                    selectedEntry = it.selectedEntry!!.copy(
-                        day = it.selectedEntry.day.copy(
-                            location = value
+                    subscreen = subscreen.copy(
+                        entry = subscreen.entry.copy(
+                            day = subscreen.entry.day.copy(
+                                location = value
+                            )
                         )
                     )
                 )
@@ -127,27 +146,55 @@ class DaysViewModel(
     }
 
     fun addMetric(entry: MetricEntry) {
-        if (viewModelState.value.selectedEntry != null) {
+        val subscreen = viewModelState.value.subscreen
+        if (subscreen is DayViewModelState.Subscreen.DayEntry && subscreen.entry != null) {
             viewModelState.update {
-                it.copy(selectedEntry = it.selectedEntry!!.copy(metrics = it.selectedEntry.metrics + entry))
+                it.copy(
+                    subscreen = subscreen.copy(entry = subscreen.entry.copy(metrics = subscreen.entry.metrics + entry))
+                )
             }
         }
     }
 
     fun removeMetric(entry: MetricEntry) {
-        if (viewModelState.value.selectedEntry != null) {
+        val subscreen = viewModelState.value.subscreen
+        if (subscreen is DayViewModelState.Subscreen.DayEntry && subscreen.entry != null) {
             viewModelState.update {
-                it.copy(selectedEntry = it.selectedEntry!!.copy(metrics = it.selectedEntry.metrics - entry))
+                it.copy(
+                    subscreen = subscreen.copy(entry = subscreen.entry.copy(metrics = subscreen.entry.metrics - entry))
+                )
             }
         }
     }
 
     fun updateMetric(index: Int, newValue: String) {
-        if (viewModelState.value.selectedEntry != null) {
+        val subscreen = viewModelState.value.subscreen
+        if (subscreen is DayViewModelState.Subscreen.DayEntry && subscreen.entry != null) {
             viewModelState.update {
-                it.copy(selectedEntry = it.selectedEntry!!.copy(metrics = it.selectedEntry.metrics.mapIndexed { idx, entry ->
-                    if (idx == index) entry.copy(value = newValue) else entry
-                }))
+                it.copy(
+                    subscreen = subscreen.copy(entry = subscreen.entry.copy(metrics = subscreen.entry.metrics.mapIndexed { idx, entry ->
+                        if (idx == index) entry.copy(value = newValue) else entry
+                    }))
+                )
+            }
+        }
+    }
+
+    fun search(query: DaySearchQuery) {
+        val subscreen = viewModelState.value.subscreen
+        if (subscreen is DayViewModelState.Subscreen.DayList) {
+            viewModelState.update {
+                it.copy(subscreen = (it.subscreen as DayViewModelState.Subscreen.DayList).copy(query = query))
+            }
+        }
+
+    }
+
+    fun clearSearch() {
+        val subscreen = viewModelState.value.subscreen
+        if (subscreen is DayViewModelState.Subscreen.DayList) {
+            viewModelState.update {
+                it.copy(subscreen = (it.subscreen as DayViewModelState.Subscreen.DayList).copy(query = null))
             }
         }
     }
@@ -177,28 +224,74 @@ class DaysViewModel(
 data class DayViewModelState(
     val loading: Boolean,
     val listYear: Int = LocalDate.now().year,
-    val selectedDate: Long? = null,
-    val selectedEntry: DayWithMetrics? = null,
-    val entries: List<DayWithMetrics> = emptyList(),
-    val metricKeys: List<MetricKey> = emptyList()
+    val allEntries: List<DayWithMetrics> = emptyList(),
+    val metricKeys: List<MetricKey> = emptyList(),
+    val subscreen: Subscreen
 ) {
 
     fun toUiState(): DayUiState =
-        if (selectedDate == null) {
-            DayUiState.DayList(loading = loading, year = listYear, entries = entries)
-        } else if (selectedEntry == null) {
-            DayUiState.DayEntryNotFound(loading = loading, date = selectedDate)
-        } else {
-            DayUiState.DayEntryFound(
-                loading = loading,
-                date = selectedDate,
-                location = selectedEntry.day.location,
-                summary = selectedEntry.day.summary,
-                metrics = selectedEntry.metrics,
-                metricKeys = metricKeys
-            )
+        when (subscreen) {
+            is Subscreen.DayList -> {
+                if (subscreen.query == null) {
+                    DayUiState.DayList(loading = loading, year = listYear, entries = allEntries)
+                } else {
+                    DayUiState.DayList(
+                        loading = loading,
+                        year = listYear,
+                        entries = allEntries.filter {
+                            it.day.summary.contains(
+                                subscreen.query.querySummaryString,
+                                true
+                            )
+                        })
+                }
+            }
+            is Subscreen.DayEntry -> {
+                if (subscreen.entry == null) {
+                    DayUiState.DayEntryNotFound(loading = loading, date = subscreen.date)
+                } else {
+                    DayUiState.DayEntryFound(
+                        loading = loading,
+                        date = subscreen.date,
+                        location = subscreen.entry.day.location,
+                        summary = subscreen.entry.day.summary,
+                        metrics = subscreen.entry.metrics,
+                        metricKeys = metricKeys
+                    )
+                }
+            }
         }
+
+
+    /**
+     * An interface representing the data needed by currently showing screen in [DaysViewModel].
+     *
+     * This interface and its implementing classes exists such that
+     * a balance can be obtained between memory usage and user experience,
+     * where only the values relevant to the current screen are kept in memory,
+     * minimizing the memory use by [DaysViewModel].
+     */
+    sealed interface Subscreen {
+
+        data class DayList(
+            val query: DaySearchQuery? = null
+        ) : Subscreen
+
+        data class DayEntry(
+            val date: Long,
+            val entry: DayWithMetrics?
+        ) : Subscreen
+    }
 }
+
+/**
+ * An object representing the properties of a search against Day entries.
+ */
+data class DaySearchQuery(
+    val yearRange: Int?, // null if searching all
+    val querySummaryString: String
+    // potentially add filters down the road?
+)
 
 /**
  * UI state for the Day screen.

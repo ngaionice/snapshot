@@ -2,6 +2,7 @@ package me.ionice.snapshot.ui.common
 
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -63,7 +64,35 @@ fun BaseScreen(
             content()
         }
     }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BaseScreen(
+    modifier: Modifier = Modifier,
+    headerBar: @Composable () -> Unit,
+    floatingActionButton: (@Composable () -> Unit)? = null,
+    snackbarHostState: SnackbarHostState? = null,
+    floatingActionButtonPosition: FabPosition = FabPosition.End,
+    content: @Composable () -> Unit
+) {
+    Scaffold(
+        floatingActionButton = {
+            if (floatingActionButton != null) {
+                floatingActionButton()
+            }
+        },
+        floatingActionButtonPosition = floatingActionButtonPosition,
+        snackbarHost = { if (snackbarHostState != null) SnackbarHost(snackbarHostState) })
+    {
+        Column(
+            modifier = modifier
+                .padding(it)
+        ) {
+            headerBar()
+            content()
+        }
+    }
 }
 
 @Composable

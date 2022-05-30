@@ -1,20 +1,24 @@
 package me.ionice.snapshot.ui.common
 
 import android.widget.CalendarView
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -37,6 +41,98 @@ fun BackButton(onBack: () -> Unit) {
 fun AddFAB(onClick: () -> Unit, description: String) {
     FloatingActionButton(onClick = onClick) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = description)
+    }
+}
+
+/**
+ */
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@Composable
+fun SearchHeaderBar(
+    placeholderText: String,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    onSearchStringChange: (String) -> Unit
+) {
+
+    var searching by remember { mutableStateOf(false) }
+    val searchString = rememberSaveable { mutableStateOf("") }
+
+    AnimatedContent(targetState = searching) { targetState ->
+        when (targetState) {
+            false -> {
+                Card(
+                    onClick = { searching = true },
+                    shape = MaterialTheme.shapes.extraLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    ) {
+                        if (leadingIcon != null) {
+                            leadingIcon()
+                        } else {
+                            Spacer(modifier = Modifier.width(12.dp))
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = placeholderText,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        if (trailingIcon != null) {
+                            trailingIcon()
+                        } else {
+                            Spacer(modifier = Modifier.width(12.dp))
+                        }
+                    }
+                }
+            }
+            true -> {
+                TextField(
+                    value = searchString.value,
+                    onValueChange = {
+                        searchString.value = it
+                        onSearchStringChange(it)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    leadingIcon = {
+                        IconButton(onClick = { searching = false }) {
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    },
+                    placeholder = {
+                        Text(text = placeholderText, style = MaterialTheme.typography.bodyMedium)
+                    }
+                )
+            }
+        }
+
+    }
+}
+
+@Preview
+@Composable
+fun SearchBarPreview() {
+
+    SearchHeaderBar(placeholderText = "Search in day summaries",
+        leadingIcon = {
+            IconButton(onClick = {}) {
+                Icon(Icons.Filled.Search, contentDescription = "Search")
+            }
+        },
+        trailingIcon = {
+            IconButton(onClick = {}) {
+                Icon(Icons.Filled.CalendarMonth, contentDescription = "Year")
+            }
+        }) {
+
     }
 }
 

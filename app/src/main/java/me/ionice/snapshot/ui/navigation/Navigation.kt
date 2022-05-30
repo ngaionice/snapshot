@@ -46,7 +46,7 @@ fun SnapshotNavHost(
 
     NavHost(navController = navController, startDestination = Screen.Days.name) {
         composable(Screen.Days.name) {
-            DaysScreen(viewModel = daysViewModel, toggleBottomNav = toggleBottomNav)
+            DaysScreen(viewModel = daysViewModel, showBottomNav = toggleBottomNav)
         }
 
         composable(Screen.Metrics.name) {

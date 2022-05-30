@@ -12,6 +12,7 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -29,7 +30,7 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DaysScreen(viewModel: DaysViewModel, toggleBottomNav: (Boolean) -> Unit) {
+fun DaysScreen(viewModel: DaysViewModel, showBottomNav: (Boolean) -> Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
@@ -46,7 +47,17 @@ fun DaysScreen(viewModel: DaysViewModel, toggleBottomNav: (Boolean) -> Unit) {
                     uiState = uiState as DayUiState.DayList,
                     onDaySelect = { viewModel.selectDay(it) },
                     onDayAdd = { viewModel.addDay(it) },
-                    onSwitchYear = { viewModel.switchYear(it) })
+                    onSwitchYear = { viewModel.switchYear(it) },
+                    onSearch = {
+                        viewModel.search(
+                            DaySearchQuery(
+                                (uiState as DayUiState.DayList).year,
+                                it
+                            )
+                        )
+                    },
+                    onClearSearch = { viewModel.clearSearch() }
+                )
             }
             is DayUiState.DayEntryNotFound -> {
                 DayEntryNotAvailableScreen(
@@ -75,13 +86,13 @@ fun DaysScreen(viewModel: DaysViewModel, toggleBottomNav: (Boolean) -> Unit) {
                             viewModel.selectDay((uiState as DayUiState.DayEntryFound).date)
                         })
                 } else {
-                    toggleBottomNav(false)
+                    showBottomNav(false)
                     DayEntryViewScreen(
                         uiState = uiState as DayUiState.DayEntryFound,
                         onEdit = { editing = true },
                         onBack = {
                             viewModel.deselectDay()
-                            toggleBottomNav(true)
+                            showBottomNav(true)
                         })
                 }
             }
@@ -95,22 +106,42 @@ private fun DayListScreen(
     uiState: DayUiState.DayList,
     onDaySelect: (Long) -> Unit,
     onDayAdd: (Long) -> Unit,
-    onSwitchYear: (Int) -> Unit
+    onSwitchYear: (Int) -> Unit,
+    onSearch: (String) -> Unit,
+    onClearSearch: () -> Unit
 ) {
 
     var showDatePicker by remember { mutableStateOf(false) }
 
     var showNaDialog by remember { mutableStateOf(false) }
 
-    BaseScreen(headerText = uiState.year.toString(), floatingActionButton = {
-        AddFAB(
-            onClick = { showDatePicker = true },
-            description = stringResource(R.string.day_screen_add_day)
-        )
-    },
-        actions = {
-            SearchButton { showNaDialog = true }
-            SwitchYearButton(onSwitch = onSwitchYear)
+    BaseScreen(
+        headerBar = {
+            SearchHeaderBar(
+                placeholderText = "Search daily summaries in ${uiState.year}",
+                onSearchStringChange = {
+                    if (it.isNotEmpty()) {
+                        onSearch(it)
+                    } else {
+                        onClearSearch()
+                    }
+                },
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.Search,
+                        contentDescription = null,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                },
+                trailingIcon = {
+                    SwitchYearButton(onSwitch = onSwitchYear)
+                })
+        },
+        floatingActionButton = {
+            AddFAB(
+                onClick = { showDatePicker = true },
+                description = stringResource(R.string.day_screen_add_day)
+            )
         }) {
         EntryList(days = uiState.entries, onDaySelect = onDaySelect)
         if (showDatePicker) {
