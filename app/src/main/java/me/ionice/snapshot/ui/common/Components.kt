@@ -61,6 +61,7 @@ fun SearchHeaderBar(
     var searching by remember { mutableStateOf(false) }
     val searchString = rememberSaveable { mutableStateOf("") }
 
+    // TODO: update to use updateTransition for even more control
     val horizontalPadding: Int by animateIntAsState(if (searching) 0 else 16)
     val verticalPadding: Int by animateIntAsState(if (searching) 0 else 8)
 
