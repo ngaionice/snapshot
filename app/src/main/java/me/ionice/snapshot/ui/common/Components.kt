@@ -1,23 +1,25 @@
 package me.ionice.snapshot.ui.common
 
 import android.widget.CalendarView
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -46,74 +48,106 @@ fun AddFAB(onClick: () -> Unit, description: String) {
 
 /**
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchHeaderBar(
     placeholderText: String,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    onSearchStringChange: (String) -> Unit
+    onSearchStringChange: (String) -> Unit,
+    onSearchBarActiveStateChange: ((Boolean) -> Unit)? = null
 ) {
 
     var searching by remember { mutableStateOf(false) }
     val searchString = rememberSaveable { mutableStateOf("") }
 
-    AnimatedContent(targetState = searching) { targetState ->
-        when (targetState) {
-            false -> {
-                Card(
-                    onClick = { searching = true },
-                    shape = MaterialTheme.shapes.extraLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    ) {
-                        if (leadingIcon != null) {
-                            leadingIcon()
-                        } else {
-                            Spacer(modifier = Modifier.width(12.dp))
-                        }
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = placeholderText,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        if (trailingIcon != null) {
-                            trailingIcon()
-                        } else {
-                            Spacer(modifier = Modifier.width(12.dp))
-                        }
-                    }
+    val horizontalPadding: Int by animateIntAsState(if (searching) 0 else 16)
+    val verticalPadding: Int by animateIntAsState(if (searching) 0 else 8)
+
+    val textFieldFocusRequester = remember { FocusRequester() }
+
+    val onActiveStateChange: (Boolean) -> Unit = onSearchBarActiveStateChange ?: {}
+
+    Card(
+        onClick = {
+            searching = true
+            onActiveStateChange(true)
+        },
+        shape = if (searching) Shapes.None else Shapes.Full,
+        modifier = Modifier.padding(
+            horizontal = horizontalPadding.dp,
+            vertical = verticalPadding.dp
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = (8 - verticalPadding).dp)
+        ) {
+            if (searching) {
+                IconButton(onClick = {
+                    searching = false
+                    onActiveStateChange(false)
+                }) {
+                    Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                }
+            } else {
+                if (leadingIcon != null) {
+                    leadingIcon()
+                } else {
+                    Spacer(modifier = Modifier.width(12.dp))
                 }
             }
-            true -> {
-                TextField(
-                    value = searchString.value,
-                    onValueChange = {
-                        searchString.value = it
-                        onSearchStringChange(it)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    leadingIcon = {
-                        IconButton(onClick = { searching = false }) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                        }
-                    },
-                    placeholder = {
-                        Text(text = placeholderText, style = MaterialTheme.typography.bodyMedium)
-                    }
-                )
+
+            Spacer(modifier = Modifier.width(4.dp))
+            Box(modifier = Modifier.weight(1f)) {
+                if (searchString.value.isEmpty()) {
+                    Text(
+                        text = placeholderText,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                if (searching) {
+                    BasicTextField(
+                        value = searchString.value,
+                        onValueChange = {
+                            searchString.value = it
+                        }, maxLines = 1,
+                        modifier = Modifier.focusRequester(textFieldFocusRequester),
+                        textStyle = TextStyle.Default.copy(color = LocalContentColor.current),
+                        cursorBrush = SolidColor(LocalContentColor.current)
+                    )
+                    textFieldFocusRequester.requestFocus()
+                }
+            }
+
+            Spacer(modifier = Modifier.width(4.dp))
+            if (searching) {
+                IconButton(onClick = {
+                    searchString.value = ""
+                    textFieldFocusRequester.requestFocus()
+                }) {
+                    Icon(Icons.Filled.Cancel, contentDescription = "Clear")
+                }
+            } else {
+                if (trailingIcon != null) {
+                    trailingIcon()
+                } else {
+                    Spacer(modifier = Modifier.width(12.dp))
+                }
             }
         }
+    }
 
+    LaunchedEffect(key1 = searchString.value) {
+        onSearchStringChange(searchString.value)
+    }
+
+    LaunchedEffect(key1 = searching) {
+        onActiveStateChange(searching)
+    }
+
+    BackHandler(enabled = searching) {
+        searching = false
     }
 }
 
@@ -131,7 +165,7 @@ fun SearchBarPreview() {
             IconButton(onClick = {}) {
                 Icon(Icons.Filled.CalendarMonth, contentDescription = "Year")
             }
-        }) {
+        }, onSearchStringChange = {}) {
 
     }
 }

@@ -126,6 +126,9 @@ private fun DayListScreen(
                         onClearSearch()
                     }
                 },
+                onSearchBarActiveStateChange = {
+                    // TODO: change system bar colors
+                },
                 leadingIcon = {
                     Icon(
                         Icons.Filled.Search,
