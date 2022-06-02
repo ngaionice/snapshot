@@ -49,6 +49,28 @@ class BackupUtil(private val context: Context) {
         }
     }
 
+    /**
+     * Returns the automatic backup frequency. If a value has never been set, returns 0.
+     *
+     * 0 represents never, and all other values represent the number of days between automatic backups.
+     */
+    fun getBackupFrequency() = preferences.getInt(Constants.backupFreqName, 0)
+
+    /**
+     * Sets the automatic backup frequency. Allowed values are 1 and non-negative multiples of 7.
+     *
+     * 0 represents never, and all other values represent the number of days between automatic backups.
+     */
+    fun setBackupFrequency(daysFreq: Int) {
+        if (daysFreq < 0 || (daysFreq.mod(7) != 0 && daysFreq != 1)) {
+            throw IllegalArgumentException("Backup day frequency has to be either 1, or a non-negative multiple of 7.")
+        }
+        with(preferences.edit()) {
+            putInt(Constants.backupFreqName, daysFreq)
+            apply()
+        }
+    }
+
     suspend fun getLastBackupTime(): LocalDateTime? {
         val req = getDriveBackupFileRequest() ?: return null
         return withContext(Dispatchers.IO) {

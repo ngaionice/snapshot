@@ -12,6 +12,10 @@ interface NetworkRepository {
 
     fun setBackupEnabled(value: Boolean)
 
+    fun getBackupFrequency(): Int
+
+    fun setBackupFrequency(dayFreq: Int)
+
     suspend fun getLastBackupTime(): LocalDateTime?
 
     suspend fun backupDatabase(): Result<Unit>

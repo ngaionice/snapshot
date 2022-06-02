@@ -30,6 +30,14 @@ class NetworkRepositoryImpl(private val applicationContext: Context) : NetworkRe
         backupUtil.setBackupEnabled(value)
     }
 
+    override fun getBackupFrequency(): Int {
+        return backupUtil.getBackupFrequency()
+    }
+
+    override fun setBackupFrequency(dayFreq: Int) {
+        backupUtil.setBackupFrequency(dayFreq)
+    }
+
     override suspend fun getLastBackupTime(): LocalDateTime? {
         return if (isOnline()) backupUtil.getLastBackupTime() else null
     }
