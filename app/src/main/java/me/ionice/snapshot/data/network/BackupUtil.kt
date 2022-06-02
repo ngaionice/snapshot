@@ -21,7 +21,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.ionice.snapshot.R
-import me.ionice.snapshot.data.Constants
 import me.ionice.snapshot.data.SnapshotDatabase
 import java.io.FileOutputStream
 import java.io.IOException
@@ -33,18 +32,18 @@ class BackupUtil(private val context: Context) {
 
     private val preferences =
         context.getSharedPreferences(
-            "${context.packageName}_${Constants.backupPrefsName}",
+            "${context.packageName}_${BACKUP_PREFS_KEY}",
             Context.MODE_PRIVATE
         )
 
     fun isBackupEnabled(): Boolean =
-        preferences != null && preferences.getBoolean(Constants.backupEnabledName, false)
+        preferences != null && preferences.getBoolean(IS_ENABLED_KEY, false)
 
     fun getLoggedInAccountEmail(): String? = GoogleSignIn.getLastSignedInAccount(context)?.email
 
     fun setBackupEnabled(value: Boolean) {
         with(preferences.edit()) {
-            putBoolean(Constants.backupEnabledName, value)
+            putBoolean(IS_ENABLED_KEY, value)
             apply()
         }
     }
@@ -54,7 +53,7 @@ class BackupUtil(private val context: Context) {
      *
      * 0 represents never, and all other values represent the number of days between automatic backups.
      */
-    fun getBackupFrequency() = preferences.getInt(Constants.backupFreqName, 0)
+    fun getBackupFrequency() = preferences.getInt(FREQUENCY_KEY, 0)
 
     /**
      * Sets the automatic backup frequency. Allowed values are 1 and non-negative multiples of 7.
@@ -66,7 +65,7 @@ class BackupUtil(private val context: Context) {
             throw IllegalArgumentException("Backup day frequency has to be either 1, or a non-negative multiple of 7.")
         }
         with(preferences.edit()) {
-            putInt(Constants.backupFreqName, daysFreq)
+            putInt(FREQUENCY_KEY, daysFreq)
             apply()
         }
     }
@@ -104,7 +103,7 @@ class BackupUtil(private val context: Context) {
             val result =
                 if (isRestoring) {
                     // delete the current database and insert the downloaded one
-                    val dbFile = context.getDatabasePath(Constants.databaseName)
+                    val dbFile = context.getDatabasePath(SnapshotDatabase.DATABASE_NAME)
                     val path = dbFile.absolutePath
 
                     dbFile.delete()
@@ -121,7 +120,7 @@ class BackupUtil(private val context: Context) {
      * Returns a Result indicating whether upload was successful.
      */
     private suspend fun uploadDatabase(): Result<Unit> {
-        val dbFile = context.getDatabasePath(Constants.databaseName)
+        val dbFile = context.getDatabasePath(SnapshotDatabase.DATABASE_NAME)
         val service =
             getDriveService() ?: return Result.failure(Exception("User is not logged in."))
 
@@ -193,7 +192,7 @@ class BackupUtil(private val context: Context) {
             val target = service.Files().list()
                 .setSpaces("drive")
                 .setFields("files(name,id,modifiedTime)")
-                .execute().files.filter { it.name == Constants.databaseName }
+                .execute().files.filter { it.name == SnapshotDatabase.DATABASE_NAME }
 
             // only 1 copy of database should exist
             return@withContext if (target.isEmpty() || target.size > 1) null else target[0].id
@@ -211,6 +210,12 @@ class BackupUtil(private val context: Context) {
             }
             null
         }
+    }
+
+    companion object {
+        const val BACKUP_PREFS_KEY = "backup_preferences"
+        const val IS_ENABLED_KEY = "is_enabled"
+        const val FREQUENCY_KEY = "frequency"
     }
 }
 

@@ -44,7 +44,7 @@ abstract class SnapshotDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         SnapshotDatabase::class.java,
-                        Constants.databaseName
+                        DATABASE_NAME
                     ).fallbackToDestructiveMigration().build()
                     INSTANCE = instance
                 }
@@ -61,5 +61,7 @@ abstract class SnapshotDatabase : RoomDatabase() {
         fun unlockInstance() {
             LOCKED = false
         }
+
+        const val DATABASE_NAME = "snapshot_database"
     }
 }
