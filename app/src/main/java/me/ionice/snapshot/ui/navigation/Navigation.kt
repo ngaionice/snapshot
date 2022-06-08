@@ -42,7 +42,7 @@ fun SnapshotNavHost(
         viewModel(factory = MetricsViewModel.provideFactory(appContainer.metricRepository))
 
     val settingsViewModel: SettingsViewModel =
-        viewModel(factory = SettingsViewModel.provideFactory(appContainer.networkRepository))
+        viewModel(factory = SettingsViewModel.provideFactory(appContainer.networkRepository, appContainer.preferencesRepository))
 
     NavHost(navController = navController, startDestination = Screen.Days.name) {
         composable(Screen.Days.name) {

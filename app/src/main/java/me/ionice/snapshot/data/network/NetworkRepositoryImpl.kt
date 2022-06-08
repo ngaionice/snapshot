@@ -18,24 +18,8 @@ class NetworkRepositoryImpl(private val applicationContext: Context) : NetworkRe
                 capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
-    override fun isBackupEnabled(): Boolean {
-        return backupUtil.isBackupEnabled()
-    }
-
     override fun getLoggedInAccountEmail(): String? {
         return if (isOnline()) backupUtil.getLoggedInAccountEmail() else null
-    }
-
-    override fun setBackupEnabled(value: Boolean) {
-        backupUtil.setBackupEnabled(value)
-    }
-
-    override fun getBackupFrequency(): Int {
-        return backupUtil.getBackupFrequency()
-    }
-
-    override fun setBackupFrequency(dayFreq: Int) {
-        backupUtil.setBackupFrequency(dayFreq)
     }
 
     override suspend fun getLastBackupTime(): LocalDateTime? {

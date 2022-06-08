@@ -7,14 +7,25 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.network.NetworkRepository
+import me.ionice.snapshot.data.preferences.PreferencesRepository
 import java.time.LocalDateTime
+import java.time.LocalTime
 
-class SettingsViewModel(private val networkRepository: NetworkRepository) : ViewModel() {
+class SettingsViewModel(
+    private val networkRepository: NetworkRepository,
+    private val preferencesRepository: PreferencesRepository
+) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(SettingsViewModelState(loading = false))
     val uiState = viewModelState
         .map { it.toUiState() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+
+    private val backupPreferencesState = preferencesRepository.backupPreferencesFlow.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        PreferencesRepository.BackupPreferences.DEFAULT
+    )
 
     fun switchScreens(targetScreen: SettingsScreenSection) {
         viewModelState.update {
@@ -43,15 +54,15 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
         }
     }
 
-    fun setBackupEnabled(value: Boolean) {
-        networkRepository.setBackupEnabled(value)
+    fun setBackupEnabled(enable: Boolean) {
         check(viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup)
         viewModelScope.launch {
+            preferencesRepository.setIsBackupEnabled(enable)
             viewModelState.update {
                 if (it.subsection is SettingsViewModelState.Subsection.Backup) {
                     it.copy(
                         subsection = it.subsection.copy(
-                            backupEnabled = value,
+                            backupEnabled = enable,
                             lastBackupTime = networkRepository.getLastBackupTime()
                         )
                     )
@@ -124,7 +135,7 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
         } else {
             SettingsViewModelState.Subsection.Backup(
                 dataAvailable = true,
-                backupEnabled = networkRepository.isBackupEnabled(),
+                backupEnabled = backupPreferencesState.value.isEnabled, 
                 signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
                 lastBackupTime = networkRepository.getLastBackupTime()
             )
@@ -138,11 +149,14 @@ class SettingsViewModel(private val networkRepository: NetworkRepository) : View
         SettingsViewModelState.Subsection.Theming("")
 
     companion object {
-        fun provideFactory(networkRepository: NetworkRepository): ViewModelProvider.Factory =
+        fun provideFactory(
+            networkRepository: NetworkRepository,
+            preferencesRepository: PreferencesRepository
+        ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SettingsViewModel(networkRepository) as T
+                    return SettingsViewModel(networkRepository, preferencesRepository) as T
                 }
             }
     }
@@ -200,7 +214,9 @@ data class SettingsViewModelState(
             val dataAvailable: Boolean,
             val backupEnabled: Boolean,
             val signedInGoogleAccountEmail: String? = null,
-            val lastBackupTime: LocalDateTime? = null
+            val lastBackupTime: LocalDateTime? = null,
+            val autoBackupFrequency: Int = 0,
+            val autoBackupTime: LocalTime = LocalTime.MIDNIGHT
         ) : Subsection
 
         data class Notifications(

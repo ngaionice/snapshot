@@ -6,15 +6,7 @@ interface NetworkRepository {
 
     fun isOnline(): Boolean
 
-    fun isBackupEnabled(): Boolean
-
     fun getLoggedInAccountEmail(): String?
-
-    fun setBackupEnabled(value: Boolean)
-
-    fun getBackupFrequency(): Int
-
-    fun setBackupFrequency(dayFreq: Int)
 
     suspend fun getLastBackupTime(): LocalDateTime?
 

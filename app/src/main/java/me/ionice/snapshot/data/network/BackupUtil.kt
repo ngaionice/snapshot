@@ -30,45 +30,7 @@ import java.time.ZoneId
 
 class BackupUtil(private val context: Context) {
 
-    private val preferences =
-        context.getSharedPreferences(
-            "${context.packageName}_${BACKUP_PREFS_KEY}",
-            Context.MODE_PRIVATE
-        )
-
-    fun isBackupEnabled(): Boolean =
-        preferences != null && preferences.getBoolean(IS_ENABLED_KEY, false)
-
     fun getLoggedInAccountEmail(): String? = GoogleSignIn.getLastSignedInAccount(context)?.email
-
-    fun setBackupEnabled(value: Boolean) {
-        with(preferences.edit()) {
-            putBoolean(IS_ENABLED_KEY, value)
-            apply()
-        }
-    }
-
-    /**
-     * Returns the automatic backup frequency. If a value has never been set, returns 0.
-     *
-     * 0 represents never, and all other values represent the number of days between automatic backups.
-     */
-    fun getBackupFrequency() = preferences.getInt(FREQUENCY_KEY, 0)
-
-    /**
-     * Sets the automatic backup frequency. Allowed values are 1 and non-negative multiples of 7.
-     *
-     * 0 represents never, and all other values represent the number of days between automatic backups.
-     */
-    fun setBackupFrequency(daysFreq: Int) {
-        if (daysFreq < 0 || (daysFreq.mod(7) != 0 && daysFreq != 1)) {
-            throw IllegalArgumentException("Backup day frequency has to be either 1, or a non-negative multiple of 7.")
-        }
-        with(preferences.edit()) {
-            putInt(FREQUENCY_KEY, daysFreq)
-            apply()
-        }
-    }
 
     suspend fun getLastBackupTime(): LocalDateTime? {
         val req = getDriveBackupFileRequest() ?: return null
@@ -210,12 +172,6 @@ class BackupUtil(private val context: Context) {
             }
             null
         }
-    }
-
-    companion object {
-        const val BACKUP_PREFS_KEY = "backup_preferences"
-        const val IS_ENABLED_KEY = "is_enabled"
-        const val FREQUENCY_KEY = "frequency"
     }
 }
 
