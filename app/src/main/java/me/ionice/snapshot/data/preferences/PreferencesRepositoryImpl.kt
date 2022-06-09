@@ -82,7 +82,7 @@ class PreferencesRepositoryImpl(private val dataStore: DataStore<Preferences>) :
             preferences[PreferencesKeys.NOTIFICATIONS_REMINDERS_ENABLED_KEY] ?: false
         val reminderTime = preferences[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY]?.let {
             LocalTime.ofSecondOfDay(it)
-        } ?: LocalTime.MIDNIGHT
+        } ?: LocalTime.of(22, 0)
         val isMemoriesEnabled = preferences[PreferencesKeys.NOTIFICATIONS_MEMORIES_ENABLED_KEY] ?: false
         return PreferencesRepository.NotificationsPreferences(isRemindersEnabled, reminderTime, isMemoriesEnabled)
     }

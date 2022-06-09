@@ -56,7 +56,7 @@ interface PreferencesRepository {
         val isMemoriesEnabled: Boolean
     ) {
         companion object {
-            val DEFAULT = NotificationsPreferences(false, LocalTime.MIDNIGHT, false)
+            val DEFAULT = NotificationsPreferences(false, LocalTime.of(22, 0), false)
         }
     }
 }
