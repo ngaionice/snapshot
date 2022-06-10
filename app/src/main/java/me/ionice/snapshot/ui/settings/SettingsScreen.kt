@@ -75,7 +75,7 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
                     navigationIcon = { BackButton(onBack = onBack) }) {
                     NotificationsScreen(
                         uiState = currState,
-                        onEnableReminders = { },
+                        onEnableReminders = { viewModel.setRemindersEnabled(it) },
                         onReminderTimeChange = {},
                         onEnableMemories = {})
 

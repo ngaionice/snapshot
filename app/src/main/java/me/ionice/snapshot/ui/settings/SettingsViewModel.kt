@@ -27,6 +27,12 @@ class SettingsViewModel(
         PreferencesRepository.BackupPreferences.DEFAULT
     )
 
+    private val notificationsPreferencesState = preferencesRepository.notificationsPreferencesFlow.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        PreferencesRepository.NotificationsPreferences.DEFAULT
+    )
+
     fun switchScreens(targetScreen: SettingsScreenSection) {
         viewModelState.update {
             it.copy(loading = true)
@@ -125,6 +131,19 @@ class SettingsViewModel(
         }
     }
 
+    fun setRemindersEnabled(enable: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.setIsDailyReminderEnabled(enable)
+            viewModelState.update {
+                if (it.subsection is SettingsViewModelState.Subsection.Notifications) {
+                    it.copy(subsection = it.subsection.copy(isRemindersEnabled = enable, reminderTime = notificationsPreferencesState.value.reminderTime))
+                } else {
+                    it.copy(subsection = initNotificationsState())
+                }
+            }
+        }
+    }
+
     fun clearSnackbarMessage() {
         viewModelState.update { it.copy(snackbarMessage = null) }
     }
@@ -135,15 +154,17 @@ class SettingsViewModel(
         } else {
             SettingsViewModelState.Subsection.Backup(
                 dataAvailable = true,
-                backupEnabled = backupPreferencesState.value.isEnabled, 
+                backupEnabled = backupPreferencesState.value.isEnabled,
                 signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
                 lastBackupTime = networkRepository.getLastBackupTime()
             )
         }
 
-
     private fun initNotificationsState(): SettingsViewModelState.Subsection.Notifications =
-        SettingsViewModelState.Subsection.Notifications("")
+        SettingsViewModelState.Subsection.Notifications(
+            isRemindersEnabled = notificationsPreferencesState.value.isRemindersEnabled,
+            reminderTime = notificationsPreferencesState.value.reminderTime
+        )
 
     private fun initThemingState(): SettingsViewModelState.Subsection.Theming =
         SettingsViewModelState.Subsection.Theming("")
@@ -195,7 +216,9 @@ data class SettingsViewModelState(
             is Subsection.Notifications -> {
                 SettingsUiState.Notifications(
                     loading = loading,
-                    snackbarMessage = snackbarMessage
+                    snackbarMessage = snackbarMessage,
+                    isRemindersEnabled = subsection.isRemindersEnabled,
+                    reminderTime = subsection.reminderTime
                 )
             }
             is Subsection.Theming -> {
@@ -220,7 +243,8 @@ data class SettingsViewModelState(
         ) : Subsection
 
         data class Notifications(
-            val placeholder: Any
+            val isRemindersEnabled: Boolean,
+            val reminderTime: LocalTime
         ) : Subsection
 
         data class Theming(
@@ -251,7 +275,9 @@ sealed interface SettingsUiState {
 
     data class Notifications(
         override val loading: Boolean,
-        override val snackbarMessage: String?
+        override val snackbarMessage: String?,
+        val isRemindersEnabled: Boolean,
+        val reminderTime: LocalTime
     ) : SettingsUiState
 
     data class Theming(

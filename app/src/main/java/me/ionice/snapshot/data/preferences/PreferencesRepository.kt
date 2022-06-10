@@ -24,6 +24,9 @@ interface PreferencesRepository {
 
     suspend fun setBackupTime(time: LocalTime)
 
+    /**
+     * If set to true, queues up daily reminders.
+     */
     suspend fun setIsDailyReminderEnabled(enable: Boolean)
 
     suspend fun setDailyReminderTime(time: LocalTime)

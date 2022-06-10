@@ -62,4 +62,19 @@
 
     <string name="settings_screen_theming_header">Theming</string>
     <string name="settings_screen_theming_subtitle"><![CDATA[Dynamic & custom themes]]></string>
+
+    <!--  notifications  -->
+    <string name="notification_reminders_channel_id">reminders_channel</string>
+    <string name="notification_memories_channel_id">memories_channel</string>
+
+    <string name="notification_reminders_channel_name">Reminders</string>
+    <string name="notification_memories_channel_name">Memories</string>
+
+    <string name="notification_reminders_channel_description">Daily reminders</string>
+    <string name="notification_memories_channel_description">Periodic memories</string>
+
+    <string name="notification_reminder_title">Snapshot your day</string>
+    <string name="notification_reminder_body">Complete your journal entry for the day!</string>
+
+
 </resources>

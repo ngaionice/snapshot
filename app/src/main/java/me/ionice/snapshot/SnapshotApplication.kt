@@ -1,62 +1,49 @@
 package me.ionice.snapshot
 
 import android.app.Application
-import androidx.work.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.graphics.Color
 import me.ionice.snapshot.data.AppContainer
 import me.ionice.snapshot.data.AppContainerImpl
-import me.ionice.snapshot.work.BackupSyncWorker
-import java.time.LocalTime
-import java.util.concurrent.TimeUnit
 
 class SnapshotApplication : Application() {
 
     lateinit var container: AppContainer
 
-    private val applicationScope = CoroutineScope(Dispatchers.Default)
-
     override fun onCreate() {
         super.onCreate()
         container = AppContainerImpl(this)
-        delayedInit()
+
+        createNotificationChannels()
     }
 
-    private fun delayedInit() {
-        applicationScope.launch {
-            setRecurringBackups()
-        }
-    }
+    private fun createNotificationChannels() {
+        val remindersChannel = NotificationChannel(
+            getString(R.string.notification_reminders_channel_id),
+            getString(R.string.notification_reminders_channel_name),
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
 
-    private fun setRecurringBackups() {
+        remindersChannel.enableLights(true)
+        remindersChannel.lightColor = Color.YELLOW
+        remindersChannel.enableVibration(true)
+        remindersChannel.description =
+            getString(R.string.notification_reminders_channel_description)
 
-        val backupFreq = container.networkRepository.getBackupFrequency()
+        val memoriesChannel = NotificationChannel(
+            getString(R.string.notification_memories_channel_id),
+            getString(R.string.notification_memories_channel_name),
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
 
-        if (backupFreq > 0) {
-            // TODO: un-hardcode backup time, add constraints
-            val targetBackupTime = LocalTime.of(2, 0).toSecondOfDay()
-            val currTime = LocalTime.now().toSecondOfDay()
+        memoriesChannel.enableLights(true)
+        memoriesChannel.lightColor = Color.YELLOW
+        memoriesChannel.enableVibration(true)
+        memoriesChannel.description = getString(R.string.notification_memories_channel_description)
 
-            val constraints =
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-
-            val initialDelay =
-                if (currTime > targetBackupTime) (24 * 60 * 60 - (currTime - targetBackupTime)) else (targetBackupTime - currTime)
-            val request = PeriodicWorkRequestBuilder<BackupSyncWorker>(
-                backupFreq.toLong(),
-                TimeUnit.DAYS
-            ).setInitialDelay(
-                initialDelay.toLong(), TimeUnit.SECONDS
-            ).setConstraints(constraints)
-                .build() // default retry is set to exponential with initial value of 10s, which is good
-            WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-                BackupSyncWorker.WORK_NAME,
-                ExistingPeriodicWorkPolicy.REPLACE,
-                request
-            )
-        } else {
-            WorkManager.getInstance(applicationContext).cancelUniqueWork(BackupSyncWorker.WORK_NAME)
-        }
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(remindersChannel)
+        manager.createNotificationChannel(memoriesChannel)
     }
 }
