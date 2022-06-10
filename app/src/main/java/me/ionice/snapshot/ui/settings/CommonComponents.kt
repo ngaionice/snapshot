@@ -5,11 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CloudSync
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -20,101 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.network.AuthResultContract
-import me.ionice.snapshot.ui.common.ConfirmationDialog
 import me.ionice.snapshot.ui.common.SectionHeader
-import me.ionice.snapshot.utils.Utils
-import java.time.LocalDateTime
-
-@Composable
-fun SettingsList(onBackupClick: () -> Unit, onNotificationsClick: () -> Unit, onThemingClick: () -> Unit) {
-    SettingsRow(
-        mainLabel = stringResource(R.string.settings_screen_backup_header),
-        secondaryLabel = stringResource(R.string.settings_screen_backup_subtitle),
-        icon = Icons.Outlined.CloudSync,
-        onClick = onBackupClick
-    )
-    SettingsRow(
-        mainLabel = stringResource(R.string.settings_screen_notifs_header),
-        secondaryLabel = stringResource(R.string.settings_screen_notifs_subtitle),
-        icon = Icons.Outlined.Notifications,
-        onClick = onNotificationsClick
-    )
-    SettingsRow(
-        mainLabel = stringResource(R.string.settings_screen_theming_header),
-        secondaryLabel = stringResource(R.string.settings_screen_theming_subtitle),
-        icon = Icons.Outlined.Palette,
-        onClick = onThemingClick
-    )
-}
-
-@Composable
-fun BackupScreenOptions(
-    isBackupInProgress: Boolean,
-    accountEmail: String?,
-    lastBackupTime: LocalDateTime?,
-    onSuccessfulLogin: (GoogleSignInAccount) -> Unit,
-    onStartBackup: () -> Unit,
-    onStartRestore: () -> Unit
-) {
-
-    var showBackupConfirmDialog by rememberSaveable { mutableStateOf(false) }
-    var showRestoreConfirmDialog by rememberSaveable { mutableStateOf(false) }
-
-    if (accountEmail != null) {
-        // Show email or something
-        SettingsRow(
-            mainLabel = stringResource(R.string.settings_screen_backup_selected_account),
-            secondaryLabel = accountEmail
-        )
-        SettingsRow(
-            mainLabel = stringResource(R.string.settings_screen_backup_last_backup),
-            secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter)
-                ?: stringResource(R.string.settings_screen_backup_last_backup_never)
-        )
-
-        Divider()
-
-        if (!isBackupInProgress) {
-            SettingsRow(
-                mainLabel = stringResource(R.string.settings_screen_backup_start_backup),
-                onClick = { showBackupConfirmDialog = true })
-            SettingsRow(
-                mainLabel = stringResource(R.string.settings_screen_backup_start_restore),
-                onClick = { showRestoreConfirmDialog = true })
-            ConfirmationDialog(
-                isOpen = showBackupConfirmDialog,
-                titleText = stringResource(R.string.settings_screen_backup_dialog_header),
-                contentText = stringResource(R.string.settings_screen_backup_dialog_content),
-                onConfirm = {
-                    onStartBackup()
-                    showBackupConfirmDialog = false
-                }, onCancel = {
-                    showBackupConfirmDialog = false
-                })
-            ConfirmationDialog(
-                isOpen = showRestoreConfirmDialog,
-                titleText = stringResource(R.string.settings_screen_restore_dialog_header),
-                contentText = stringResource(R.string.settings_screen_restore_dialog_content),
-                onConfirm = {
-                    onStartRestore()
-                    showRestoreConfirmDialog = false
-                }, onCancel = {
-                    showRestoreConfirmDialog = false
-                })
-
-        } else {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 24.dp), horizontalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-    } else {
-        SignInButton(onSuccessfulLogin = onSuccessfulLogin)
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -148,7 +51,7 @@ private fun ProminentSwitchPreview() {
 }
 
 @Composable
-private fun SwitchSetting(
+fun SwitchSetting(
     mainLabel: String,
     secondaryLabel: String? = null,
     checked: Boolean,
@@ -176,7 +79,7 @@ private fun SwitchSetting(
  * If button functionality is enabled, the button can be disabled by setting `loading` to `true`.
  */
 @Composable
-private fun SettingsRow(
+fun SettingsRow(
     mainLabel: String,
     secondaryLabel: String? = null,
     icon: ImageVector? = null,
@@ -249,7 +152,7 @@ private fun ScreenSubsection(headerText: String?, content: @Composable () -> Uni
 }
 
 @Composable
-private fun SignInButton(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
+fun SignInButton(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
     var helperText by remember { mutableStateOf<String?>(null) }
     val signInRequestCode = 1
     var enabled by remember { mutableStateOf(true) }
