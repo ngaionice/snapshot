@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.work.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -22,11 +23,14 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.SnapshotDatabase
+import me.ionice.snapshot.work.BackupSyncWorker
 import java.io.FileOutputStream
 import java.io.IOException
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 
 class BackupUtil(private val context: Context) {
 
@@ -195,4 +199,35 @@ class AuthResultContract : ActivityResultContract<Int, Task<GoogleSignInAccount>
             else -> null
         }
     }
+}
+
+// TODO: set up a proper function/method to store constraints and not hardcode it
+val autoBackupConstraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+
+fun setRecurringBackups(applicationContext: Context, backupFreq: Int, backupTime: LocalTime, constraints: Constraints) {
+    if (backupFreq > 0) {
+        val targetBackupTime = backupTime.toSecondOfDay()
+        val currTime = LocalTime.now().toSecondOfDay()
+
+        val initialDelay =
+            if (currTime > targetBackupTime) (24 * 60 * 60 - (currTime - targetBackupTime)) else (targetBackupTime - currTime)
+        val request = PeriodicWorkRequestBuilder<BackupSyncWorker>(
+            backupFreq.toLong(),
+            TimeUnit.DAYS
+        ).setInitialDelay(
+            initialDelay.toLong(), TimeUnit.SECONDS
+        ).setConstraints(constraints)
+            .build() // default retry is set to exponential with initial value of 10s, which is good
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+            BackupSyncWorker.WORK_NAME,
+            ExistingPeriodicWorkPolicy.REPLACE,
+            request
+        )
+    } else {
+        WorkManager.getInstance(applicationContext).cancelUniqueWork(BackupSyncWorker.WORK_NAME)
+    }
+}
+
+fun disableRecurringBackups(applicationContext: Context) {
+    WorkManager.getInstance(applicationContext).cancelUniqueWork(BackupSyncWorker.WORK_NAME)
 }

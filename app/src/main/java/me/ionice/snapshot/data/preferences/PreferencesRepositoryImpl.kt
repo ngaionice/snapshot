@@ -6,6 +6,8 @@ import androidx.datastore.preferences.core.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import me.ionice.snapshot.data.network.autoBackupConstraints
+import me.ionice.snapshot.data.network.setRecurringBackups
 import me.ionice.snapshot.notifications.cancelAlarm
 import me.ionice.snapshot.notifications.setAlarm
 import java.io.IOException
@@ -14,8 +16,7 @@ import java.time.LocalTime
 class PreferencesRepositoryImpl(
     private val applicationContext: Context,
     private val dataStore: DataStore<Preferences>
-) :
-    PreferencesRepository {
+) : PreferencesRepository {
 
     override val backupPreferencesFlow = dataStore.data.catch { e ->
         if (e is IOException) {
@@ -52,21 +53,31 @@ class PreferencesRepositoryImpl(
         dataStore.edit {
             it[PreferencesKeys.BACKUP_FREQUENCY_KEY] = daysFreq
         }
-        // TODO: set alarm accordingly
+        val backupTime = dataStore.data.first()
+            .toPreferences()[PreferencesKeys.BACKUP_TIME_KEY]?.let { LocalTime.ofSecondOfDay(it) }
+            ?: PreferencesRepository.BackupPreferences.DEFAULT.autoBackupTime
+        setRecurringBackups(applicationContext, daysFreq, backupTime, autoBackupConstraints)
     }
 
     override suspend fun setBackupTime(time: LocalTime) {
         dataStore.edit {
             it[PreferencesKeys.BACKUP_TIME_KEY] = time.toSecondOfDay() * 1L
         }
-        // TODO: set alarm accordingly
+        val currPrefs = dataStore.data.first().toPreferences()
+        val backupEnabled = currPrefs[PreferencesKeys.BACKUP_ENABLED_KEY] ?: false
+        val backupFreq = currPrefs[PreferencesKeys.BACKUP_FREQUENCY_KEY] ?: 0
+        if (backupEnabled && backupFreq > 0) {
+            setRecurringBackups(applicationContext, backupFreq, time, autoBackupConstraints)
+        }
     }
 
     override suspend fun setDailyReminderTime(time: LocalTime) {
         dataStore.edit {
             it[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY] = time.toSecondOfDay() * 1L
         }
-        if (dataStore.data.first().toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_ENABLED_KEY] == true) {
+        if (dataStore.data.first()
+                .toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_ENABLED_KEY] == true
+        ) {
             setAlarm(applicationContext, time)
         }
     }
@@ -76,8 +87,12 @@ class PreferencesRepositoryImpl(
             it[PreferencesKeys.NOTIFICATIONS_REMINDERS_ENABLED_KEY] = enable
         }
         if (enable) {
-            val reminderTime = dataStore.data.first().toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY]
-            setAlarm(applicationContext, if (reminderTime != null) LocalTime.ofSecondOfDay(reminderTime) else PreferencesRepository.NotificationsPreferences.DEFAULT.reminderTime)
+            val reminderTime = dataStore.data.first()
+                .toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY]
+            setAlarm(
+                applicationContext,
+                if (reminderTime != null) LocalTime.ofSecondOfDay(reminderTime) else PreferencesRepository.NotificationsPreferences.DEFAULT.reminderTime
+            )
         } else {
             cancelAlarm(applicationContext)
         }
