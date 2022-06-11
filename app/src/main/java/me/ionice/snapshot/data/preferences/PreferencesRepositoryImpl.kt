@@ -66,7 +66,9 @@ class PreferencesRepositoryImpl(
         dataStore.edit {
             it[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY] = time.toSecondOfDay() * 1L
         }
-        // TODO: set alarm accordingly
+        if (dataStore.data.first().toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_ENABLED_KEY] == true) {
+            setAlarm(applicationContext, time)
+        }
     }
 
     override suspend fun setIsDailyReminderEnabled(enable: Boolean) {
