@@ -31,30 +31,23 @@ fun SnapshotNavHost(
     toggleBottomNav: (Boolean) -> Unit
 ) {
 
-    val daysViewModel: DaysViewModel = viewModel(
-        factory = DaysViewModel.provideFactory(
-            appContainer.dayRepository,
-            appContainer.metricRepository
-        )
-    )
-
-    val metricsViewModel: MetricsViewModel =
-        viewModel(factory = MetricsViewModel.provideFactory(appContainer.metricRepository))
-
-    val settingsViewModel: SettingsViewModel =
-        viewModel(factory = SettingsViewModel.provideFactory(appContainer.networkRepository, appContainer.preferencesRepository))
-
     NavHost(navController = navController, startDestination = Screen.Days.name) {
         composable(Screen.Days.name) {
-            DaysScreen(viewModel = daysViewModel, showBottomNav = toggleBottomNav)
+            DaysScreen(viewModel = viewModel(
+                factory = DaysViewModel.provideFactory(
+                    appContainer.dayRepository,
+                    appContainer.metricRepository
+                )
+            ), showBottomNav = toggleBottomNav)
         }
 
         composable(Screen.Metrics.name) {
-            MetricsScreen(viewModel = metricsViewModel, toggleBottomNav = toggleBottomNav)
+            MetricsScreen(viewModel = viewModel(factory = MetricsViewModel.provideFactory(appContainer.metricRepository)), toggleBottomNav = toggleBottomNav)
         }
 
         composable(Screen.Settings.name) {
-            SettingsScreen(viewModel = settingsViewModel, toggleBottomNav = toggleBottomNav)
+            SettingsScreen(viewModel =
+            viewModel(factory = SettingsViewModel.provideFactory(appContainer.networkRepository, appContainer.preferencesRepository)), toggleBottomNav = toggleBottomNav)
         }
     }
 }
