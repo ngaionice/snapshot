@@ -146,9 +146,35 @@ private fun SwitchRowPreview() {
 }
 
 @Composable
-private fun ScreenSubsection(headerText: String?, content: @Composable () -> Unit) {
-    headerText?.let { SectionHeader(displayText = headerText) }
-    content()
+fun SettingsGroup(title: String, content: @Composable () -> Unit) {
+    Column(modifier = Modifier.padding(bottom = 16.dp)) {
+        SettingsGroupHeader(title = title)
+        content()
+    }
+}
+
+@Composable
+private fun SettingsGroupHeader(title: String) {
+    Row(modifier = Modifier.padding(start = 24.dp, end = 16.dp, top = 8.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(text = title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
+    }
+}
+
+@Preview
+@Composable
+private fun SettingsGroupTest() {
+    Column {
+        SettingsGroup(title = "Title 1") {
+            SettingsRow(mainLabel = "Text 1")
+            SettingsRow(mainLabel = "Text 2")
+            SettingsRow(mainLabel = "Text 3")
+        }
+        SettingsGroup(title = "Title 2") {
+            SettingsRow(mainLabel = "Text 4")
+            SettingsRow(mainLabel = "Text 5")
+            SettingsRow(mainLabel = "Text 6")
+        }
+    }
 }
 
 @Composable

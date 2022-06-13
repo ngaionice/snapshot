@@ -5,7 +5,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -17,10 +16,7 @@ import kotlinx.coroutines.launch
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.ConfirmationDialog
 import me.ionice.snapshot.ui.common.FunctionalityNotAvailableScreen
-import me.ionice.snapshot.ui.settings.ProminentSwitchSetting
-import me.ionice.snapshot.ui.settings.SettingsRow
-import me.ionice.snapshot.ui.settings.SettingsUiState
-import me.ionice.snapshot.ui.settings.SignInButton
+import me.ionice.snapshot.ui.settings.*
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime
 
@@ -119,7 +115,6 @@ private fun BackupFunctionalities(
 
     Column {
         BackupInfo(email = email, lastBackupTime = lastBackupTime)
-        Divider()
         if (isBackupInProgress) {
             BackupInProgress()
         } else {
@@ -139,15 +134,17 @@ private fun BackupEnabledToggle(isEnabled: Boolean, onIsEnabledChange: (Boolean)
 
 @Composable
 private fun BackupInfo(email: String, lastBackupTime: LocalDateTime?) {
-    SettingsRow(
-        mainLabel = stringResource(R.string.settings_screen_backup_selected_account),
-        secondaryLabel = email
-    )
-    SettingsRow(
-        mainLabel = stringResource(R.string.settings_screen_backup_last_backup),
-        secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter)
-            ?: stringResource(R.string.settings_screen_backup_last_backup_never)
-    )
+    SettingsGroup(title = stringResource(R.string.settings_screen_backup_general_subsection_header)) {
+        SettingsRow(
+            mainLabel = stringResource(R.string.settings_screen_backup_selected_account),
+            secondaryLabel = email
+        )
+        SettingsRow(
+            mainLabel = stringResource(R.string.settings_screen_backup_last_backup),
+            secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter)
+                ?: stringResource(R.string.settings_screen_backup_last_backup_never)
+        )
+    }
 }
 
 @Composable
@@ -155,12 +152,14 @@ private fun BackupActions(onStartBackup: () -> Unit, onStartRestore: () -> Unit)
     var showBackupDialog by rememberSaveable { mutableStateOf(false) }
     var showRestoreDialog by rememberSaveable { mutableStateOf(false) }
 
-    SettingsRow(
-        mainLabel = stringResource(R.string.settings_screen_backup_start_backup),
-        onClick = { showBackupDialog = true })
-    SettingsRow(
-        mainLabel = stringResource(R.string.settings_screen_backup_start_restore),
-        onClick = { showRestoreDialog = true })
+    SettingsGroup(title = stringResource(R.string.settings_screen_backup_actions_subsection_header)) {
+        SettingsRow(
+            mainLabel = stringResource(R.string.settings_screen_backup_start_backup),
+            onClick = { showBackupDialog = true })
+        SettingsRow(
+            mainLabel = stringResource(R.string.settings_screen_backup_start_restore),
+            onClick = { showRestoreDialog = true })
+    }
     ConfirmationDialog(
         isOpen = showBackupDialog,
         titleText = stringResource(R.string.settings_screen_backup_dialog_header),
