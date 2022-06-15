@@ -1,8 +1,11 @@
 package me.ionice.snapshot.data.network
 
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
 
 interface NetworkRepository {
+
+    val backupStatus: StateFlow<BackupState>
 
     fun isOnline(): Boolean
 
@@ -13,4 +16,10 @@ interface NetworkRepository {
     suspend fun backupDatabase(): Result<Unit>
 
     suspend fun restoreDatabase(): Result<Unit>
+
+    fun backupNow()
+
+    fun restoreNow()
+
+    data class BackupState(val isInProgress: Boolean, val action: String?, val isSuccess: Boolean?)
 }

@@ -5,14 +5,15 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.ConfirmationDialog
 import me.ionice.snapshot.ui.common.FunctionalityNotAvailableScreen
@@ -28,42 +29,21 @@ import java.time.LocalDateTime
 @Composable
 fun BackupScreen(
     uiState: SettingsUiState.Backup,
-    scope: CoroutineScope,
     onEnableBackup: (Boolean) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit,
-    onStartBackup: suspend () -> Unit,
-    onStartRestore: suspend () -> Unit,
-    toggleBottomNav: (Boolean) -> Unit
+    onStartBackup: () -> Unit,
+    onStartRestore: () -> Unit,
 ) {
 
-    var isBackupInProgress by remember {
-        mutableStateOf(false)
-    }
     if (!uiState.dataAvailable) {
         CannotBackupScreen()
     } else {
         CanBackupScreen(
             uiState = uiState,
-            isBackupInProgress = isBackupInProgress,
+            isBackupInProgress = uiState.isBackupInProgress,
             onEnableBackup = onEnableBackup,
-            onStartBackup = {
-                isBackupInProgress = true
-                toggleBottomNav(false)
-                scope.launch {
-                    onStartBackup()
-                    isBackupInProgress = false
-                    toggleBottomNav(true)
-                }
-            },
-            onStartRestore = {
-                isBackupInProgress = true
-                toggleBottomNav(false)
-                scope.launch {
-                    onStartRestore()
-                    isBackupInProgress = false
-                    toggleBottomNav(true)
-                }
-            },
+            onStartBackup = onStartBackup,
+            onStartRestore = onStartRestore,
             onSuccessfulLogin = onSuccessfulLogin
         )
     }

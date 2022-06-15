@@ -23,7 +23,9 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.SnapshotDatabase
-import me.ionice.snapshot.work.BackupSyncWorker
+import me.ionice.snapshot.work.BackupStatusNotifyWorker
+import me.ionice.snapshot.work.OneOffBackupSyncWorker
+import me.ionice.snapshot.work.PeriodicBackupSyncWorker
 import java.io.FileOutputStream
 import java.io.IOException
 import java.time.Instant
@@ -202,16 +204,24 @@ class AuthResultContract : ActivityResultContract<Int, Task<GoogleSignInAccount>
 }
 
 // TODO: set up a proper function/method to store constraints and not hardcode it
-val autoBackupConstraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+val autoBackupConstraints =
+    Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
-fun setRecurringBackups(applicationContext: Context, backupFreq: Int, backupTime: LocalTime, constraints: Constraints) {
+// TODO: refactor all the methods below properly so they go into BackupUtil and become the only public methods;
+//  make private the backupDatabase and restoreDatabase? need to consider the usages of the workers though
+fun setRecurringBackups(
+    applicationContext: Context,
+    backupFreq: Int,
+    backupTime: LocalTime,
+    constraints: Constraints
+) {
     if (backupFreq > 0) {
         val targetBackupTime = backupTime.toSecondOfDay()
         val currTime = LocalTime.now().toSecondOfDay()
 
         val initialDelay =
             if (currTime > targetBackupTime) (24 * 60 * 60 - (currTime - targetBackupTime)) else (targetBackupTime - currTime)
-        val request = PeriodicWorkRequestBuilder<BackupSyncWorker>(
+        val request = PeriodicWorkRequestBuilder<PeriodicBackupSyncWorker>(
             backupFreq.toLong(),
             TimeUnit.DAYS
         ).setInitialDelay(
@@ -219,15 +229,40 @@ fun setRecurringBackups(applicationContext: Context, backupFreq: Int, backupTime
         ).setConstraints(constraints)
             .build() // default retry is set to exponential with initial value of 10s, which is good
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-            BackupSyncWorker.WORK_NAME,
+            PeriodicBackupSyncWorker.WORK_NAME,
             ExistingPeriodicWorkPolicy.REPLACE,
             request
         )
     } else {
-        WorkManager.getInstance(applicationContext).cancelUniqueWork(BackupSyncWorker.WORK_NAME)
+        WorkManager.getInstance(applicationContext)
+            .cancelUniqueWork(PeriodicBackupSyncWorker.WORK_NAME)
     }
 }
 
 fun disableRecurringBackups(applicationContext: Context) {
-    WorkManager.getInstance(applicationContext).cancelUniqueWork(BackupSyncWorker.WORK_NAME)
+    WorkManager.getInstance(applicationContext).cancelUniqueWork(PeriodicBackupSyncWorker.WORK_NAME)
+}
+
+fun backupNow(applicationContext: Context) {
+    actionNow(applicationContext, OneOffBackupSyncWorker.WORK_TYPE_BACKUP)
+}
+
+fun restoreNow(applicationContext: Context) {
+    actionNow(applicationContext, OneOffBackupSyncWorker.WORK_TYPE_RESTORE)
+}
+
+private fun actionNow(applicationContext: Context, actionType: String) {
+    val backupRequest =
+        OneTimeWorkRequestBuilder<OneOffBackupSyncWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setInputData(workDataOf(OneOffBackupSyncWorker.WORK_TYPE to actionType))
+            .build()
+    val broadcastRequest =
+        OneTimeWorkRequestBuilder<BackupStatusNotifyWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .build()
+    WorkManager.getInstance(applicationContext)
+        .beginUniqueWork(OneOffBackupSyncWorker.WORK_NAME, ExistingWorkPolicy.KEEP, backupRequest)
+        .then(broadcastRequest)
+        .enqueue()
 }

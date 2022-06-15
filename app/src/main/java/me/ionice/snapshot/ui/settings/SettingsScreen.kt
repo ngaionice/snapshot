@@ -17,10 +17,9 @@ import me.ionice.snapshot.ui.settings.screens.ThemingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> Unit) {
+fun SettingsScreen(viewModel: SettingsViewModel) {
 
     val uiState by viewModel.uiState.collectAsState()
-    val scope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -57,12 +56,10 @@ fun SettingsScreen(viewModel: SettingsViewModel, toggleBottomNav: (Boolean) -> U
                 {
                     BackupScreen(
                         currState,
-                        scope = scope,
                         onEnableBackup = { viewModel.setBackupEnabled(it) },
                         onSuccessfulLogin = { viewModel.loggedInToGoogle(it) },
                         onStartBackup = { viewModel.backupDatabase() },
-                        onStartRestore = { viewModel.restoreDatabase() },
-                        toggleBottomNav = toggleBottomNav
+                        onStartRestore = { viewModel.restoreDatabase() }
                     )
 
                     BackHandler(onBack = onBack)

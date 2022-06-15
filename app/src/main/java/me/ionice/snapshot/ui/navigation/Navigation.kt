@@ -47,7 +47,7 @@ fun SnapshotNavHost(
 
         composable(Screen.Settings.name) {
             SettingsScreen(viewModel =
-            viewModel(factory = SettingsViewModel.provideFactory(appContainer.networkRepository, appContainer.preferencesRepository)), toggleBottomNav = toggleBottomNav)
+            viewModel(factory = SettingsViewModel.provideFactory(appContainer.networkRepository, appContainer.preferencesRepository)))
         }
     }
 }
