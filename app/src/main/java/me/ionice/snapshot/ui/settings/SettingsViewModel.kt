@@ -44,7 +44,8 @@ class SettingsViewModel(
                 }
 
                 if (viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup) {
-                    val subsection = viewModelState.value.subsection as SettingsViewModelState.Subsection.Backup
+                    val subsection =
+                        viewModelState.value.subsection as SettingsViewModelState.Subsection.Backup
                     viewModelState.value = viewModelState.value.copy(
                         subsection = subsection.copy(
                             isBackupInProgress = it.isInProgress,
@@ -121,11 +122,11 @@ class SettingsViewModel(
     }
 
     fun backupDatabase() {
-        networkRepository.backupNow()
+        networkRepository.startDatabaseBackup()
     }
 
     fun restoreDatabase() {
-        networkRepository.restoreNow()
+        networkRepository.startDatabaseRestore()
     }
 
     fun setRemindersEnabled(enable: Boolean) {

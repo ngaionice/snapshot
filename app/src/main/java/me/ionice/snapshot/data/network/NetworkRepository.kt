@@ -13,13 +13,9 @@ interface NetworkRepository {
 
     suspend fun getLastBackupTime(): LocalDateTime?
 
-    suspend fun backupDatabase(): Result<Unit>
+    fun startDatabaseBackup()
 
-    suspend fun restoreDatabase(): Result<Unit>
-
-    fun backupNow()
-
-    fun restoreNow()
+    fun startDatabaseRestore()
 
     data class BackupState(val isInProgress: Boolean, val action: String?, val isSuccess: Boolean?)
 }

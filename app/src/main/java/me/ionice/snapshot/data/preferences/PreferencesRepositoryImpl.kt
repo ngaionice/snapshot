@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import me.ionice.snapshot.data.network.BackupUtil
 import me.ionice.snapshot.data.network.autoBackupConstraints
-import me.ionice.snapshot.data.network.setRecurringBackups
 import me.ionice.snapshot.notifications.cancelAlarm
 import me.ionice.snapshot.notifications.setAlarm
 import java.io.IOException
@@ -17,6 +17,8 @@ class PreferencesRepositoryImpl(
     private val applicationContext: Context,
     private val dataStore: DataStore<Preferences>
 ) : PreferencesRepository {
+
+    private val backupUtil = BackupUtil(applicationContext)
 
     override val backupPreferencesFlow = dataStore.data.catch { e ->
         if (e is IOException) {
@@ -56,7 +58,7 @@ class PreferencesRepositoryImpl(
         val backupTime = dataStore.data.first()
             .toPreferences()[PreferencesKeys.BACKUP_TIME_KEY]?.let { LocalTime.ofSecondOfDay(it) }
             ?: PreferencesRepository.BackupPreferences.DEFAULT.autoBackupTime
-        setRecurringBackups(applicationContext, daysFreq, backupTime, autoBackupConstraints)
+        backupUtil.setRecurringBackups(daysFreq, backupTime, autoBackupConstraints)
     }
 
     override suspend fun setBackupTime(time: LocalTime) {
@@ -67,7 +69,7 @@ class PreferencesRepositoryImpl(
         val backupEnabled = currPrefs[PreferencesKeys.BACKUP_ENABLED_KEY] ?: false
         val backupFreq = currPrefs[PreferencesKeys.BACKUP_FREQUENCY_KEY] ?: 0
         if (backupEnabled && backupFreq > 0) {
-            setRecurringBackups(applicationContext, backupFreq, time, autoBackupConstraints)
+            backupUtil.setRecurringBackups(backupFreq, time, autoBackupConstraints)
         }
     }
 

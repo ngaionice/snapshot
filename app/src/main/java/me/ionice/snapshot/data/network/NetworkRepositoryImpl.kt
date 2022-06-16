@@ -57,19 +57,11 @@ class NetworkRepositoryImpl(private val applicationContext: Context) : NetworkRe
         return if (isOnline()) backupUtil.getLastBackupTime() else null
     }
 
-    override suspend fun backupDatabase(): Result<Unit> {
-        return if (isOnline()) backupUtil.backupDatabase() else Result.failure(Exception("Device is not connected to the internet."))
-    }
-
-    override suspend fun restoreDatabase(): Result<Unit> {
-        return if (isOnline()) backupUtil.restoreDatabase() else Result.failure(Exception("Device is not connected to the internet."))
-    }
-
-    override fun backupNow() {
+    override fun startDatabaseBackup() {
         _backupStatus.update { it.copy(isInProgress = true, action = ACTION_TYPE_BACKUP) }
         if (isOnline()) {
             registerReceiverIfNotRegistered()
-            backupNow(applicationContext)
+            backupUtil.startBackup()
         } else {
             _backupStatus.update {
                 it.copy(
@@ -81,11 +73,11 @@ class NetworkRepositoryImpl(private val applicationContext: Context) : NetworkRe
         }
     }
 
-    override fun restoreNow() {
+    override fun startDatabaseRestore() {
         _backupStatus.update { it.copy(isInProgress = true, action = ACTION_TYPE_RESTORE) }
         if (isOnline()) {
             registerReceiverIfNotRegistered()
-            restoreNow(applicationContext)
+            backupUtil.startRestore()
         } else {
             _backupStatus.update {
                 it.copy(

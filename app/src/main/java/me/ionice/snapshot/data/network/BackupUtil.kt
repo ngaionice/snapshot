@@ -49,10 +49,60 @@ class BackupUtil(private val context: Context) {
         }
     }
 
+    /**
+     * Closes the current database instance,
+     * and queues up an expedited WorkManager job to back up the database to Google Drive.
+     */
+    fun startBackup() {
+        SnapshotDatabase.closeAndLockInstance()
+        enqueueDatabaseWork(OneOffBackupSyncWorker.WORK_TYPE_BACKUP)
+    }
+
+    /**
+     * Closes the current database instance,
+     * and queues up an expedited WorkManager job to restore the database from Google Drive.
+     */
+    fun startRestore() {
+        SnapshotDatabase.closeAndLockInstance()
+        enqueueDatabaseWork(OneOffBackupSyncWorker.WORK_TYPE_RESTORE)
+    }
+
+    private fun enqueueDatabaseWork(actionType: String) {
+        val backupRequest =
+            OneTimeWorkRequestBuilder<OneOffBackupSyncWorker>()
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setInputData(workDataOf(OneOffBackupSyncWorker.WORK_TYPE to actionType))
+                .build()
+        val broadcastRequest =
+            OneTimeWorkRequestBuilder<BackupStatusNotifyWorker>()
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .build()
+        WorkManager.getInstance(context)
+            .beginUniqueWork(
+                OneOffBackupSyncWorker.WORK_NAME,
+                ExistingWorkPolicy.KEEP,
+                backupRequest
+            )
+            .then(broadcastRequest)
+            .enqueue()
+    }
+
+    /**
+     * Backs up the database immediately.
+     *
+     * Use with caution: if the Coroutine scope this function is called in gets cancelled,
+     * the behavior is unknown: the backup on Google Drive may be corrupted.
+     */
     suspend fun backupDatabase(): Result<Unit> {
         return backupOrRestoreDatabase(isRestoring = false)
     }
 
+    /**
+     * Restores the database immediately.
+     *
+     * Use with caution: if the Coroutine scope this function is called in gets cancelled,
+     * the behavior is unknown: the local copy may be corrupted.
+     */
     suspend fun restoreDatabase(): Result<Unit> {
         // check that the backup exists
         getExistingBackupId() ?: return Result.failure(Exception("No backup found."))
@@ -179,6 +229,35 @@ class BackupUtil(private val context: Context) {
             null
         }
     }
+
+    fun setRecurringBackups(
+        backupFreq: Int,
+        backupTime: LocalTime,
+        constraints: Constraints
+    ) {
+        if (backupFreq > 0) {
+            val targetBackupTime = backupTime.toSecondOfDay()
+            val currTime = LocalTime.now().toSecondOfDay()
+
+            val initialDelay =
+                if (currTime > targetBackupTime) (24 * 60 * 60 - (currTime - targetBackupTime)) else (targetBackupTime - currTime)
+            val request = PeriodicWorkRequestBuilder<PeriodicBackupSyncWorker>(
+                backupFreq.toLong(),
+                TimeUnit.DAYS
+            ).setInitialDelay(
+                initialDelay.toLong(), TimeUnit.SECONDS
+            ).setConstraints(constraints)
+                .build() // default retry is set to exponential with initial value of 10s, which is good
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                PeriodicBackupSyncWorker.WORK_NAME,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                request
+            )
+        } else {
+            WorkManager.getInstance(context)
+                .cancelUniqueWork(PeriodicBackupSyncWorker.WORK_NAME)
+        }
+    }
 }
 
 fun getGoogleSignInClient(context: Context): GoogleSignInClient {
@@ -206,63 +285,3 @@ class AuthResultContract : ActivityResultContract<Int, Task<GoogleSignInAccount>
 // TODO: set up a proper function/method to store constraints and not hardcode it
 val autoBackupConstraints =
     Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-
-// TODO: refactor all the methods below properly so they go into BackupUtil and become the only public methods;
-//  make private the backupDatabase and restoreDatabase? need to consider the usages of the workers though
-fun setRecurringBackups(
-    applicationContext: Context,
-    backupFreq: Int,
-    backupTime: LocalTime,
-    constraints: Constraints
-) {
-    if (backupFreq > 0) {
-        val targetBackupTime = backupTime.toSecondOfDay()
-        val currTime = LocalTime.now().toSecondOfDay()
-
-        val initialDelay =
-            if (currTime > targetBackupTime) (24 * 60 * 60 - (currTime - targetBackupTime)) else (targetBackupTime - currTime)
-        val request = PeriodicWorkRequestBuilder<PeriodicBackupSyncWorker>(
-            backupFreq.toLong(),
-            TimeUnit.DAYS
-        ).setInitialDelay(
-            initialDelay.toLong(), TimeUnit.SECONDS
-        ).setConstraints(constraints)
-            .build() // default retry is set to exponential with initial value of 10s, which is good
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-            PeriodicBackupSyncWorker.WORK_NAME,
-            ExistingPeriodicWorkPolicy.REPLACE,
-            request
-        )
-    } else {
-        WorkManager.getInstance(applicationContext)
-            .cancelUniqueWork(PeriodicBackupSyncWorker.WORK_NAME)
-    }
-}
-
-fun disableRecurringBackups(applicationContext: Context) {
-    WorkManager.getInstance(applicationContext).cancelUniqueWork(PeriodicBackupSyncWorker.WORK_NAME)
-}
-
-fun backupNow(applicationContext: Context) {
-    actionNow(applicationContext, OneOffBackupSyncWorker.WORK_TYPE_BACKUP)
-}
-
-fun restoreNow(applicationContext: Context) {
-    actionNow(applicationContext, OneOffBackupSyncWorker.WORK_TYPE_RESTORE)
-}
-
-private fun actionNow(applicationContext: Context, actionType: String) {
-    val backupRequest =
-        OneTimeWorkRequestBuilder<OneOffBackupSyncWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setInputData(workDataOf(OneOffBackupSyncWorker.WORK_TYPE to actionType))
-            .build()
-    val broadcastRequest =
-        OneTimeWorkRequestBuilder<BackupStatusNotifyWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .build()
-    WorkManager.getInstance(applicationContext)
-        .beginUniqueWork(OneOffBackupSyncWorker.WORK_NAME, ExistingWorkPolicy.KEEP, backupRequest)
-        .then(broadcastRequest)
-        .enqueue()
-}
