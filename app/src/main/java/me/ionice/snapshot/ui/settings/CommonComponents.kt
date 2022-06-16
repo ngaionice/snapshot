@@ -51,26 +51,32 @@ private fun ProminentSwitchPreview() {
 }
 
 @Composable
-fun SwitchSetting(
+fun SettingSwitch(
     mainLabel: String,
     secondaryLabel: String? = null,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .clickable(onClick = { onCheckedChange(!checked) })
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, 16.dp), verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = mainLabel, style = MaterialTheme.typography.titleLarge)
-            if (secondaryLabel != null) {
-                Text(text = secondaryLabel, style = MaterialTheme.typography.labelMedium)
+    Row(modifier = Modifier.clickable(onClick = { onCheckedChange(!checked) }).padding(horizontal = 24.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
+                .weight(1f)
+            , verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = mainLabel, style = MaterialTheme.typography.titleLarge)
+                if (secondaryLabel != null) {
+                    Text(text = secondaryLabel, style = MaterialTheme.typography.labelMedium)
+                }
             }
+
         }
+        Spacer(modifier = Modifier.width(16.dp))
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
+
 }
 
 /**
