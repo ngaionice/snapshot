@@ -36,22 +36,51 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
-            networkRepository.backupStatus.collect {
-                val snackbarMessage = if (it.isInProgress || it.action == null) {
-                    null
-                } else {
-                    "${it.action} ${if (it.isSuccess == true) "successful" else "failed"}"
-                }
+            observeBackupStatus()
+        }
+        viewModelScope.launch {
+            observeBackupPreferences()
+        }
+    }
 
-                if (viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup) {
-                    val subsection =
-                        viewModelState.value.subsection as SettingsViewModelState.Subsection.Backup
-                    viewModelState.value = viewModelState.value.copy(
+    /**
+     * A call to this function never completes normally, as it calls Flow.collect internally.
+     */
+    private suspend fun observeBackupStatus() {
+        networkRepository.backupStatus.collect {
+            val snackbarMessage = if (it.isInProgress || it.action == null) {
+                null
+            } else {
+                "${it.action} ${if (it.isSuccess == true) "successful" else "failed"}"
+            }
+
+            if (viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup) {
+                val subsection =
+                    viewModelState.value.subsection as SettingsViewModelState.Subsection.Backup
+                viewModelState.update { state ->
+                    state.copy(
                         subsection = subsection.copy(
                             isBackupInProgress = it.isInProgress,
                             lastBackupTime = if (!it.isInProgress) networkRepository.getLastBackupTime() else subsection.lastBackupTime
                         ),
                         snackbarMessage = snackbarMessage
+                    )
+                }
+            }
+        }
+    }
+
+    private suspend fun observeBackupPreferences() {
+        backupPreferencesState.collect { bState ->
+            if (viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup) {
+                viewModelState.update {
+                    val subsection = it.subsection as SettingsViewModelState.Subsection.Backup
+                    it.copy(
+                        subsection = subsection.copy(
+                            backupEnabled = bState.isEnabled,
+                            autoBackupTime = bState.autoBackupTime,
+                            autoBackupFrequency = bState.autoBackupFrequency
+                        )
                     )
                 }
             }
@@ -86,19 +115,12 @@ class SettingsViewModel(
     }
 
     fun setBackupEnabled(enable: Boolean) {
-        check(viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup)
         viewModelScope.launch {
             preferencesRepository.setIsBackupEnabled(enable)
-            viewModelState.update {
-                if (it.subsection is SettingsViewModelState.Subsection.Backup) {
-                    it.copy(
-                        subsection = it.subsection.copy(
-                            backupEnabled = enable,
-                            lastBackupTime = networkRepository.getLastBackupTime()
-                        )
-                    )
-                } else {
-                    it.copy(subsection = initBackupState())
+            if (viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup) {
+                viewModelState.update {
+                    val subsection = it.subsection as SettingsViewModelState.Subsection.Backup
+                    it.copy(subsection = subsection.copy(lastBackupTime = networkRepository.getLastBackupTime()))
                 }
             }
         }
@@ -147,6 +169,20 @@ class SettingsViewModel(
         }
     }
 
+    // these should be ok to use with viewModelScope because these are really short writes,
+    // and not a big deal if they fail
+    fun setBackupFrequency(freq: Int) {
+        viewModelScope.launch {
+            preferencesRepository.setBackupFrequency(freq)
+        }
+    }
+
+    fun setBackupTime(time: LocalTime) {
+        viewModelScope.launch {
+            preferencesRepository.setBackupTime(time)
+        }
+    }
+
     fun clearSnackbarMessage() {
         viewModelState.update { it.copy(snackbarMessage = null) }
     }
@@ -160,7 +196,9 @@ class SettingsViewModel(
                 backupEnabled = backupPreferencesState.value.isEnabled,
                 signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
                 lastBackupTime = networkRepository.getLastBackupTime(),
-                isBackupInProgress = networkRepository.backupStatus.value.isInProgress
+                isBackupInProgress = networkRepository.backupStatus.value.isInProgress,
+                autoBackupFrequency = backupPreferencesState.value.autoBackupFrequency,
+                autoBackupTime = backupPreferencesState.value.autoBackupTime
             )
         }
 
@@ -215,7 +253,9 @@ data class SettingsViewModelState(
                     signedInGoogleAccountEmail = subsection.signedInGoogleAccountEmail,
                     lastBackupTime = subsection.lastBackupTime,
                     snackbarMessage = snackbarMessage,
-                    isBackupInProgress = subsection.isBackupInProgress
+                    isBackupInProgress = subsection.isBackupInProgress,
+                    autoBackupTime = subsection.autoBackupTime,
+                    autoBackupFrequency = subsection.autoBackupFrequency
                 )
             }
             is Subsection.Notifications -> {
@@ -277,7 +317,9 @@ sealed interface SettingsUiState {
         val backupEnabled: Boolean,
         val signedInGoogleAccountEmail: String?,
         val lastBackupTime: LocalDateTime?,
-        val isBackupInProgress: Boolean
+        val isBackupInProgress: Boolean,
+        val autoBackupFrequency: Int,
+        val autoBackupTime: LocalTime,
     ) : SettingsUiState
 
     data class Notifications(

@@ -4,12 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -20,11 +19,7 @@ import me.ionice.snapshot.ui.common.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.settings.*
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime
-
-// TODO:
-//  - move isBackupInProgress and the suspend functions to ViewModel;
-//    being able to cancel the backup if leaving the screen can be dangerous,
-//    and whether backup is in progress should not be decided by the UI
+import java.time.LocalTime
 
 @Composable
 fun BackupScreen(
@@ -33,6 +28,8 @@ fun BackupScreen(
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit,
     onStartBackup: () -> Unit,
     onStartRestore: () -> Unit,
+    onBackupFreqChange: (Int) -> Unit,
+    onBackupTimeChange: (LocalTime) -> Unit
 ) {
 
     if (!uiState.dataAvailable) {
@@ -44,7 +41,9 @@ fun BackupScreen(
             onEnableBackup = onEnableBackup,
             onStartBackup = onStartBackup,
             onStartRestore = onStartRestore,
-            onSuccessfulLogin = onSuccessfulLogin
+            onSuccessfulLogin = onSuccessfulLogin,
+            onBackupFreqChange = onBackupFreqChange,
+            onBackupTimeChange = onBackupTimeChange
         )
     }
 }
@@ -61,6 +60,8 @@ private fun CanBackupScreen(
     onEnableBackup: (Boolean) -> Unit,
     onStartBackup: () -> Unit,
     onStartRestore: () -> Unit,
+    onBackupFreqChange: (Int) -> Unit,
+    onBackupTimeChange: (LocalTime) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit
 ) {
     Column {
@@ -74,8 +75,12 @@ private fun CanBackupScreen(
                     isBackupInProgress = isBackupInProgress,
                     email = uiState.signedInGoogleAccountEmail,
                     lastBackupTime = uiState.lastBackupTime,
+                    backupFreq = uiState.autoBackupFrequency,
+                    backupTime = uiState.autoBackupTime,
                     onStartBackup = onStartBackup,
-                    onStartRestore = onStartRestore
+                    onStartRestore = onStartRestore,
+                    onBackupFreqChange = onBackupFreqChange,
+                    onBackupTimeChange = onBackupTimeChange
                 )
             } else {
                 SignInButton(onSuccessfulLogin = onSuccessfulLogin)
@@ -89,15 +94,26 @@ private fun BackupFunctionalities(
     isBackupInProgress: Boolean,
     email: String,
     lastBackupTime: LocalDateTime?,
+    backupFreq: Int,
+    backupTime: LocalTime,
     onStartBackup: () -> Unit,
-    onStartRestore: () -> Unit
+    onStartRestore: () -> Unit,
+    onBackupFreqChange: (Int) -> Unit,
+    onBackupTimeChange: (LocalTime) -> Unit
 ) {
+    val scrollState = rememberScrollState()
 
-    Column {
+    Column(modifier = Modifier.verticalScroll(scrollState)) {
         BackupInfo(email = email, lastBackupTime = lastBackupTime)
         if (isBackupInProgress) {
             BackupInProgress()
         } else {
+            AutoBackupOptions(
+                onBackupFreqChange = onBackupFreqChange,
+                onBackupTimeChange = onBackupTimeChange,
+                backupFreq = backupFreq,
+                backupTime = backupTime
+            )
             BackupActions(onStartBackup = onStartBackup, onStartRestore = onStartRestore)
         }
     }
@@ -125,6 +141,113 @@ private fun BackupInfo(email: String, lastBackupTime: LocalDateTime?) {
                 ?: stringResource(R.string.settings_screen_backup_last_backup_never)
         )
     }
+}
+
+@Composable
+private fun AutoBackupOptions(
+    backupFreq: Int,
+    backupTime: LocalTime,
+    onBackupFreqChange: (Int) -> Unit,
+    onBackupTimeChange: (LocalTime) -> Unit
+) {
+    var showFreqPickerDialog by rememberSaveable { mutableStateOf(false) }
+    var showTimePickerDialog by rememberSaveable { mutableStateOf(false) }
+
+    val freqOptions = listOf(
+        Pair(0, "Never"),
+        Pair(1, "Daily"),
+        Pair(7, "Weekly"),
+        Pair(14, "Biweekly"),
+        Pair(28, "Monthly")
+    )
+
+    val backupFreqText = when (backupFreq) {
+        0 -> "Never"
+        1 -> "Daily"
+        7 -> "Weekly"
+        14 -> "Biweekly"
+        28 -> "Monthly"
+        else -> throw IllegalArgumentException("backupFreq should be one of 0, 1, 7, 14, 28")
+    }
+
+    SettingsGroup(title = "Automatic backups") {
+        SettingsRow(
+            mainLabel = "Backup frequency",
+            secondaryLabel = backupFreqText,
+            onClick = { showFreqPickerDialog = true })
+        SettingsRow(
+            mainLabel = "Backup time",
+            secondaryLabel = backupTime.format(Utils.timeFormatter),
+            onClick = { showTimePickerDialog = true },
+            disabled = backupFreq <= 0)
+    }
+
+    if (showFreqPickerDialog) {
+        BackupFreqPickerDialog(
+            selected = freqOptions.find { (f, _) -> f == backupFreq } ?: throw IllegalArgumentException(
+                "Illegal backupFreq value"
+            ),
+            options = freqOptions,
+            onSelection = {
+                onBackupFreqChange(it.first)
+                showFreqPickerDialog = false
+            },
+            onClose = { showFreqPickerDialog = false }
+        )
+    }
+    TimePickerDialog(isOpen = showTimePickerDialog,
+        initialTime = backupTime,
+        onSelection = {
+            onBackupTimeChange(it)
+            showTimePickerDialog = false
+        },
+        onClose = { showTimePickerDialog = false })
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BackupFreqPickerDialog(
+    selected: Pair<Int, String>,
+    options: List<Pair<Int, String>>,
+    onSelection: (Pair<Int, String>) -> Unit,
+    onClose: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var current by remember { mutableStateOf(selected) }
+
+    AlertDialog(
+        onDismissRequest = onClose,
+        text = {
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }) {
+                TextField(
+                    readOnly = true,
+                    value = current.second,
+                    onValueChange = {},
+                    label = { Text("Backup Frequency") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    options.forEach { selectionOption ->
+                        DropdownMenuItem(
+                            text = { Text(selectionOption.second) },
+                            onClick = {
+                                current = selectionOption
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = { Button(onClick = { onSelection(current) }) { Text("OK") } },
+        dismissButton = { TextButton(onClick = onClose) { Text("Cancel") } })
+
 }
 
 @Composable

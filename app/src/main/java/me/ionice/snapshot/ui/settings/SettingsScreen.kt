@@ -59,7 +59,9 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                         onEnableBackup = { viewModel.setBackupEnabled(it) },
                         onSuccessfulLogin = { viewModel.loggedInToGoogle(it) },
                         onStartBackup = { viewModel.backupDatabase() },
-                        onStartRestore = { viewModel.restoreDatabase() }
+                        onStartRestore = { viewModel.restoreDatabase() },
+                        onBackupTimeChange = { viewModel.setBackupTime(it) },
+                        onBackupFreqChange = { viewModel.setBackupFrequency(it) }
                     )
 
                     BackHandler(onBack = onBack)
