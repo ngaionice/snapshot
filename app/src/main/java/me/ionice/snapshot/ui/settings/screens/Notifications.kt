@@ -16,7 +16,7 @@ fun NotificationsScreen(
     onEnableMemories: (Boolean) -> Unit
 ) {
     Column {
-        SettingSwitch(mainLabel = "Use daily reminders", secondaryLabel = "test", checked = uiState.isRemindersEnabled, onCheckedChange = {onEnableReminders(it)})
+        SettingSwitch(mainLabel = "Use daily reminders", checked = uiState.isRemindersEnabled, onCheckedChange = {onEnableReminders(it)})
         if (uiState.isRemindersEnabled) {
             SettingsRow(mainLabel = "Remind at", secondaryLabel = Utils.timeFormatter.format(uiState.reminderTime))
         }
