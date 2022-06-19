@@ -3,13 +3,18 @@ package me.ionice.snapshot.data.preferences
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import androidx.work.WorkManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.network.BackupUtil
 import me.ionice.snapshot.data.network.autoBackupConstraints
 import me.ionice.snapshot.notifications.cancelAlarm
 import me.ionice.snapshot.notifications.setAlarm
+import me.ionice.snapshot.work.PeriodicBackupSyncWorker
 import java.io.IOException
 import java.time.LocalTime
 
@@ -35,6 +40,31 @@ class PreferencesRepositoryImpl(
             throw e
         }
     }.map { mapNotificationsPreferences(it) }
+
+    init {
+        val manager = WorkManager.getInstance(applicationContext)
+        registerBackgroundActions(manager)
+    }
+
+    private fun registerBackgroundActions(manager: WorkManager) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val backupPrefs = getInitialBackupPreferences()
+            val notificationsPrefs = getInitialNotificationsPreferences()
+            if (backupPrefs.autoBackupFrequency > 0 && manager.getWorkInfosByTag(PeriodicBackupSyncWorker.WORK_NAME).get().isEmpty()) {
+                backupUtil.setRecurringBackups(backupPrefs.autoBackupFrequency, backupPrefs.autoBackupTime, autoBackupConstraints)
+            }
+            if (notificationsPrefs.isRemindersEnabled) {
+                val reminderTime = dataStore.data.first()
+                    .toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY]
+                setAlarm(
+                    applicationContext,
+                    if (reminderTime != null) LocalTime.ofSecondOfDay(reminderTime) else PreferencesRepository.NotificationsPreferences.DEFAULT.reminderTime
+                )
+            }
+        }
+
+
+    }
 
     override suspend fun getInitialBackupPreferences(): PreferencesRepository.BackupPreferences =
         mapBackupPreferences(dataStore.data.first().toPreferences())
