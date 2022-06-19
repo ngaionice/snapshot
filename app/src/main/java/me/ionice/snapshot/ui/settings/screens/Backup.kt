@@ -154,29 +154,29 @@ private fun AutoBackupOptions(
     var showTimePickerDialog by rememberSaveable { mutableStateOf(false) }
 
     val freqOptions = listOf(
-        Pair(0, "Never"),
-        Pair(1, "Daily"),
-        Pair(7, "Weekly"),
-        Pair(14, "Biweekly"),
-        Pair(28, "Monthly")
+        Pair(0, stringResource(R.string.settings_auto_backup_freq_never)),
+        Pair(1, stringResource(R.string.settings_auto_backup_freq_daily)),
+        Pair(7, stringResource(R.string.settings_auto_backup_freq_weekly)),
+        Pair(14, stringResource(R.string.settings_auto_backup_freq_every_two_weeks)),
+        Pair(28, stringResource(R.string.settings_auto_backup_freq_every_four_weeks))
     )
 
     val backupFreqText = when (backupFreq) {
-        0 -> "Never"
-        1 -> "Daily"
-        7 -> "Weekly"
-        14 -> "Biweekly"
-        28 -> "Monthly"
+        0 -> stringResource(R.string.settings_auto_backup_freq_never)
+        1 -> stringResource(R.string.settings_auto_backup_freq_daily)
+        7 -> stringResource(R.string.settings_auto_backup_freq_weekly)
+        14 -> stringResource(R.string.settings_auto_backup_freq_every_two_weeks)
+        28 -> stringResource(R.string.settings_auto_backup_freq_every_four_weeks)
         else -> throw IllegalArgumentException("backupFreq should be one of 0, 1, 7, 14, 28")
     }
 
-    SettingsGroup(title = "Automatic backups") {
+    SettingsGroup(title = stringResource(R.string.settings_screen_backup_auto_backup_subsection_header)) {
         SettingsRow(
-            mainLabel = "Backup frequency",
+            mainLabel = stringResource(R.string.settings_auto_backup_frequency),
             secondaryLabel = backupFreqText,
             onClick = { showFreqPickerDialog = true })
         SettingsRow(
-            mainLabel = "Backup time",
+            mainLabel = stringResource(R.string.settings_auto_backup_time),
             secondaryLabel = backupTime.format(Utils.timeFormatter),
             onClick = { showTimePickerDialog = true },
             disabled = backupFreq <= 0)
@@ -225,7 +225,7 @@ private fun BackupFreqPickerDialog(
                     readOnly = true,
                     value = current.second,
                     onValueChange = {},
-                    label = { Text("Backup Frequency") },
+                    label = { Text(stringResource(R.string.settings_auto_backup_frequency)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(),
                 )
@@ -245,8 +245,8 @@ private fun BackupFreqPickerDialog(
                 }
             }
         },
-        confirmButton = { Button(onClick = { onSelection(current) }) { Text("OK") } },
-        dismissButton = { TextButton(onClick = onClose) { Text("Cancel") } })
+        confirmButton = { Button(onClick = { onSelection(current) }) { Text(stringResource(R.string.common_dialog_ok)) } },
+        dismissButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.common_dialog_cancel)) } })
 
 }
 
@@ -255,7 +255,7 @@ private fun BackupActions(onStartBackup: () -> Unit, onStartRestore: () -> Unit)
     var showBackupDialog by rememberSaveable { mutableStateOf(false) }
     var showRestoreDialog by rememberSaveable { mutableStateOf(false) }
 
-    SettingsGroup(title = stringResource(R.string.settings_screen_backup_actions_subsection_header)) {
+    SettingsGroup(title = stringResource(R.string.settings_screen_backup_manual_actions_subsection_header)) {
         SettingsRow(
             mainLabel = stringResource(R.string.settings_screen_backup_start_backup),
             onClick = { showBackupDialog = true })
