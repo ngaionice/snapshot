@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.ui.common.*
+import me.ionice.snapshot.ui.days.screens.ListScreen
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
@@ -43,7 +44,7 @@ fun DaysScreen(viewModel: DaysViewModel, showBottomNav: (Boolean) -> Unit) {
     } else {
         when (uiState) {
             is DayUiState.DayList -> {
-                DayListScreen(
+                ListScreen(
                     uiState = uiState as DayUiState.DayList,
                     onDaySelect = { viewModel.selectDay(it) },
                     onDayAdd = { viewModel.addDay(it) },
@@ -96,64 +97,6 @@ fun DaysScreen(viewModel: DaysViewModel, showBottomNav: (Boolean) -> Unit) {
                         })
                 }
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DayListScreen(
-    uiState: DayUiState.DayList,
-    onDaySelect: (Long) -> Unit,
-    onDayAdd: (Long) -> Unit,
-    onSwitchYear: (Int) -> Unit,
-    onSearch: (String) -> Unit,
-    onClearSearch: () -> Unit
-) {
-
-    var showDatePicker by remember { mutableStateOf(false) }
-
-    var showNaDialog by remember { mutableStateOf(false) }
-
-    BaseScreen(
-        headerBar = {
-            SearchHeaderBar(
-                placeholderText = "Search daily summaries in ${uiState.year}",
-                onSearchStringChange = {
-                    if (it.isNotEmpty()) {
-                        onSearch(it)
-                    } else {
-                        onClearSearch()
-                    }
-                },
-                onSearchBarActiveStateChange = {
-                    // TODO: change system bar colors
-                },
-                leadingIcon = {
-                    Icon(
-                        Icons.Filled.Search,
-                        contentDescription = null,
-                        modifier = Modifier.padding(12.dp)
-                    )
-                },
-                trailingIcon = {
-                    SwitchYearButton(onSwitch = onSwitchYear)
-                })
-        },
-        floatingActionButton = {
-            AddFAB(
-                onClick = { showDatePicker = true },
-                description = stringResource(R.string.day_screen_add_day)
-            )
-        }) {
-        EntryList(days = uiState.entries, onDaySelect = onDaySelect)
-        if (showDatePicker) {
-            DatePicker(
-                onSelect = { day -> onDayAdd(day) },
-                onDismissRequest = { showDatePicker = false })
-        }
-        FunctionalityNotYetAvailableDialog(isOpen = showNaDialog) {
-            showNaDialog = false
         }
     }
 }
