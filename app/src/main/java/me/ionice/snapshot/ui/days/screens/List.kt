@@ -1,5 +1,6 @@
 package me.ionice.snapshot.ui.days.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -116,41 +117,44 @@ private fun EntryList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EntryListItem(day: DayWithMetrics, onClick: () -> Unit) {
     val date = LocalDate.ofEpochDay(day.day.id)
     val location: String = day.day.location
     val metricCount = day.metrics.size
 
-    Card(modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp), onClick = onClick) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp)) {
-            Column(
-                verticalArrangement = Arrangement.Center, modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = Utils.dateFormatter.format(date),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = pluralStringResource(
-                        R.plurals.day_screen_metric_count,
-                        metricCount,
-                        metricCount
-                    ),
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal)
-                )
-            }
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .weight(0.75f)
-                    .fillMaxHeight()
-            ) {
-                Text(text = location, style = MaterialTheme.typography.labelLarge)
-            }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(vertical = 16.dp, horizontal = 24.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center, modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            Text(
+                text = Utils.dateFormatter.format(date),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                text = pluralStringResource(
+                    R.plurals.day_screen_metric_count,
+                    metricCount,
+                    metricCount
+                ),
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal)
+            )
+        }
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .weight(0.75f)
+                .fillMaxHeight()
+        ) {
+            Text(text = location, style = MaterialTheme.typography.labelLarge)
         }
     }
 }
