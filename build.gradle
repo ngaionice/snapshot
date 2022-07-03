@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        compose_version = '1.2.0-beta03'
+        compose_version = '1.2.0-rc02'
         room_version = '2.4.2'
         coroutine_version = '1.6.1'
         workmanager_version = '2.7.1'
