@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.days.screens
+package me.ionice.snapshot.ui.days.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,22 +16,22 @@ import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.AddFAB
 import me.ionice.snapshot.ui.common.BackButton
 import me.ionice.snapshot.ui.common.BaseScreen
-import me.ionice.snapshot.ui.days.DayUiState
+import me.ionice.snapshot.ui.days.DayEntryUiState
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EntryNotAvailableScreen(
-    uiState: DayUiState.DayEntryNotFound,
+    uiState: DayEntryUiState.EntryNotFound,
     onDayAdd: (Long) -> Unit,
     onBack: () -> Unit
 ) {
     BaseScreen(
-        headerText = Utils.dateFormatter.format(LocalDate.ofEpochDay(uiState.date)),
+        headerText = Utils.dateFormatter.format(LocalDate.ofEpochDay(uiState.dayId)),
         navigationIcon = { BackButton(onBack) }, floatingActionButton = {
             AddFAB(
-                onClick = { onDayAdd(uiState.date) },
+                onClick = { onDayAdd(uiState.dayId) },
                 description = stringResource(R.string.day_screen_add_day)
             )
         },

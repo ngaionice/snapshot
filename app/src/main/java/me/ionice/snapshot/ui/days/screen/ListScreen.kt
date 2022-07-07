@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.days.screens
+package me.ionice.snapshot.ui.days.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,14 +23,40 @@ import me.ionice.snapshot.ui.common.AddFAB
 import me.ionice.snapshot.ui.common.BaseScreen
 import me.ionice.snapshot.ui.common.DatePicker
 import me.ionice.snapshot.ui.common.SearchHeaderBar
-import me.ionice.snapshot.ui.days.DayUiState
+import me.ionice.snapshot.ui.days.DayListUiState
+import me.ionice.snapshot.ui.days.DayListViewModel
+import me.ionice.snapshot.ui.days.DaySearchQuery
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
+@Composable
+fun ListRoute(viewModel: DayListViewModel, onSelectItem: (Long) -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    ListScreen(
+        uiState = uiState,
+        onDaySelect = onSelectItem,
+        onDayAdd = {
+            viewModel.insertDay(it)
+            onSelectItem(it)
+        },
+        onSwitchYear = viewModel::switchYear,
+        onSearch = {
+            viewModel.search(
+                DaySearchQuery(
+                    uiState.year,
+                    it
+                )
+            )
+        },
+        onClearSearch = viewModel::clearSearch
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListScreen(
-    uiState: DayUiState.DayList,
+private fun ListScreen(
+    uiState: DayListUiState,
     onDaySelect: (Long) -> Unit,
     onDayAdd: (Long) -> Unit,
     onSwitchYear: (Int) -> Unit,
@@ -58,7 +84,7 @@ fun ListScreen(
         EntryList(days = uiState.entries, onDaySelect = onDaySelect)
         if (showDatePicker) {
             DatePicker(
-                onSelect = { day -> onDayAdd(day) },
+                onSelect = onDayAdd,
                 onDismissRequest = { showDatePicker = false })
         }
     }
@@ -150,6 +176,8 @@ private fun EntryListItem(day: DayWithMetrics, onClick: () -> Unit) {
         }
         Column(
             verticalArrangement = Arrangement.Center,
+//            TODO: move metric count and location to right; show summary preview on left
+//            horizontalAlignment = Alignment.End,
             modifier = Modifier
                 .weight(0.75f)
                 .fillMaxHeight()
