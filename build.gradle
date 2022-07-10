@@ -2,7 +2,7 @@ buildscript {
     ext {
         compose_version = '1.2.0-rc02'
         room_version = '2.4.2'
-        coroutine_version = '1.6.1'
+        coroutine_version = '1.6.3'
         workmanager_version = '2.7.1'
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
