@@ -126,17 +126,18 @@ data class DayEntryViewModelState(
     val day: DayWithMetrics? = null,
     val metricKeys: List<MetricKey> = emptyList()
 ) {
-    fun toUiState(): DayEntryUiState = if (day != null) {
+    fun toUiState(): DayEntryUiState = if (loading) {
+        DayEntryUiState.Loading(dayId = dayId)
+    } else if (day == null) {
+        DayEntryUiState.EntryNotFound(dayId = dayId)
+    } else {
         DayEntryUiState.EntryFound(
-            loading = loading,
             dayId = dayId,
             summary = day.day.summary,
             location = day.day.location,
             metrics = day.metrics,
             metricKeys = metricKeys
         )
-    } else {
-        DayEntryUiState.EntryNotFound(loading = loading, dayId = dayId)
     }
 }
 
@@ -148,14 +149,16 @@ data class DayEntryViewModelState(
  */
 sealed interface DayEntryUiState {
 
-    val loading: Boolean
     val dayId: Long
+
+    data class Loading(
+        override val dayId: Long
+    ) : DayEntryUiState
 
     /**
      * When an entry is available for the specified date.
      */
     data class EntryFound(
-        override val loading: Boolean,
         override val dayId: Long,
         val summary: String,
         val location: String,
@@ -167,7 +170,6 @@ sealed interface DayEntryUiState {
      * When an entry is not available for the specified date.
      */
     data class EntryNotFound(
-        override val loading: Boolean,
         override val dayId: Long
     ) : DayEntryUiState
 }

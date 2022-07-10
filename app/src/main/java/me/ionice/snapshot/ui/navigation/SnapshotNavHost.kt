@@ -21,24 +21,12 @@ fun SnapshotNavHost(
     appContainer: AppContainer,
     toggleBottomNav: (Boolean) -> Unit
 ) {
-
-    // TODO: this scopes it to the lifecycle of the app, bad idea. need refactor later
-    val dayListViewModel: DayListViewModel = viewModel(
-        factory = DayListViewModel.provideFactory(
-            appContainer.dayRepository,
-            appContainer.metricRepository
-        )
-    )
-
-    val dayEntryViewModel: DayEntryViewModel = viewModel(
-        factory = DayEntryViewModel.provideFactory(
-            appContainer.dayRepository,
-            appContainer.metricRepository
-        )
-    )
-
     NavHost(navController = navController, startDestination = DayDestination.route) {
-        dayGraph(navController = navController, dayListViewModel = dayListViewModel, dayEntryViewModel = dayEntryViewModel)
+        dayGraph(
+            navController = navController,
+            dayRepository = appContainer.dayRepository,
+            metricRepository = appContainer.metricRepository
+        )
 
         composable(Screen.Metrics.name) {
             MetricsScreen(

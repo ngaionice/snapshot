@@ -12,7 +12,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,43 +26,14 @@ import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
 import me.ionice.snapshot.ui.common.BackButton
 import me.ionice.snapshot.ui.common.BaseScreen
-import me.ionice.snapshot.ui.common.LoadingScreen
 import me.ionice.snapshot.ui.common.SectionHeader
 import me.ionice.snapshot.ui.days.DayEntryUiState
-import me.ionice.snapshot.ui.days.DayEntryViewModel
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
-@Composable
-fun ViewRoute(viewModel: DayEntryViewModel, day: Long, onEditItem: () -> Unit, onBack: () -> Unit) {
-    val uiState by viewModel.uiState.collectAsState()
-    viewModel.loadDay(day)
-
-    if (uiState.loading) {
-        LoadingScreen()
-    } else {
-        when (uiState) {
-            is DayEntryUiState.EntryFound -> {
-                ViewScreen(
-                    uiState = uiState as DayEntryUiState.EntryFound,
-                    onEdit = onEditItem,
-                    onBack = onBack
-                )
-            }
-            is DayEntryUiState.EntryNotFound -> {
-                EntryNotAvailableScreen(
-                    uiState = uiState as DayEntryUiState.EntryNotFound,
-                    onDayAdd = viewModel::insertDay,
-                    onBack = onBack
-                )
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ViewScreen(
+fun ViewScreen(
     uiState: DayEntryUiState.EntryFound,
     onEdit: () -> Unit,
     onBack: () -> Unit

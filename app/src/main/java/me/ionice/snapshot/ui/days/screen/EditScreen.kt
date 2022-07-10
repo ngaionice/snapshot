@@ -30,50 +30,14 @@ import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
 import me.ionice.snapshot.ui.common.BackButton
 import me.ionice.snapshot.ui.common.BaseScreen
-import me.ionice.snapshot.ui.common.LoadingScreen
 import me.ionice.snapshot.ui.common.SectionHeader
 import me.ionice.snapshot.ui.days.DayEntryUiState
-import me.ionice.snapshot.ui.days.DayEntryViewModel
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
-@Composable
-fun EditRoute(viewModel: DayEntryViewModel, onBack: () -> Unit) {
-    val uiState by viewModel.uiState.collectAsState()
-
-    if (uiState.loading) {
-        LoadingScreen()
-    } else {
-        when (uiState) {
-            is DayEntryUiState.EntryFound -> {
-                EditScreen(
-                    uiState = uiState as DayEntryUiState.EntryFound,
-                    onLocationChange = { viewModel.setLocation(it) },
-                    onSummaryChange = { viewModel.setSummary(it) },
-                    onMetricAdd = { viewModel.addMetric(it) },
-                    onMetricDelete = { viewModel.removeMetric(it) },
-                    onMetricChange = { index, value -> viewModel.updateMetric(index, value) },
-                    onSave = {
-                        viewModel.saveDay()
-                        onBack()
-                    },
-                    onBack = onBack
-                )
-            }
-            is DayEntryUiState.EntryNotFound -> {
-                EntryNotAvailableScreen(
-                    uiState = uiState as DayEntryUiState.EntryNotFound,
-                    onDayAdd = viewModel::insertDay,
-                    onBack = onBack
-                )
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
-private fun EditScreen(
+fun EditScreen(
     uiState: DayEntryUiState.EntryFound,
     onLocationChange: (String) -> Unit,
     onSummaryChange: (String) -> Unit,
