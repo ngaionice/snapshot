@@ -9,13 +9,17 @@ import me.ionice.snapshot.ui.days.screen.EntryRoute
 import me.ionice.snapshot.ui.days.screen.ListRoute
 import me.ionice.snapshot.ui.navigation.NavigationDestination
 
-object DayDestination : NavigationDestination {
-    override val route = "day_route"
-    override val destination = "day_destination"
+const val DAY_ROUTE = "day"
+
+object DayListDestination : NavigationDestination {
+    override val route = DAY_ROUTE
+    override val destination = "list"
+}
+
+object DayEntryDestination : NavigationDestination {
+    override val route = DAY_ROUTE
+    override val destination = "entry"
     const val dayIdArg = "day_id"
-    const val listDestination = "list"
-    const val viewDestination = "view"
-    const val editDestination = "edit"
 }
 
 fun NavGraphBuilder.dayGraph(
@@ -24,25 +28,27 @@ fun NavGraphBuilder.dayGraph(
     metricRepository: MetricRepository
 ) {
     navigation(
-        route = DayDestination.route,
-        startDestination = "${DayDestination.route}/${DayDestination.listDestination}"
+        route = DayListDestination.route,
+        startDestination = "${DayListDestination.route}/${DayListDestination.destination}"
     ) {
-        composable(route = "${DayDestination.route}/${DayDestination.listDestination}") { _ ->
+        composable(route = "${DayListDestination.route}/${DayListDestination.destination}") { _ ->
             ListRoute(
                 viewModel = viewModel(
                     factory = DayListViewModel.provideFactory(dayRepository, metricRepository)
                 ),
-                onSelectItem = { navController.navigate("${DayDestination.route}/$it") })
+                onSelectItem = { navController.navigate("${DayListDestination.route}/${DayEntryDestination.destination}/$it") })
         }
         composable(
-            route = "${DayDestination.route}/{${DayDestination.dayIdArg}}",
-            arguments = listOf(navArgument(DayDestination.dayIdArg) { type = NavType.LongType })
+            route = "${DayListDestination.route}/${DayEntryDestination.destination}/{${DayEntryDestination.dayIdArg}}",
+            arguments = listOf(navArgument(DayEntryDestination.dayIdArg) {
+                type = NavType.LongType
+            })
         ) {
             EntryRoute(
                 viewModel = viewModel(
                     factory = DayEntryViewModel.provideFactory(dayRepository, metricRepository)
                 ),
-                dayId = it.arguments?.getLong(DayDestination.dayIdArg)!!,
+                dayId = it.arguments?.getLong(DayEntryDestination.dayIdArg)!!,
                 onBack = { navController.popBackStack() }
             )
         }
