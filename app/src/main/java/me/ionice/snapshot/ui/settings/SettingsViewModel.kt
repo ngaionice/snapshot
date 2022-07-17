@@ -16,11 +16,6 @@ class SettingsViewModel(
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
-    private val viewModelState = MutableStateFlow(SettingsViewModelState(loading = false))
-    val uiState = viewModelState
-        .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
-
     private val backupPreferencesState = preferencesRepository.backupPreferencesFlow.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
@@ -34,12 +29,33 @@ class SettingsViewModel(
             PreferencesRepository.NotificationsPreferences.DEFAULT
         )
 
+    private val viewModelState = MutableStateFlow(
+        SettingsViewModelState(
+            loading = false,
+            backupPreferences = SettingsViewModelState.Backup(
+                backupEnabled = backupPreferencesState.value.isEnabled,
+                dataAvailable = false
+            ),
+            notificationsPreferences = SettingsViewModelState.Notifications(
+                isRemindersEnabled = notificationsPreferencesState.value.isRemindersEnabled,
+                reminderTime = notificationsPreferencesState.value.reminderTime
+            ),
+            themingPreferences = SettingsViewModelState.Theming
+        )
+    )
+    val uiState = viewModelState
+        .map { it.toUiState() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+
     init {
         viewModelScope.launch {
             observeBackupStatus()
         }
         viewModelScope.launch {
             observeBackupPreferences()
+        }
+        viewModelScope.launch {
+            loadBackupPreferences()
         }
     }
 
@@ -54,62 +70,28 @@ class SettingsViewModel(
                 "${it.action} ${if (it.isSuccess == true) "successful" else "failed"}"
             }
 
-            if (viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup) {
-                val subsection =
-                    viewModelState.value.subsection as SettingsViewModelState.Subsection.Backup
-                viewModelState.update { state ->
-                    state.copy(
-                        subsection = subsection.copy(
-                            isBackupInProgress = it.isInProgress,
-                            lastBackupTime = if (!it.isInProgress) networkRepository.getLastBackupTime() else subsection.lastBackupTime
-                        ),
-                        snackbarMessage = snackbarMessage
-                    )
-                }
+            viewModelState.update { state ->
+                state.copy(
+                    backupPreferences = state.backupPreferences.copy(
+                        isBackupInProgress = it.isInProgress,
+                        lastBackupTime = if (!it.isInProgress) networkRepository.getLastBackupTime() else state.backupPreferences.lastBackupTime
+                    ),
+                    snackbarMessage = snackbarMessage
+                )
             }
         }
     }
 
     private suspend fun observeBackupPreferences() {
         backupPreferencesState.collect { bState ->
-            if (viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup) {
-                viewModelState.update {
-                    val subsection = it.subsection as SettingsViewModelState.Subsection.Backup
-                    it.copy(
-                        subsection = subsection.copy(
-                            backupEnabled = bState.isEnabled,
-                            autoBackupTime = bState.autoBackupTime,
-                            autoBackupFrequency = bState.autoBackupFrequency
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    fun switchScreens(targetScreen: SettingsScreenSection) {
-        viewModelState.update {
-            it.copy(loading = true)
-        }
-        viewModelScope.launch {
             viewModelState.update {
-                when (targetScreen) {
-                    SettingsScreenSection.Home -> {
-                        it.copy(
-                            loading = false,
-                            subsection = SettingsViewModelState.Subsection.Home
-                        )
-                    }
-                    SettingsScreenSection.Backup -> {
-                        it.copy(loading = false, subsection = initBackupState())
-                    }
-                    SettingsScreenSection.Notifications -> {
-                        it.copy(loading = false, subsection = initNotificationsState())
-                    }
-                    SettingsScreenSection.Theming -> {
-                        it.copy(loading = false, subsection = initThemingState())
-                    }
-                }
+                it.copy(
+                    backupPreferences = it.backupPreferences.copy(
+                        backupEnabled = bState.isEnabled,
+                        autoBackupTime = bState.autoBackupTime,
+                        autoBackupFrequency = bState.autoBackupFrequency
+                    )
+                )
             }
         }
     }
@@ -117,28 +99,18 @@ class SettingsViewModel(
     fun setBackupEnabled(enable: Boolean) {
         viewModelScope.launch {
             preferencesRepository.setIsBackupEnabled(enable)
-            if (viewModelState.value.subsection is SettingsViewModelState.Subsection.Backup) {
-                viewModelState.update {
-                    val subsection = it.subsection as SettingsViewModelState.Subsection.Backup
-                    it.copy(subsection = subsection.copy(lastBackupTime = networkRepository.getLastBackupTime()))
-                }
-            }
         }
     }
 
     fun loggedInToGoogle(account: GoogleSignInAccount) {
         viewModelScope.launch {
             viewModelState.update {
-                if (it.subsection is SettingsViewModelState.Subsection.Backup) {
-                    it.copy(
-                        subsection = it.subsection.copy(
-                            signedInGoogleAccountEmail = account.email,
-                            lastBackupTime = networkRepository.getLastBackupTime()
-                        )
+                it.copy(
+                    backupPreferences = it.backupPreferences.copy(
+                        signedInGoogleAccountEmail = account.email,
+                        lastBackupTime = networkRepository.getLastBackupTime()
                     )
-                } else {
-                    it.copy(subsection = initBackupState())
-                }
+                )
             }
         }
     }
@@ -155,16 +127,12 @@ class SettingsViewModel(
         viewModelScope.launch {
             preferencesRepository.setIsDailyReminderEnabled(enable)
             viewModelState.update {
-                if (it.subsection is SettingsViewModelState.Subsection.Notifications) {
-                    it.copy(
-                        subsection = it.subsection.copy(
-                            isRemindersEnabled = enable,
-                            reminderTime = notificationsPreferencesState.value.reminderTime
-                        )
+                it.copy(
+                    notificationsPreferences = it.notificationsPreferences.copy(
+                        isRemindersEnabled = enable,
+                        reminderTime = notificationsPreferencesState.value.reminderTime
                     )
-                } else {
-                    it.copy(subsection = initNotificationsState())
-                }
+                )
             }
         }
     }
@@ -187,29 +155,24 @@ class SettingsViewModel(
         viewModelState.update { it.copy(snackbarMessage = null) }
     }
 
-    private suspend fun initBackupState(): SettingsViewModelState.Subsection.Backup =
-        if (!networkRepository.isOnline()) {
-            SettingsViewModelState.Subsection.Backup(dataAvailable = false, backupEnabled = false)
-        } else {
-            SettingsViewModelState.Subsection.Backup(
-                dataAvailable = true,
-                backupEnabled = backupPreferencesState.value.isEnabled,
-                signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
-                lastBackupTime = networkRepository.getLastBackupTime(),
-                isBackupInProgress = networkRepository.backupStatus.value.isInProgress,
-                autoBackupFrequency = backupPreferencesState.value.autoBackupFrequency,
-                autoBackupTime = backupPreferencesState.value.autoBackupTime
-            )
+    private suspend fun loadBackupPreferences() {
+        println("Loading backup prefs")
+        viewModelState.update {
+            if (!networkRepository.isOnline()) {
+                it.copy(backupPreferences = SettingsViewModelState.Backup(dataAvailable = false, backupEnabled = false))
+            } else {
+                it.copy(backupPreferences = SettingsViewModelState.Backup(
+                    dataAvailable = true,
+                    backupEnabled = backupPreferencesState.value.isEnabled,
+                    signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
+                    lastBackupTime = networkRepository.getLastBackupTime(),
+                    isBackupInProgress = networkRepository.backupStatus.value.isInProgress,
+                    autoBackupFrequency = backupPreferencesState.value.autoBackupFrequency,
+                    autoBackupTime = backupPreferencesState.value.autoBackupTime
+                ))
+            }
         }
-
-    private fun initNotificationsState(): SettingsViewModelState.Subsection.Notifications =
-        SettingsViewModelState.Subsection.Notifications(
-            isRemindersEnabled = notificationsPreferencesState.value.isRemindersEnabled,
-            reminderTime = notificationsPreferencesState.value.reminderTime
-        )
-
-    private fun initThemingState(): SettingsViewModelState.Subsection.Theming =
-        SettingsViewModelState.Subsection.Theming("")
+    }
 
     companion object {
         fun provideFactory(
@@ -225,112 +188,93 @@ class SettingsViewModel(
     }
 }
 
-enum class SettingsScreenSection {
-    Home,
-    Backup,
-    Notifications,
-    Theming
-}
-
 data class SettingsViewModelState(
     val loading: Boolean,
-    val snackbarMessage: String? = null,
-    val subsection: Subsection = Subsection.Home
+    val backupPreferences: Backup,
+    val notificationsPreferences: Notifications,
+    val themingPreferences: Theming,
+    val snackbarMessage: String? = null
 ) {
-    fun toUiState(): SettingsUiState =
-        when (subsection) {
-            is Subsection.Home -> {
-                SettingsUiState.Home(
-                    loading = loading,
-                    snackbarMessage = snackbarMessage
-                )
-            }
-            is Subsection.Backup -> {
-                SettingsUiState.Backup(
-                    loading = loading,
-                    dataAvailable = subsection.dataAvailable,
-                    backupEnabled = subsection.backupEnabled,
-                    signedInGoogleAccountEmail = subsection.signedInGoogleAccountEmail,
-                    lastBackupTime = subsection.lastBackupTime,
-                    snackbarMessage = snackbarMessage,
-                    isBackupInProgress = subsection.isBackupInProgress,
-                    autoBackupTime = subsection.autoBackupTime,
-                    autoBackupFrequency = subsection.autoBackupFrequency
-                )
-            }
-            is Subsection.Notifications -> {
-                SettingsUiState.Notifications(
-                    loading = loading,
-                    snackbarMessage = snackbarMessage,
-                    isRemindersEnabled = subsection.isRemindersEnabled,
-                    reminderTime = subsection.reminderTime
-                )
-            }
-            is Subsection.Theming -> {
-                SettingsUiState.Theming(
-                    loading = loading,
-                    snackbarMessage = snackbarMessage
-                )
-            }
+    fun toUiState(): SettingsUiState {
+        if (loading) return SettingsUiState.Loading
+
+        return SettingsUiState.Loaded(
+            backupPreferences = toBackupPreferencesUiState(),
+            notificationsPreferences = toNotificationsPreferencesUiState(),
+            themingPreferences = toThemingPreferencesUiState(),
+            snackbarMessage = snackbarMessage
+        )
+    }
+
+    private fun toBackupPreferencesUiState(): SettingsUiState.Loaded.Backup =
+        if (backupPreferences.dataAvailable) {
+            SettingsUiState.Loaded.Backup.Available(
+                backupEnabled = backupPreferences.backupEnabled,
+                signedInGoogleAccountEmail = backupPreferences.signedInGoogleAccountEmail,
+                lastBackupTime = backupPreferences.lastBackupTime,
+                autoBackupFrequency = backupPreferences.autoBackupFrequency,
+                autoBackupTime = backupPreferences.autoBackupTime,
+                isBackupInProgress = backupPreferences.isBackupInProgress,
+            )
+        } else {
+            SettingsUiState.Loaded.Backup.NotAvailable
         }
 
-    sealed interface Subsection {
+    private fun toNotificationsPreferencesUiState(): SettingsUiState.Loaded.Notifications =
+        SettingsUiState.Loaded.Notifications(
+            isRemindersEnabled = notificationsPreferences.isRemindersEnabled,
+            reminderTime = notificationsPreferences.reminderTime
+        )
 
-        object Home : Subsection
+    private fun toThemingPreferencesUiState(): SettingsUiState.Loaded.Theming =
+        SettingsUiState.Loaded.Theming
 
-        data class Backup(
-            val dataAvailable: Boolean,
-            val backupEnabled: Boolean,
-            val signedInGoogleAccountEmail: String? = null,
-            val lastBackupTime: LocalDateTime? = null,
-            val autoBackupFrequency: Int = 0,
-            val autoBackupTime: LocalTime = LocalTime.MIDNIGHT,
-            val isBackupInProgress: Boolean = true
-        ) : Subsection
+    data class Backup(
+        val backupEnabled: Boolean,
+        val dataAvailable: Boolean,
+        val signedInGoogleAccountEmail: String? = null,
+        val lastBackupTime: LocalDateTime? = null,
+        val autoBackupFrequency: Int = 0,
+        val autoBackupTime: LocalTime = LocalTime.MIDNIGHT,
+        val isBackupInProgress: Boolean = true,
+    )
+
+    data class Notifications(
+        val isRemindersEnabled: Boolean,
+        val reminderTime: LocalTime
+    )
+
+    object Theming
+}
+
+sealed interface SettingsUiState {
+
+    object Loading : SettingsUiState
+
+    data class Loaded(
+        val backupPreferences: Backup,
+        val notificationsPreferences: Notifications,
+        val themingPreferences: Theming,
+        val snackbarMessage: String?
+    ) : SettingsUiState {
+        sealed interface Backup {
+            data class Available(
+                val backupEnabled: Boolean,
+                val signedInGoogleAccountEmail: String?,
+                val lastBackupTime: LocalDateTime?,
+                val isBackupInProgress: Boolean,
+                val autoBackupFrequency: Int,
+                val autoBackupTime: LocalTime,
+            ) : Backup
+
+            object NotAvailable : Backup
+        }
 
         data class Notifications(
             val isRemindersEnabled: Boolean,
             val reminderTime: LocalTime
-        ) : Subsection
+        )
 
-        data class Theming(
-            val placeholder: Any
-        ) : Subsection
+        object Theming
     }
-}
-
-
-sealed interface SettingsUiState {
-
-    val loading: Boolean
-    val snackbarMessage: String?
-
-    data class Home(
-        override val loading: Boolean,
-        override val snackbarMessage: String?
-    ) : SettingsUiState
-
-    data class Backup(
-        override val loading: Boolean,
-        override val snackbarMessage: String?,
-        val dataAvailable: Boolean,
-        val backupEnabled: Boolean,
-        val signedInGoogleAccountEmail: String?,
-        val lastBackupTime: LocalDateTime?,
-        val isBackupInProgress: Boolean,
-        val autoBackupFrequency: Int,
-        val autoBackupTime: LocalTime,
-    ) : SettingsUiState
-
-    data class Notifications(
-        override val loading: Boolean,
-        override val snackbarMessage: String?,
-        val isRemindersEnabled: Boolean,
-        val reminderTime: LocalTime
-    ) : SettingsUiState
-
-    data class Theming(
-        override val loading: Boolean,
-        override val snackbarMessage: String?
-    ) : SettingsUiState
 }

@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.settings.screens
+package me.ionice.snapshot.ui.settings.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -14,16 +14,41 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import me.ionice.snapshot.R
-import me.ionice.snapshot.ui.common.ConfirmationDialog
-import me.ionice.snapshot.ui.common.FunctionalityNotAvailableScreen
+import me.ionice.snapshot.ui.common.*
 import me.ionice.snapshot.ui.settings.*
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime
 import java.time.LocalTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BackupScreen(
-    uiState: SettingsUiState.Backup,
+fun BackupRoute(viewModel: SettingsViewModel, onBack: () -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    BaseScreen(
+        headerText = stringResource(R.string.settings_screen_backup_header),
+        navigationIcon = { BackButton(onBack = onBack) })
+    {
+        when (uiState) {
+            is SettingsUiState.Loading -> LoadingScreen()
+            is SettingsUiState.Loaded -> {
+                BackupScreen(
+                    uiState = (uiState as SettingsUiState.Loaded).backupPreferences,
+                    onEnableBackup = viewModel::setBackupEnabled,
+                    onSuccessfulLogin = viewModel::loggedInToGoogle,
+                    onStartBackup = viewModel::backupDatabase,
+                    onStartRestore = viewModel::restoreDatabase,
+                    onBackupTimeChange = viewModel::setBackupTime,
+                    onBackupFreqChange = viewModel::setBackupFrequency
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun BackupScreen(
+    uiState: SettingsUiState.Loaded.Backup,
     onEnableBackup: (Boolean) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit,
     onStartBackup: () -> Unit,
@@ -31,20 +56,20 @@ fun BackupScreen(
     onBackupFreqChange: (Int) -> Unit,
     onBackupTimeChange: (LocalTime) -> Unit
 ) {
-
-    if (!uiState.dataAvailable) {
-        CannotBackupScreen()
-    } else {
-        CanBackupScreen(
-            uiState = uiState,
-            isBackupInProgress = uiState.isBackupInProgress,
-            onEnableBackup = onEnableBackup,
-            onStartBackup = onStartBackup,
-            onStartRestore = onStartRestore,
-            onSuccessfulLogin = onSuccessfulLogin,
-            onBackupFreqChange = onBackupFreqChange,
-            onBackupTimeChange = onBackupTimeChange
-        )
+    when (uiState) {
+        is SettingsUiState.Loaded.Backup.Available -> {
+            CanBackupScreen(
+                uiState = uiState,
+                isBackupInProgress = uiState.isBackupInProgress,
+                onEnableBackup = onEnableBackup,
+                onStartBackup = onStartBackup,
+                onStartRestore = onStartRestore,
+                onSuccessfulLogin = onSuccessfulLogin,
+                onBackupFreqChange = onBackupFreqChange,
+                onBackupTimeChange = onBackupTimeChange
+            )
+        }
+        is SettingsUiState.Loaded.Backup.NotAvailable -> CannotBackupScreen()
     }
 }
 
@@ -55,7 +80,7 @@ private fun CannotBackupScreen() {
 
 @Composable
 private fun CanBackupScreen(
-    uiState: SettingsUiState.Backup,
+    uiState: SettingsUiState.Loaded.Backup.Available,
     isBackupInProgress: Boolean,
     onEnableBackup: (Boolean) -> Unit,
     onStartBackup: () -> Unit,
@@ -179,14 +204,16 @@ private fun AutoBackupOptions(
             mainLabel = stringResource(R.string.settings_auto_backup_time),
             secondaryLabel = backupTime.format(Utils.timeFormatter),
             onClick = { showTimePickerDialog = true },
-            disabled = backupFreq <= 0)
+            disabled = backupFreq <= 0
+        )
     }
 
     if (showFreqPickerDialog) {
         BackupFreqPickerDialog(
-            selected = freqOptions.find { (f, _) -> f == backupFreq } ?: throw IllegalArgumentException(
-                "Illegal backupFreq value"
-            ),
+            selected = freqOptions.find { (f, _) -> f == backupFreq }
+                ?: throw IllegalArgumentException(
+                    "Illegal backupFreq value"
+                ),
             options = freqOptions,
             onSelection = {
                 onBackupFreqChange(it.first)

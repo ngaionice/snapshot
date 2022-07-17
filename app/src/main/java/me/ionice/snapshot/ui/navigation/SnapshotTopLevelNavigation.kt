@@ -12,7 +12,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import me.ionice.snapshot.ui.days.DAY_ROUTE
 import me.ionice.snapshot.ui.navigation.graph.METRIC_ROUTE
-import me.ionice.snapshot.ui.navigation.graph.SETTINGS_ROUTE
+import me.ionice.snapshot.ui.settings.SETTINGS_ROUTE
 
 class SnapshotTopLevelNavigation(private val navController: NavHostController) {
 
