@@ -19,7 +19,7 @@ object DayListDestination : NavigationDestination {
 object DayEntryDestination : NavigationDestination {
     override val route = DAY_ROUTE
     override val destination = "entry"
-    const val dayIdArg = "day_id"
+    const val dayIdArg = "dayId"
 }
 
 fun NavGraphBuilder.dayGraph(
@@ -49,7 +49,7 @@ fun NavGraphBuilder.dayGraph(
                     factory = DayEntryViewModel.provideFactory(dayRepository, metricRepository)
                 ),
                 dayId = it.arguments?.getLong(DayEntryDestination.dayIdArg)!!,
-                onBack = { navController.popBackStack() }
+                onBack = navController::popBackStack
             )
         }
     }

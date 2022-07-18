@@ -6,7 +6,7 @@ interface MetricRepository {
 
     suspend fun insertKey(name: String)
 
-    suspend fun getMetric(key: MetricKey): Metric?
+    suspend fun getMetric(metricId: Long): Metric?
 
     suspend fun upsertEntry(entry: MetricEntry)
 

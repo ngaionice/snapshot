@@ -9,9 +9,9 @@ import me.ionice.snapshot.data.metric.Metric
 import me.ionice.snapshot.data.metric.MetricKey
 import me.ionice.snapshot.data.metric.MetricRepository
 
-class MetricsViewModel(private val repository: MetricRepository) : ViewModel() {
+class MetricListViewModel(private val repository: MetricRepository) : ViewModel() {
 
-    private val viewModelState = MutableStateFlow(MetricsViewModelState(loading = true))
+    private val viewModelState = MutableStateFlow(MetricListViewModelState(loading = true))
 
     val uiState = viewModelState
         .map { it.toUiState() }
@@ -43,56 +43,34 @@ class MetricsViewModel(private val repository: MetricRepository) : ViewModel() {
         }
     }
 
-    fun selectMetric(key: MetricKey) {
-        viewModelState.update { it.copy(loading = true) }
-
-        viewModelScope.launch {
-            val metric = repository.getMetric(key)
-            viewModelState.update { it.copy(selectedMetric = metric, loading = false) }
-        }
-    }
-
-    fun deselectMetric() {
-        viewModelState.update { it.copy(selectedMetric = null) }
-    }
-
     companion object {
         fun provideFactory(metricRepository: MetricRepository): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return MetricsViewModel(metricRepository) as T
+                    return MetricListViewModel(metricRepository) as T
                 }
             }
     }
 }
 
-data class MetricsViewModelState(
+data class MetricListViewModelState(
     val keys: List<MetricKey> = emptyList(),
-    val selectedMetric: Metric? = null,
     val loading: Boolean
 ) {
-    fun toUiState(): MetricsUiState =
-        if (selectedMetric == null) {
-            MetricsUiState.MetricList(loading, keys)
-        } else {
-            MetricsUiState.MetricDetails(loading, keys, selectedMetric)
-        }
+    fun toUiState(): MetricListUiState = if (loading) {
+        MetricListUiState.Loading
+    } else {
+        MetricListUiState.Loaded(keys)
+    }
+
 }
 
-sealed interface MetricsUiState {
+sealed interface MetricListUiState {
 
-    val loading: Boolean
-    val keys: List<MetricKey>
+    object Loading : MetricListUiState
 
-    data class MetricList(
-        override val loading: Boolean,
-        override val keys: List<MetricKey>
-    ) : MetricsUiState
-
-    data class MetricDetails(
-        override val loading: Boolean,
-        override val keys: List<MetricKey>,
-        val selectedMetric: Metric
-    ) : MetricsUiState
+    data class Loaded(
+        val keys: List<MetricKey>
+    ) : MetricListUiState
 }

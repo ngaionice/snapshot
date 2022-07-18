@@ -13,9 +13,9 @@ class MetricRepositoryImpl(private val database: SnapshotDatabase) : MetricRepos
         }
     }
 
-    override suspend fun getMetric(key: MetricKey): Metric? {
+    override suspend fun getMetric(metricId: Long): Metric? {
         return withContext(Dispatchers.IO) {
-            database.metricDao.getMetric(key.id)
+            database.metricDao.getMetric(metricId)
         }
     }
 
