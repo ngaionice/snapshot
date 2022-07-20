@@ -26,7 +26,7 @@ class DayEntryViewModel(
     init {
         viewModelScope.launch {
             // keep latest keys available so users can select them when adding metrics
-            metricRepository.observeKeys().collect { keys ->
+            metricRepository.getKeysFlow().collect { keys ->
                 viewModelState.update { it.copy(metricKeys = keys) }
             }
         }

@@ -20,6 +20,6 @@ interface DayRepository {
      *
      * `startDay` and `endDayInclusive` should both be non-negative.
      */
-    fun observeDays(startDay: Long, endDayInclusive: Long): Flow<List<DayWithMetrics>>
+    fun getDaysFlow(startDay: Long, endDayInclusive: Long): Flow<List<DayWithMetrics>>
 
 }

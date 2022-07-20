@@ -5,8 +5,8 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import me.ionice.snapshot.work.OneOffBackupSyncWorker
 import java.time.LocalDateTime
@@ -16,8 +16,7 @@ class NetworkRepositoryImpl(private val applicationContext: Context) : NetworkRe
     private val backupUtil = BackupUtil(applicationContext)
     private var isReceiverRegistered = false
 
-    private val _backupStatus = MutableStateFlow(NetworkRepository.BackupState(false, null, null))
-    override val backupStatus: StateFlow<NetworkRepository.BackupState> = _backupStatus
+    private val backupStatus = MutableStateFlow(NetworkRepository.BackupState(false, null, null))
 
     private fun registerReceiverIfNotRegistered() {
         if (!isReceiverRegistered) {
@@ -25,7 +24,7 @@ class NetworkRepositoryImpl(private val applicationContext: Context) : NetworkRe
                 if (type != OneOffBackupSyncWorker.WORK_TYPE_BACKUP && type != OneOffBackupSyncWorker.WORK_TYPE_RESTORE) {
                     throw IllegalArgumentException("type must be one of WORK_TYPE_BACKUP or WORK_TYPE_RESTORE")
                 }
-                _backupStatus.update {
+                backupStatus.update {
                     NetworkRepository.BackupState(
                         isInProgress = false,
                         action = if (type == OneOffBackupSyncWorker.WORK_TYPE_BACKUP) ACTION_TYPE_BACKUP else ACTION_TYPE_RESTORE,
@@ -40,6 +39,10 @@ class NetworkRepositoryImpl(private val applicationContext: Context) : NetworkRe
             isReceiverRegistered = true
         }
     }
+
+    override fun getBackupStatus(): NetworkRepository.BackupState = backupStatus.value
+
+    override fun getBackupStatusFlow(): Flow<NetworkRepository.BackupState> = backupStatus
 
     override fun isOnline(): Boolean {
         val cm = ContextCompat.getSystemService(applicationContext, ConnectivityManager::class.java)
@@ -58,12 +61,12 @@ class NetworkRepositoryImpl(private val applicationContext: Context) : NetworkRe
     }
 
     override fun startDatabaseBackup() {
-        _backupStatus.update { it.copy(isInProgress = true, action = ACTION_TYPE_BACKUP) }
+        backupStatus.update { it.copy(isInProgress = true, action = ACTION_TYPE_BACKUP) }
         if (isOnline()) {
             registerReceiverIfNotRegistered()
             backupUtil.startBackup()
         } else {
-            _backupStatus.update {
+            backupStatus.update {
                 it.copy(
                     isInProgress = false,
                     action = ACTION_TYPE_BACKUP,
@@ -74,12 +77,12 @@ class NetworkRepositoryImpl(private val applicationContext: Context) : NetworkRe
     }
 
     override fun startDatabaseRestore() {
-        _backupStatus.update { it.copy(isInProgress = true, action = ACTION_TYPE_RESTORE) }
+        backupStatus.update { it.copy(isInProgress = true, action = ACTION_TYPE_RESTORE) }
         if (isOnline()) {
             registerReceiverIfNotRegistered()
             backupUtil.startRestore()
         } else {
-            _backupStatus.update {
+            backupStatus.update {
                 it.copy(
                     isInProgress = false,
                     action = ACTION_TYPE_RESTORE,

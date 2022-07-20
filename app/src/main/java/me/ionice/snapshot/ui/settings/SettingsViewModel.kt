@@ -16,14 +16,14 @@ class SettingsViewModel(
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
-    private val backupPreferencesState = preferencesRepository.backupPreferencesFlow.stateIn(
+    private val backupPreferencesState = preferencesRepository.getBackupPreferencesFlow().stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
         PreferencesRepository.BackupPreferences.DEFAULT
     )
 
     private val notificationsPreferencesState =
-        preferencesRepository.notificationsPreferencesFlow.stateIn(
+        preferencesRepository.getNotificationsPreferencesFlow().stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
             PreferencesRepository.NotificationsPreferences.DEFAULT
@@ -63,7 +63,7 @@ class SettingsViewModel(
      * A call to this function never completes normally, as it calls Flow.collect internally.
      */
     private suspend fun observeBackupStatus() {
-        networkRepository.backupStatus.collect {
+        networkRepository.getBackupStatusFlow().collect {
             val snackbarMessage = if (it.isInProgress || it.action == null) {
                 null
             } else {
@@ -166,7 +166,7 @@ class SettingsViewModel(
                     backupEnabled = backupPreferencesState.value.isEnabled,
                     signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
                     lastBackupTime = networkRepository.getLastBackupTime(),
-                    isBackupInProgress = networkRepository.backupStatus.value.isInProgress,
+                    isBackupInProgress = networkRepository.getBackupStatus().isInProgress,
                     autoBackupFrequency = backupPreferencesState.value.autoBackupFrequency,
                     autoBackupTime = backupPreferencesState.value.autoBackupTime
                 ))

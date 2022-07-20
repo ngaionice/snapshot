@@ -37,7 +37,7 @@ class MetricRepositoryImpl(private val database: SnapshotDatabase) : MetricRepos
         }
     }
 
-    override fun observeKeys(): Flow<List<MetricKey>> {
+    override fun getKeysFlow(): Flow<List<MetricKey>> {
         return database.metricDao.observeKeys()
     }
 }

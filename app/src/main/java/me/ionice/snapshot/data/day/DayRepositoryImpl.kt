@@ -39,7 +39,7 @@ class DayRepositoryImpl(private val database: SnapshotDatabase) : DayRepository 
         }
     }
 
-    override fun observeDays(
+    override fun getDaysFlow(
         startDay: Long,
         endDayInclusive: Long
     ): Flow<List<DayWithMetrics>> {

@@ -5,9 +5,9 @@ import java.time.LocalTime
 
 interface PreferencesRepository {
 
-    val backupPreferencesFlow: Flow<BackupPreferences>
+    fun getBackupPreferencesFlow(): Flow<BackupPreferences>
 
-    val notificationsPreferencesFlow: Flow<NotificationsPreferences>
+    fun getNotificationsPreferencesFlow(): Flow<NotificationsPreferences>
 
     suspend fun getInitialBackupPreferences(): BackupPreferences
 

@@ -37,7 +37,7 @@ class DayListViewModel(
             viewModelState.update { it.copy(allEntries = data, loading = false) }
 
             // observe for changes
-            dayRepository.observeDays(startDay, endDay)
+            dayRepository.getDaysFlow(startDay, endDay)
                 .takeWhile { viewModelState.value.listYear == year } // when the year changes, this flow gets cancelled automatically
                 .collect { days ->
                     viewModelState.update {

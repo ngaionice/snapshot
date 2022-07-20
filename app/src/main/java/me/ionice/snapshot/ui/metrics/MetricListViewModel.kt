@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import me.ionice.snapshot.data.metric.Metric
 import me.ionice.snapshot.data.metric.MetricKey
 import me.ionice.snapshot.data.metric.MetricRepository
 
@@ -26,7 +25,7 @@ class MetricListViewModel(private val repository: MetricRepository) : ViewModel(
             }
 
             // observe keys
-            repository.observeKeys().collect { keys ->
+            repository.getKeysFlow().collect { keys ->
                 viewModelState.update {
                     it.copy(keys = keys)
                 }

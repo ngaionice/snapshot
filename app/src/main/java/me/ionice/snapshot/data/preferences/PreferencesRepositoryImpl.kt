@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.*
 import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -25,22 +26,6 @@ class PreferencesRepositoryImpl(
 
     private val backupUtil = BackupUtil(applicationContext)
 
-    override val backupPreferencesFlow = dataStore.data.catch { e ->
-        if (e is IOException) {
-            emit(emptyPreferences())
-        } else {
-            throw e
-        }
-    }.map { preferences -> mapBackupPreferences(preferences) }
-
-    override val notificationsPreferencesFlow = dataStore.data.catch { e ->
-        if (e is IOException) {
-            emit(emptyPreferences())
-        } else {
-            throw e
-        }
-    }.map { mapNotificationsPreferences(it) }
-
     init {
         val manager = WorkManager.getInstance(applicationContext)
         registerBackgroundActions(manager)
@@ -50,8 +35,15 @@ class PreferencesRepositoryImpl(
         CoroutineScope(Dispatchers.IO).launch {
             val backupPrefs = getInitialBackupPreferences()
             val notificationsPrefs = getInitialNotificationsPreferences()
-            if (backupPrefs.autoBackupFrequency > 0 && manager.getWorkInfosByTag(PeriodicBackupSyncWorker.WORK_NAME).get().isEmpty()) {
-                backupUtil.setRecurringBackups(backupPrefs.autoBackupFrequency, backupPrefs.autoBackupTime, autoBackupConstraints)
+            if (backupPrefs.autoBackupFrequency > 0 && manager.getWorkInfosByTag(
+                    PeriodicBackupSyncWorker.WORK_NAME
+                ).get().isEmpty()
+            ) {
+                backupUtil.setRecurringBackups(
+                    backupPrefs.autoBackupFrequency,
+                    backupPrefs.autoBackupTime,
+                    autoBackupConstraints
+                )
             }
             if (notificationsPrefs.isRemindersEnabled) {
                 val reminderTime = dataStore.data.first()
@@ -62,9 +54,25 @@ class PreferencesRepositoryImpl(
                 )
             }
         }
-
-
     }
+
+    override fun getBackupPreferencesFlow(): Flow<PreferencesRepository.BackupPreferences> =
+        dataStore.data.catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map { mapBackupPreferences(it) }
+
+    override fun getNotificationsPreferencesFlow(): Flow<PreferencesRepository.NotificationsPreferences> =
+        dataStore.data.catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map { mapNotificationsPreferences(it) }
 
     override suspend fun getInitialBackupPreferences(): PreferencesRepository.BackupPreferences =
         mapBackupPreferences(dataStore.data.first().toPreferences())

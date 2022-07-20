@@ -14,5 +14,5 @@ interface MetricRepository {
 
     suspend fun getKeys(): List<MetricKey>
 
-    fun observeKeys(): Flow<List<MetricKey>>
+    fun getKeysFlow(): Flow<List<MetricKey>>
 }
