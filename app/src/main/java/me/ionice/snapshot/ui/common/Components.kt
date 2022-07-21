@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -52,14 +53,15 @@ fun AddFAB(onClick: () -> Unit, description: String) {
 @Composable
 fun SearchHeaderBar(
     placeholderText: String,
+    modifier: Modifier = Modifier,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     onSearchStringChange: (String) -> Unit,
-    onSearchBarActiveStateChange: ((Boolean) -> Unit)? = null
+    onSearchBarActiveStateChange: ((Boolean) -> Unit)? = null,
 ) {
 
-    var searching by remember { mutableStateOf(false) }
-    val searchString = rememberSaveable { mutableStateOf("") }
+    var searching by rememberSaveable { mutableStateOf(false) }
+    var searchString by rememberSaveable { mutableStateOf("") }
 
     // TODO: update to use updateTransition for even more control
     val horizontalPadding: Int by animateIntAsState(if (searching) 0 else 16)
@@ -75,10 +77,10 @@ fun SearchHeaderBar(
             onActiveStateChange(true)
         },
         shape = if (searching) Shapes.None else Shapes.Full,
-        modifier = Modifier.padding(
+        modifier = modifier.padding(
             horizontal = horizontalPadding.dp,
             vertical = verticalPadding.dp
-        )
+        ).background(color = Color.Transparent)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -101,7 +103,7 @@ fun SearchHeaderBar(
 
             Spacer(modifier = Modifier.width(4.dp))
             Box(modifier = Modifier.weight(1f)) {
-                if (searchString.value.isEmpty()) {
+                if (searchString.isEmpty()) {
                     Text(
                         text = placeholderText,
                         style = MaterialTheme.typography.bodyMedium
@@ -109,9 +111,9 @@ fun SearchHeaderBar(
                 }
                 if (searching) {
                     BasicTextField(
-                        value = searchString.value,
+                        value = searchString,
                         onValueChange = {
-                            searchString.value = it
+                            searchString = it
                         }, maxLines = 1,
                         modifier = Modifier.focusRequester(textFieldFocusRequester),
                         textStyle = TextStyle.Default.copy(color = LocalContentColor.current),
@@ -124,7 +126,7 @@ fun SearchHeaderBar(
             Spacer(modifier = Modifier.width(4.dp))
             if (searching) {
                 IconButton(onClick = {
-                    searchString.value = ""
+                    searchString = ""
                     textFieldFocusRequester.requestFocus()
                 }) {
                     Icon(Icons.Filled.Cancel, contentDescription = "Clear")
@@ -139,8 +141,8 @@ fun SearchHeaderBar(
         }
     }
 
-    LaunchedEffect(key1 = searchString.value) {
-        onSearchStringChange(searchString.value)
+    LaunchedEffect(key1 = searchString) {
+        onSearchStringChange(searchString)
     }
 
     LaunchedEffect(key1 = searching) {
