@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -45,6 +46,11 @@ fun AddFAB(onClick: () -> Unit, description: String) {
     FloatingActionButton(onClick = onClick) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = description)
     }
+}
+
+@Composable
+fun VerticalDivider(modifier: Modifier = Modifier, height: Dp = 16.dp, color: Color = LocalContentColor.current) {
+    Divider(modifier = modifier.width(1.dp).height(height), color = color)
 }
 
 /**
@@ -80,7 +86,7 @@ fun SearchHeaderBar(
         modifier = modifier.padding(
             horizontal = horizontalPadding.dp,
             vertical = verticalPadding.dp
-        ).background(color = Color.Transparent)
+        )
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

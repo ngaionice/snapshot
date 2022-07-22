@@ -48,6 +48,8 @@ object FakeData {
         )
     }
 
+    val longSummaryEntry = DayWithMetrics(Day(summary = summaries[2]), emptyList())
+
     val daysWithMetrics = days.map { d ->
         DayWithMetrics(
             d,
