@@ -61,6 +61,9 @@ dependencies {
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
+    // Accompanist: Pager for horizontal paging
+    implementation "com.google.accompanist:accompanist-pager:0.24.13-rc"
+
     // Lifecycles
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0"
