@@ -4,8 +4,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import me.ionice.snapshot.data.metric.MetricRepository
-import me.ionice.snapshot.ui.metrics.screen.EntryRoute
-import me.ionice.snapshot.ui.metrics.screen.ListRoute
+import me.ionice.snapshot.ui.metrics.screens.EntryRoute
+import me.ionice.snapshot.ui.metrics.screens.ListRoute
 import me.ionice.snapshot.ui.navigation.NavigationDestination
 
 const val METRIC_ROUTE = "metric"

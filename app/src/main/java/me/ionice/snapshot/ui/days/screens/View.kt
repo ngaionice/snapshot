@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.days.screen
+package me.ionice.snapshot.ui.days.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState

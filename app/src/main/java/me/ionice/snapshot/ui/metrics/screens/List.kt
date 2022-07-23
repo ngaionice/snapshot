@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.metrics.screen
+package me.ionice.snapshot.ui.metrics.screens
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

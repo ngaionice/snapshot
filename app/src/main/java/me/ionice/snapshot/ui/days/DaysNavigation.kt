@@ -5,8 +5,8 @@ import androidx.navigation.*
 import androidx.navigation.compose.composable
 import me.ionice.snapshot.data.day.DayRepository
 import me.ionice.snapshot.data.metric.MetricRepository
-import me.ionice.snapshot.ui.days.screen.EntryRoute
-import me.ionice.snapshot.ui.days.screen.ListRoute
+import me.ionice.snapshot.ui.days.screens.EntryRoute
+import me.ionice.snapshot.ui.days.screens.ListRoute
 import me.ionice.snapshot.ui.navigation.NavigationDestination
 
 const val DAY_ROUTE = "day"

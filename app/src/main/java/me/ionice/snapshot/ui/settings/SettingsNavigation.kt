@@ -8,10 +8,10 @@ import me.ionice.snapshot.data.network.NetworkRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
 import me.ionice.snapshot.ui.navigation.NavigationDestination
 import me.ionice.snapshot.ui.navigation.parentViewModel
-import me.ionice.snapshot.ui.settings.screen.BackupRoute
-import me.ionice.snapshot.ui.settings.screen.HomeRoute
-import me.ionice.snapshot.ui.settings.screen.NotificationsRoute
-import me.ionice.snapshot.ui.settings.screen.ThemingRoute
+import me.ionice.snapshot.ui.settings.screens.BackupRoute
+import me.ionice.snapshot.ui.settings.screens.HomeRoute
+import me.ionice.snapshot.ui.settings.screens.NotificationsRoute
+import me.ionice.snapshot.ui.settings.screens.ThemingRoute
 
 const val SETTINGS_ROUTE = "settings"
 

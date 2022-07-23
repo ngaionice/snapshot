@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.days.screen
+package me.ionice.snapshot.ui.days.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable

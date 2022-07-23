@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.days.screen
+package me.ionice.snapshot.ui.days.screens
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable

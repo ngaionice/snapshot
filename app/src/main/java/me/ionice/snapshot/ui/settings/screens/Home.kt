@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.settings.screen
+package me.ionice.snapshot.ui.settings.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons

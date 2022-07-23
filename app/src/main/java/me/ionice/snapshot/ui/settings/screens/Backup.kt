@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.settings.screen
+package me.ionice.snapshot.ui.settings.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

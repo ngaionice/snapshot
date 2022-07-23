@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.settings.screen
+package me.ionice.snapshot.ui.settings.screens
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable

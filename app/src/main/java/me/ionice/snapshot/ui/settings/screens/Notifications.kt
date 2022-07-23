@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.settings.screen
+package me.ionice.snapshot.ui.settings.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
