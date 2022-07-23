@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter
 
 object Utils {
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
-    val shortDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd")
+    val shortDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("LLL dd")
     val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
     val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 }
