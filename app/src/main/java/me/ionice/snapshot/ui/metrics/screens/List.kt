@@ -12,9 +12,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.metric.MetricKey
-import me.ionice.snapshot.ui.common.AddFAB
-import me.ionice.snapshot.ui.common.BaseScreen
-import me.ionice.snapshot.ui.common.LoadingScreen
+import me.ionice.snapshot.ui.common.components.AddFAB
+import me.ionice.snapshot.ui.common.screens.BaseScreen
+import me.ionice.snapshot.ui.common.screens.LoadingScreen
 import me.ionice.snapshot.ui.metrics.MetricListUiState
 import me.ionice.snapshot.ui.metrics.MetricListViewModel
 

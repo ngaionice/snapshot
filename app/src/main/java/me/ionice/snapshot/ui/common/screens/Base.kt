@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.common
+package me.ionice.snapshot.ui.common.screens
 
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.layout.Box

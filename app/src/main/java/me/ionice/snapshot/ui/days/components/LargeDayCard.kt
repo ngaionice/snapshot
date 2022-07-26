@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.day.DayWithMetrics
-import me.ionice.snapshot.ui.common.VerticalDivider
+import me.ionice.snapshot.ui.common.components.VerticalDivider
 import me.ionice.snapshot.utils.FakeData
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate

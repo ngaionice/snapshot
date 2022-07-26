@@ -28,9 +28,9 @@ import kotlinx.coroutines.launch
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
-import me.ionice.snapshot.ui.common.BackButton
-import me.ionice.snapshot.ui.common.BaseScreen
-import me.ionice.snapshot.ui.common.SectionHeader
+import me.ionice.snapshot.ui.common.components.BackButton
+import me.ionice.snapshot.ui.common.screens.BaseScreen
+import me.ionice.snapshot.ui.common.components.SectionHeader
 import me.ionice.snapshot.ui.days.DayEntryUiState
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate

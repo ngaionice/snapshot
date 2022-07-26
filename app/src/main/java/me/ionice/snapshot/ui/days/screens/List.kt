@@ -19,10 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.day.DayWithMetrics
-import me.ionice.snapshot.ui.common.AddFAB
-import me.ionice.snapshot.ui.common.BaseScreen
-import me.ionice.snapshot.ui.common.DatePicker
-import me.ionice.snapshot.ui.common.SearchHeaderBar
+import me.ionice.snapshot.ui.common.components.AddFAB
+import me.ionice.snapshot.ui.common.screens.BaseScreen
+import me.ionice.snapshot.ui.common.components.DatePicker
+import me.ionice.snapshot.ui.common.components.SearchHeaderBar
 import me.ionice.snapshot.ui.days.DayListUiState
 import me.ionice.snapshot.ui.days.DayListViewModel
 import me.ionice.snapshot.ui.days.DaySearchQuery

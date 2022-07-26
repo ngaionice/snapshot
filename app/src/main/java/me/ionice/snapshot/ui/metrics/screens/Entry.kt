@@ -10,9 +10,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import me.ionice.snapshot.ui.common.BackButton
-import me.ionice.snapshot.ui.common.BaseScreen
-import me.ionice.snapshot.ui.common.LoadingScreen
+import me.ionice.snapshot.ui.common.components.BackButton
+import me.ionice.snapshot.ui.common.screens.BaseScreen
+import me.ionice.snapshot.ui.common.screens.LoadingScreen
 import me.ionice.snapshot.ui.metrics.MetricEntryList
 import me.ionice.snapshot.ui.metrics.MetricEntryUiState
 import me.ionice.snapshot.ui.metrics.MetricEntryViewModel

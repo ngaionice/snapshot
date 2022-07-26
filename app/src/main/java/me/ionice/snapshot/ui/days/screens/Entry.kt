@@ -3,7 +3,7 @@ package me.ionice.snapshot.ui.days.screens
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import me.ionice.snapshot.data.metric.MetricEntry
-import me.ionice.snapshot.ui.common.LoadingScreen
+import me.ionice.snapshot.ui.common.screens.LoadingScreen
 import me.ionice.snapshot.ui.days.DayEntryUiState
 import me.ionice.snapshot.ui.days.DayEntryViewModel
 

@@ -13,9 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.R
-import me.ionice.snapshot.ui.common.AddFAB
-import me.ionice.snapshot.ui.common.BackButton
-import me.ionice.snapshot.ui.common.BaseScreen
+import me.ionice.snapshot.ui.common.components.AddFAB
+import me.ionice.snapshot.ui.common.components.BackButton
+import me.ionice.snapshot.ui.common.screens.BaseScreen
 import me.ionice.snapshot.ui.days.DayEntryUiState
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate

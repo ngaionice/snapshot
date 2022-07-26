@@ -14,7 +14,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import me.ionice.snapshot.R
-import me.ionice.snapshot.ui.common.*
+import me.ionice.snapshot.ui.common.components.BackButton
+import me.ionice.snapshot.ui.common.components.ConfirmationDialog
+import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
+import me.ionice.snapshot.ui.common.components.PageSection
+import me.ionice.snapshot.ui.common.screens.BaseScreen
+import me.ionice.snapshot.ui.common.screens.LoadingScreen
 import me.ionice.snapshot.ui.settings.*
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime
@@ -155,7 +160,7 @@ private fun BackupEnabledToggle(isEnabled: Boolean, onIsEnabledChange: (Boolean)
 
 @Composable
 private fun BackupInfo(email: String, lastBackupTime: LocalDateTime?) {
-    SettingsGroup(title = stringResource(R.string.settings_screen_backup_general_subsection_header)) {
+    PageSection(title = stringResource(R.string.settings_screen_backup_general_subsection_header)) {
         SettingsRow(
             mainLabel = stringResource(R.string.settings_screen_backup_selected_account),
             secondaryLabel = email
@@ -195,7 +200,7 @@ private fun AutoBackupOptions(
         else -> throw IllegalArgumentException("backupFreq should be one of 0, 1, 7, 14, 28")
     }
 
-    SettingsGroup(title = stringResource(R.string.settings_screen_backup_auto_backup_subsection_header)) {
+    PageSection(title = stringResource(R.string.settings_screen_backup_auto_backup_subsection_header)) {
         SettingsRow(
             mainLabel = stringResource(R.string.settings_auto_backup_frequency),
             secondaryLabel = backupFreqText,
@@ -282,7 +287,7 @@ private fun BackupActions(onStartBackup: () -> Unit, onStartRestore: () -> Unit)
     var showBackupDialog by rememberSaveable { mutableStateOf(false) }
     var showRestoreDialog by rememberSaveable { mutableStateOf(false) }
 
-    SettingsGroup(title = stringResource(R.string.settings_screen_backup_manual_actions_subsection_header)) {
+    PageSection(title = stringResource(R.string.settings_screen_backup_manual_actions_subsection_header)) {
         SettingsRow(
             mainLabel = stringResource(R.string.settings_screen_backup_start_backup),
             onClick = { showBackupDialog = true })

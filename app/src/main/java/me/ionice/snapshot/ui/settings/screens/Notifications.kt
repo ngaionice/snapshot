@@ -8,9 +8,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import me.ionice.snapshot.R
-import me.ionice.snapshot.ui.common.BackButton
-import me.ionice.snapshot.ui.common.BaseScreen
-import me.ionice.snapshot.ui.common.LoadingScreen
+import me.ionice.snapshot.ui.common.components.BackButton
+import me.ionice.snapshot.ui.common.screens.BaseScreen
+import me.ionice.snapshot.ui.common.screens.LoadingScreen
 import me.ionice.snapshot.ui.settings.SettingsRow
 import me.ionice.snapshot.ui.settings.SettingsUiState
 import me.ionice.snapshot.ui.settings.SettingSwitch
