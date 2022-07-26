@@ -4,6 +4,7 @@ import me.ionice.snapshot.data.day.Day
 import me.ionice.snapshot.data.day.DayWithMetrics
 import me.ionice.snapshot.data.metric.MetricEntry
 import me.ionice.snapshot.data.metric.MetricKey
+import java.time.LocalDate
 
 object FakeData {
     private val summaries = listOf(
@@ -23,12 +24,12 @@ object FakeData {
 
     private val metricValues = listOf("2:15", "190lb", "2000m")
 
-    private const val startEpoch = 19125
-    private const val endEpoch = startEpoch + 15
+    private val startEpoch = LocalDate.now().toEpochDay()
+    private val endEpoch = startEpoch + 15
 
     val days = (startEpoch..endEpoch).map { d ->
         Day(
-            id = d.toLong(),
+            id = d,
             summary = summaries[summaries.indices.random()],
             location = locations[locations.indices.random()]
         )
@@ -43,12 +44,21 @@ object FakeData {
     val metricEntries = (0..10).map {
         MetricEntry(
             (1..metricKeys.size).random().toLong(),
-            (startEpoch..endEpoch).random().toLong(),
+            (startEpoch..endEpoch).random(),
             metricValues[metricValues.indices.random()]
         )
     }
 
     val longSummaryEntry = DayWithMetrics(Day(summary = summaries[2]), emptyList())
+
+    val varyingDateEntries = listOf(
+        DayWithMetrics(Day(id = LocalDate.now().minusMonths(1).toEpochDay(),summary = summaries[2], location = locations[1]), emptyList()),
+        DayWithMetrics(Day(id = LocalDate.now().minusMonths(3).toEpochDay(), summary = summaries[2], location = locations[1]), emptyList()),
+        DayWithMetrics(Day(id = LocalDate.now().minusMonths(6).toEpochDay(), summary = summaries[2], location = locations[1]), emptyList()),
+        DayWithMetrics(Day(id = LocalDate.now().minusMonths(12).toEpochDay(), summary = summaries[2], location = locations[1]), emptyList()),
+        DayWithMetrics(Day(id = LocalDate.now().minusMonths(24).toEpochDay(), summary = summaries[2], location = locations[1]), emptyList()),
+        DayWithMetrics(Day(id = LocalDate.now().minusMonths(36).toEpochDay(), summary = summaries[2], location = locations[1]), emptyList())
+    )
 
     val daysWithMetrics = days.map { d ->
         DayWithMetrics(
