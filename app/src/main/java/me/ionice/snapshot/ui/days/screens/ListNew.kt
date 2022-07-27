@@ -3,6 +3,7 @@ package me.ionice.snapshot.ui.days.screens
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -38,15 +39,11 @@ fun NewListScreen() {
         }
 
         item {
-            PageSection(title = "This week", headerColor = MaterialTheme.colorScheme.onSurface) {
-                CurrentWeek(emptyList(), onViewItem = {}, onAddItem = {})
-            }
+            CurrentWeek(emptyList(), onViewItem = {}, onAddItem = {})
         }
 
         item {
-            PageSection(title = "Memories", headerColor = MaterialTheme.colorScheme.onSurface) {
-                Memories(emptyList(), onViewItem = {})
-            }
+            Memories(emptyList(), onViewItem = {})
         }
 
         stickyHeader {
@@ -96,42 +93,47 @@ private fun CurrentWeek(
         map[it.day.id] = it
     }
 
-    LazyRow(
-        contentPadding = PaddingValues(horizontal = 24.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(items = currentWeek, key = { dayId -> dayId }) { dayId ->
-            val day = map[dayId]
-            if (day == null) {
-                SmallAddDayCard(
-                    dayId = dayId,
-                    onClick = { onAddItem(dayId) },
-                    modifier = Modifier.fillParentMaxWidth(0.3333f)
-                )
-            } else {
-                SmallDayCard(
-                    day = day,
-                    onClick = { onViewItem(dayId) },
-                    modifier = Modifier.fillParentMaxWidth(0.3333f)
-                )
+    PageSection(title = "This week", headerColor = MaterialTheme.colorScheme.onSurface) {
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(items = currentWeek, key = { dayId -> dayId }) { dayId ->
+                val day = map[dayId]
+                if (day == null) {
+                    SmallAddDayCard(
+                        dayId = dayId,
+                        onClick = { onAddItem(dayId) },
+                        modifier = Modifier.fillParentMaxWidth(0.3333f)
+                    )
+                } else {
+                    SmallDayCard(
+                        day = day,
+                        onClick = { onViewItem(dayId) },
+                        modifier = Modifier.fillParentMaxWidth(0.3333f)
+                    )
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun Memories(days: List<DayWithMetrics>, onViewItem: (Long) -> Unit) {
-    LazyRow(
-        contentPadding = PaddingValues(horizontal = 24.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(items = days, key = { day -> day.day.id }) { day ->
+    PageSection(title = "Memories", headerColor = MaterialTheme.colorScheme.onSurface) {
+        HorizontalPager(
+            count = days.size,
+            contentPadding = PaddingValues(horizontal = 24.dp),
+            itemSpacing = 12.dp
+        ) { page ->
+            val day = days[page]
             val date = LocalDate.ofEpochDay(day.day.id)
             val relativeDate = RelativeTime.getPastDuration(date)
             LargeDayCard(
                 day = day,
                 onClick = { onViewItem(day.day.id) },
-                modifier = Modifier.fillParentMaxWidth(1f)
+                modifier = Modifier.fillMaxWidth()
             ) { color ->
                 LargeDayCardInformation(
                     date = date,
@@ -159,7 +161,7 @@ private fun DayGroupListItem() {
 fun CurrentWeekPreview() {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 24.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
             SmallAddDayCard(
@@ -180,7 +182,5 @@ fun CurrentWeekPreview() {
 @Preview
 @Composable
 fun MemoriesPreview() {
-    PageSection(title = "Memories", headerColor = MaterialTheme.colorScheme.onSurface) {
-        Memories(days = FakeData.varyingDateEntries, onViewItem = {})
-    }
+    Memories(days = FakeData.varyingDateEntries, onViewItem = {})
 }
