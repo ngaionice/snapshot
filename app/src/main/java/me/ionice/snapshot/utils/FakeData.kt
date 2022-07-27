@@ -52,6 +52,7 @@ object FakeData {
     val longSummaryEntry = DayWithMetrics(Day(summary = summaries[2]), emptyList())
 
     val varyingDateEntries = listOf(
+        DayWithMetrics(Day(id = LocalDate.now().minusMonths(1).plusDays(1).toEpochDay(),summary = summaries[2], location = locations[1]), emptyList()),
         DayWithMetrics(Day(id = LocalDate.now().minusMonths(1).toEpochDay(),summary = summaries[2], location = locations[1]), emptyList()),
         DayWithMetrics(Day(id = LocalDate.now().minusMonths(3).toEpochDay(), summary = summaries[2], location = locations[1]), emptyList()),
         DayWithMetrics(Day(id = LocalDate.now().minusMonths(6).toEpochDay(), summary = summaries[2], location = locations[1]), emptyList()),

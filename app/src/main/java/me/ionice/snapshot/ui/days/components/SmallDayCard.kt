@@ -10,9 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.data.day.DayWithMetrics
+import me.ionice.snapshot.utils.Utils.locale
 import java.time.LocalDate
 import java.time.format.TextStyle
-import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,8 +35,8 @@ fun SmallDayCard(day: DayWithMetrics, onClick: () -> Unit, modifier: Modifier = 
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US)
-                        .uppercase(Locale.US),
+                    text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, locale)
+                        .uppercase(locale),
                     color = contentColor
                 )
                 Text(
@@ -81,8 +81,8 @@ fun SmallAddDayCard(dayId: Long, onClick: () -> Unit, modifier: Modifier = Modif
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US)
-                        .uppercase(Locale.US),
+                    text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, locale)
+                        .uppercase(locale),
                     color = contentColor
                 )
                 Text(

@@ -1,8 +1,6 @@
 package me.ionice.snapshot.ui.common.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +18,9 @@ fun PageSection(title: String, headerColor: Color? = null, content: @Composable 
 }
 
 @Composable
-fun PageSectionHeader(title: String, color: Color? = null) {
+fun PageSectionHeader(title: String, color: Color? = null, action: @Composable (() -> Unit)? = null) {
     Row(
-        modifier = Modifier.padding(start = 24.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -30,5 +28,14 @@ fun PageSectionHeader(title: String, color: Color? = null) {
             style = MaterialTheme.typography.titleSmall,
             color = color ?: MaterialTheme.colorScheme.onPrimaryContainer
         )
+        Spacer(modifier = Modifier.weight(1f))
+        action?.invoke()
+    }
+}
+
+@Composable
+fun PageSectionContent(content: @Composable () -> Unit) {
+    Box(modifier = Modifier.padding(bottom = 16.dp)) {
+        content()
     }
 }

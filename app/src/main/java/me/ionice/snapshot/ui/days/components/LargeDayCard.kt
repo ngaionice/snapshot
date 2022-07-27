@@ -18,9 +18,9 @@ import me.ionice.snapshot.data.day.DayWithMetrics
 import me.ionice.snapshot.ui.common.components.VerticalDivider
 import me.ionice.snapshot.utils.FakeData
 import me.ionice.snapshot.utils.Utils
+import me.ionice.snapshot.utils.Utils.locale
 import java.time.LocalDate
 import java.time.format.TextStyle
-import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +71,7 @@ fun LargeDayCardInformation(
             )
         } else {
             Text(
-                text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US),
+                text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, locale),
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor
             )
