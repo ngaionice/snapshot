@@ -36,7 +36,7 @@ fun NavGraphBuilder.dayGraph(
                 viewModel = viewModel(
                     factory = DayListViewModel.provideFactory(dayRepository)
                 ),
-                onSelectItem = { navController.navigate("${DayListDestination.route}/${DayEntryDestination.destination}/$it") })
+                onSelectDay = { navController.navigate("${DayListDestination.route}/${DayEntryDestination.destination}/$it") }, onStartSearch = {})
         }
         composable(
             route = "${DayListDestination.route}/${DayEntryDestination.destination}/{${DayEntryDestination.dayIdArg}}",

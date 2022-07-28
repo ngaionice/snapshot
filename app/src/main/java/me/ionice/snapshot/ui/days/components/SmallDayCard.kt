@@ -17,8 +17,8 @@ import java.time.format.TextStyle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallDayCard(day: DayWithMetrics, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val containerColor = MaterialTheme.colorScheme.primaryContainer
-    val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val containerColor = MaterialTheme.colorScheme.surfaceVariant
+    val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     val date = LocalDate.ofEpochDay(day.core.id)
     Card(
         modifier = modifier,
@@ -63,8 +63,8 @@ fun SmallDayCard(day: DayWithMetrics, onClick: () -> Unit, modifier: Modifier = 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallAddDayCard(dayId: Long, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val containerColor = MaterialTheme.colorScheme.surfaceVariant
-    val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val containerColor = MaterialTheme.colorScheme.primaryContainer
+    val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
     val date = LocalDate.ofEpochDay(dayId)
     Card(
         modifier = modifier,

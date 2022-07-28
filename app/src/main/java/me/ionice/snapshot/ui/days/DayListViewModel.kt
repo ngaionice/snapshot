@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.day.Day
 import me.ionice.snapshot.data.day.DayRepository
 import me.ionice.snapshot.data.day.DayWithMetrics
-import me.ionice.snapshot.data.metric.MetricKey
 import java.time.LocalDate
 
 class DayListViewModel(
@@ -22,7 +21,27 @@ class DayListViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
     init {
-        switchYear(LocalDate.now().year)
+        val today = LocalDate.now()
+        switchYear(today.year)
+
+        // load weekly entries
+        viewModelScope.launch {
+            val currentDayId = today.toEpochDay()
+            val weekStartDayId = currentDayId - (today.dayOfWeek.value - 1)
+            dayRepository.getDaysFlow(weekStartDayId, currentDayId).collect { days ->
+                viewModelState.update {
+                    it.copy(weekEntries = days)
+                }
+            }
+        }
+
+        // load memories
+        viewModelScope.launch {
+            val memories = dayRepository.getDaysOfDate(today.month.value, today.dayOfMonth)
+            viewModelState.update {
+                it.copy(memories = memories)
+            }
+        }
     }
 
     fun switchYear(year: Int) {
@@ -32,18 +51,19 @@ class DayListViewModel(
             val startDay = LocalDate.of(year, 1, 1).toEpochDay()
             val endDay = LocalDate.of(year, 12, 31).toEpochDay()
             val data = dayRepository.getDays(startDay, endDay)
-            viewModelState.update { it.copy(allEntries = data, loading = false) }
+            viewModelState.update { it.copy(yearEntries = data, loading = false) }
 
             // observe for changes
             dayRepository.getDaysFlow(startDay, endDay)
                 .takeWhile { viewModelState.value.listYear == year } // when the year changes, this flow gets cancelled automatically
                 .collect { days ->
                     viewModelState.update {
-                        it.copy(allEntries = days)
+                        it.copy(yearEntries = days)
                     }
                 }
         }
     }
+
 
     fun insertDay(epochDay: Long) {
         viewModelState.update { it.copy(loading = true) }
@@ -92,20 +112,30 @@ class DayListViewModel(
 data class DayListViewModelState(
     val loading: Boolean,
     val listYear: Int = LocalDate.now().year,
-    val allEntries: List<DayWithMetrics> = emptyList(),
-    val metricKeys: List<MetricKey> = emptyList(),
+    val weekEntries: List<DayWithMetrics> = emptyList(),
+    val yearEntries: List<DayWithMetrics> = emptyList(),
+    val memories: List<DayWithMetrics> = emptyList(),
     val query: DaySearchQuery? = null
 ) {
 
     fun toUiState(): DayListUiState = if (query == null) {
-        DayListUiState(loading = loading, year = listYear, entries = allEntries)
+        DayListUiState(
+            loading = loading,
+            year = listYear,
+            weekEntries = weekEntries,
+            yearEntries = yearEntries,
+            memories = memories
+        )
     } else {
         DayListUiState(
             loading = loading,
             year = listYear,
-            entries = allEntries.filter {
+            weekEntries = weekEntries,
+            yearEntries = yearEntries.filter {
                 it.core.summary.contains(query.querySummaryString, true)
-            })
+            },
+            memories = memories
+        )
     }
 }
 
@@ -119,13 +149,12 @@ data class DaySearchQuery(
 )
 
 /**
- * UI state for the Day screen.
- *
- * Derived from [DayListViewModelState], but split into two possible subclasses to more
- * precisely represent the state available to render the UI.
+ * UI state for the List screen.
  */
 data class DayListUiState(
     val loading: Boolean,
     val year: Int,
-    val entries: List<DayWithMetrics>
+    val weekEntries: List<DayWithMetrics>,
+    val yearEntries: List<DayWithMetrics>,
+    val memories: List<DayWithMetrics>
 )

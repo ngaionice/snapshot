@@ -36,7 +36,7 @@ fun SearchHeaderBar(
     var searchString by rememberSaveable { mutableStateOf("") }
 
     // TODO: update to use updateTransition for even more control
-    val horizontalPadding: Int by animateIntAsState(if (searching) 0 else 16)
+    val horizontalPadding: Int by animateIntAsState(if (searching) 0 else 24)
     val verticalPadding: Int by animateIntAsState(if (searching) 0 else 8)
 
     val textFieldFocusRequester = remember { FocusRequester() }

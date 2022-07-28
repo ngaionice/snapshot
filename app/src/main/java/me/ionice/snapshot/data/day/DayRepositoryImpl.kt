@@ -40,7 +40,8 @@ class DayRepositoryImpl(private val database: SnapshotDatabase) : DayRepository 
     }
 
     override suspend fun getDaysOfDate(month: Int, day: Int): List<DayWithMetrics> {
-        TODO("Not yet implemented, waiting for database migration")
+        return emptyList()
+        // TODO("Not yet implemented, waiting for database migration")
     }
 
     override fun getDaysFlow(
