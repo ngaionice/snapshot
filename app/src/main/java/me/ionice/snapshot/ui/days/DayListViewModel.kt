@@ -9,12 +9,10 @@ import me.ionice.snapshot.data.day.Day
 import me.ionice.snapshot.data.day.DayRepository
 import me.ionice.snapshot.data.day.DayWithMetrics
 import me.ionice.snapshot.data.metric.MetricKey
-import me.ionice.snapshot.data.metric.MetricRepository
 import java.time.LocalDate
 
 class DayListViewModel(
-    private val dayRepository: DayRepository,
-    private val metricRepository: MetricRepository
+    private val dayRepository: DayRepository
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(DayListViewModelState(loading = true))
@@ -77,13 +75,12 @@ class DayListViewModel(
 
     companion object {
         fun provideFactory(
-            dayRepository: DayRepository,
-            metricRepository: MetricRepository
+            dayRepository: DayRepository
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return DayListViewModel(dayRepository, metricRepository) as T
+                    return DayListViewModel(dayRepository) as T
                 }
             }
     }
@@ -107,7 +104,7 @@ data class DayListViewModelState(
             loading = loading,
             year = listYear,
             entries = allEntries.filter {
-                it.day.summary.contains(query.querySummaryString, true)
+                it.core.summary.contains(query.querySummaryString, true)
             })
     }
 }

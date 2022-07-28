@@ -19,7 +19,7 @@ import java.time.format.TextStyle
 fun SmallDayCard(day: DayWithMetrics, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val containerColor = MaterialTheme.colorScheme.primaryContainer
     val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-    val date = LocalDate.ofEpochDay(day.day.id)
+    val date = LocalDate.ofEpochDay(day.core.id)
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = containerColor),

@@ -15,7 +15,7 @@ class DayRepositoryImpl(private val database: SnapshotDatabase) : DayRepository 
 
     override suspend fun upsertDay(day: DayWithMetrics) {
         withContext(Dispatchers.IO) {
-            val existing = database.dayDao.getWithMetrics(day.day.id)
+            val existing = database.dayDao.getWithMetrics(day.core.id)
 
             // delete removed keys
             if (existing != null) {
@@ -27,7 +27,7 @@ class DayRepositoryImpl(private val database: SnapshotDatabase) : DayRepository 
             }
 
             // update existing data
-            database.dayDao.upsert(day.day)
+            database.dayDao.upsert(day.core)
             database.metricDao.upsertManyEntries(day.metrics)
 
         }
@@ -37,6 +37,10 @@ class DayRepositoryImpl(private val database: SnapshotDatabase) : DayRepository 
         return withContext(Dispatchers.IO) {
             database.dayDao.getInRangeWithMetrics(startDay, endDayInclusive)
         }
+    }
+
+    override suspend fun getDaysOfDate(month: Int, day: Int): List<DayWithMetrics> {
+        TODO("Not yet implemented, waiting for database migration")
     }
 
     override fun getDaysFlow(

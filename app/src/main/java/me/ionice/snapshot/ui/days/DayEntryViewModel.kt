@@ -70,7 +70,7 @@ class DayEntryViewModel(
     fun setSummary(summary: String) {
         viewModelState.update {
             it.copy(
-                day = it.day?.copy(day = it.day.day.copy(summary = summary))
+                day = it.day?.copy(core = it.day.core.copy(summary = summary))
             )
         }
     }
@@ -78,7 +78,7 @@ class DayEntryViewModel(
     fun setLocation(location: String) {
         viewModelState.update {
             it.copy(
-                day = it.day?.copy(day = it.day.day.copy(location = location))
+                day = it.day?.copy(core = it.day.core.copy(location = location))
             )
         }
     }
@@ -133,8 +133,8 @@ data class DayEntryViewModelState(
     } else {
         DayEntryUiState.EntryFound(
             dayId = dayId,
-            summary = day.day.summary,
-            location = day.day.location,
+            summary = day.core.summary,
+            location = day.core.location,
             metrics = day.metrics,
             metricKeys = metricKeys
         )

@@ -14,8 +14,7 @@ import me.ionice.snapshot.data.metric.MetricKey
 
 @Database(
     entities = [Day::class, MetricKey::class, MetricEntry::class],
-    version = 1,
-    exportSchema = false
+    version = 1
 )
 abstract class SnapshotDatabase : RoomDatabase() {
 

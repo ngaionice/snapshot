@@ -41,7 +41,7 @@ fun LargeDayCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
         ) {
-            Text(text = day.day.summary, color = contentColor)
+            Text(text = day.core.summary, color = contentColor)
 
             Divider(color = contentColor)
 
@@ -112,7 +112,7 @@ private fun LargeDayCardPreview() {
     val day = FakeData.longSummaryEntry
     LargeDayCard(day = FakeData.longSummaryEntry, onClick = {}) {
         LargeDayCardInformation(
-            date = LocalDate.ofEpochDay(day.day.id),
+            date = LocalDate.ofEpochDay(day.core.id),
             textColor = it,
             metricCount = day.metrics.size
         )

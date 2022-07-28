@@ -16,11 +16,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -33,6 +30,7 @@ import com.google.accompanist.pager.HorizontalPager
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.day.DayWithMetrics
 import me.ionice.snapshot.ui.common.components.*
+import me.ionice.snapshot.ui.days.DayListViewModel
 import me.ionice.snapshot.ui.days.components.LargeDayCard
 import me.ionice.snapshot.ui.days.components.LargeDayCardInformation
 import me.ionice.snapshot.ui.days.components.SmallAddDayCard
@@ -49,41 +47,67 @@ import java.time.ZonedDateTime
 import java.time.temporal.IsoFields
 import java.time.temporal.TemporalAdjusters
 
+@Composable
+fun NewListRoute(viewModel: DayListViewModel, onSelectDay: (Long) -> Unit, onStartSearch: () -> Unit) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    NewListScreen(
+        daysInWeek = emptyList(),
+        daysInYear = emptyList(),
+        memories = emptyList(),
+        year = uiState.year,
+        onSelectDay = onSelectDay,
+        onAddDay = {
+            viewModel.insertDay(it)
+            onSelectDay(it)
+        },
+        onChangeYear = viewModel::switchYear,
+        onStartSearch = onStartSearch
+    )
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NewListScreen() {
+fun NewListScreen(
+    daysInWeek: List<DayWithMetrics>,
+    daysInYear: List<DayWithMetrics>,
+    memories: List<DayWithMetrics>,
+    year: Int,
+    onSelectDay: (Long) -> Unit,
+    onAddDay: (Long) -> Unit,
+    onChangeYear: (Int) -> Unit,
+    onStartSearch: () -> Unit
+) {
     LazyColumn {
         stickyHeader {
-            SearchBar()
+            SearchBar(onClick = onStartSearch)
         }
 
         item {
-            CurrentWeek(emptyList(), onViewItem = {}, onAddItem = {})
+            CurrentWeek(days = daysInWeek, onSelectDay = onSelectDay, onAddDay = onAddDay)
         }
 
         item {
-            Memories(emptyList(), onViewItem = {})
+            Memories(days = memories, onSelectDay = onSelectDay)
         }
 
         stickyHeader {
-            WeekListHeader(LocalDate.now().year, onChangeYear = {})
+            WeekListHeader(year = year, onChangeYear = onChangeYear)
         }
 
         item {
-
+            WeekList(daysInYear = daysInYear, onSelectDay = onSelectDay)
         }
     }
 }
 
 @Composable
-private fun SearchBar() {
+private fun SearchBar(onClick: () -> Unit) {
     SearchHeaderBar(
         placeholderText = "Search entries",
-        onSearchStringChange = {
-
-        },
+        onSearchStringChange = {},
         onSearchBarActiveStateChange = {
-            // TODO: change system bar colors
+            onClick()
         },
         leadingIcon = {
             Icon(
@@ -98,8 +122,8 @@ private fun SearchBar() {
 @Composable
 private fun CurrentWeek(
     days: List<DayWithMetrics>,
-    onViewItem: (Long) -> Unit,
-    onAddItem: (Long) -> Unit
+    onSelectDay: (Long) -> Unit,
+    onAddDay: (Long) -> Unit
 ) {
     val currentDay = LocalDate.now()
     val currentDayId = currentDay.toEpochDay()
@@ -109,7 +133,7 @@ private fun CurrentWeek(
     val map = mutableMapOf<Long, DayWithMetrics>()
 
     days.forEach {
-        map[it.day.id] = it
+        map[it.core.id] = it
     }
 
     PageSection(title = "This week", headerColor = MaterialTheme.colorScheme.onSurface) {
@@ -122,13 +146,13 @@ private fun CurrentWeek(
                 if (day == null) {
                     SmallAddDayCard(
                         dayId = dayId,
-                        onClick = { onAddItem(dayId) },
+                        onClick = { onAddDay(dayId) },
                         modifier = Modifier.fillParentMaxWidth(0.3333f)
                     )
                 } else {
                     SmallDayCard(
                         day = day,
-                        onClick = { onViewItem(dayId) },
+                        onClick = { onSelectDay(dayId) },
                         modifier = Modifier.fillParentMaxWidth(0.3333f)
                     )
                 }
@@ -139,7 +163,7 @@ private fun CurrentWeek(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun Memories(days: List<DayWithMetrics>, onViewItem: (Long) -> Unit) {
+private fun Memories(days: List<DayWithMetrics>, onSelectDay: (Long) -> Unit) {
     PageSection(title = "Memories", headerColor = MaterialTheme.colorScheme.onSurface) {
         HorizontalPager(
             count = days.size,
@@ -147,18 +171,18 @@ private fun Memories(days: List<DayWithMetrics>, onViewItem: (Long) -> Unit) {
             itemSpacing = 12.dp
         ) { page ->
             val day = days[page]
-            val date = LocalDate.ofEpochDay(day.day.id)
+            val date = LocalDate.ofEpochDay(day.core.id)
             val relativeDate = RelativeTime.getPastDuration(date)
             LargeDayCard(
                 day = day,
-                onClick = { onViewItem(day.day.id) },
+                onClick = { onSelectDay(day.core.id) },
                 modifier = Modifier.fillMaxWidth()
             ) { color ->
                 LargeDayCardInformation(
                     date = date,
                     textColor = color,
                     relativeDate = relativeDate,
-                    location = day.day.location
+                    location = day.core.location
                 )
             }
         }
@@ -193,14 +217,14 @@ private fun WeekListHeader(year: Int, onChangeYear: (Int) -> Unit) {
  * sorted by the ID of the day attribute in each object, where the largest value comes first.
  */
 @Composable
-private fun WeekList(daysInYear: List<DayWithMetrics>, onViewItem: (Long) -> Unit) {
+private fun WeekList(daysInYear: List<DayWithMetrics>, onSelectDay: (Long) -> Unit) {
     val weekMap: MutableMap<Int, MutableList<DayWithMetrics>> = mutableMapOf()
     val maxWeek = ZonedDateTime.now(zoneId).get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
 
     var expandedWeek by rememberSaveable { mutableStateOf(-1) }
 
     daysInYear.forEach { day ->
-        val date = LocalDate.ofEpochDay(day.day.id)
+        val date = LocalDate.ofEpochDay(day.core.id)
         var week = ZonedDateTime.of(date, LocalTime.of(0, 0), zoneId)
             .get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
         if (week == 53 && date.dayOfYear < 7) {
@@ -229,7 +253,7 @@ private fun WeekList(daysInYear: List<DayWithMetrics>, onViewItem: (Long) -> Uni
                                     week
                                 }
                             },
-                            onViewItem = onViewItem
+                            onViewItem = onSelectDay
                         )
                     }
                 }
@@ -249,10 +273,10 @@ private fun WeekListItem(
     onClickWeek: () -> Unit,
     onViewItem: (Long) -> Unit
 ) {
-    val weekStart = LocalDate.ofEpochDay(days.last().day.id)
+    val weekStart = LocalDate.ofEpochDay(days.last().core.id)
         .with(TemporalAdjusters.previousOrSame(firstDayOfWeek))
     val weekEnd =
-        LocalDate.ofEpochDay(days.first().day.id).with(TemporalAdjusters.nextOrSame(lastDayOfWeek))
+        LocalDate.ofEpochDay(days.first().core.id).with(TemporalAdjusters.nextOrSame(lastDayOfWeek))
 
     Column {
         Row(modifier = Modifier
@@ -277,7 +301,7 @@ private fun WeekListItem(
         AnimatedVisibility(visible = isExpanded) {
             Column {
                 days.reversed().forEach {
-                    WeekListSubItem(day = it, onViewItem = { onViewItem(it.day.id) })
+                    WeekListSubItem(day = it, onViewItem = { onViewItem(it.core.id) })
                 }
             }
         }
@@ -291,9 +315,10 @@ private fun WeekListSubItem(day: DayWithMetrics, onViewItem: () -> Unit) {
         .background(color = MaterialTheme.colorScheme.surface)
         .clickable { onViewItem() }
         .fillMaxWidth()
-        .padding(horizontal = 24.dp, vertical = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        .padding(horizontal = 24.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = Utils.shortDateFormatter.format(LocalDate.ofEpochDay(day.day.id)),
+            text = Utils.shortDateFormatter.format(LocalDate.ofEpochDay(day.core.id)),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -335,7 +360,7 @@ fun CurrentWeekPreview() {
 @Preview
 @Composable
 fun MemoriesPreview() {
-    Memories(days = FakeData.varyingDateEntries, onViewItem = {})
+    Memories(days = FakeData.varyingDateEntries, onSelectDay = {})
 }
 
 @Preview
@@ -343,7 +368,7 @@ fun MemoriesPreview() {
 fun WeekListPreview() {
     Column {
         WeekListHeader(year = 2022, onChangeYear = {})
-        WeekList(daysInYear = FakeData.varyingDateEntries.subList(0, 4), onViewItem = {})
+        WeekList(daysInYear = FakeData.varyingDateEntries.subList(0, 4), onSelectDay = {})
     }
 }
 

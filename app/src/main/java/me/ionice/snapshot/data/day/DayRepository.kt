@@ -15,6 +15,8 @@ interface DayRepository {
 
     suspend fun getDays(startDay: Long, endDayInclusive: Long): List<DayWithMetrics>
 
+    suspend fun getDaysOfDate(month: Int, day: Int): List<DayWithMetrics>
+
     /**
      * Returns a `Flow` of a list of `DayWithMetrics` in the specified date range.
      *

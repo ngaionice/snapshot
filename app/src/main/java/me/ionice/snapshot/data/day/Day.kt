@@ -1,27 +1,25 @@
 package me.ionice.snapshot.data.day
 
-import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import kotlinx.parcelize.Parcelize
 import me.ionice.snapshot.data.metric.MetricEntry
 import java.time.LocalDate
 
-@Parcelize
 @Entity(tableName = "day_entry")
 data class Day(
+    // TODO: rename to DayCore? since this is the 'core'; add Date as an attribute, remove location
     @PrimaryKey
-    var id: Long = LocalDate.now().toEpochDay(),
-
-    var summary: String = "",
-
-    var location: String = ""
-) : Parcelable
+    val id: Long = LocalDate.now().toEpochDay(),
+    val summary: String = "",
+    val location: String = ""
+)
 
 data class DayWithMetrics(
-    @Embedded val day: Day,
+    // TODO: rename to Day, add Location as an attribute
+    @Embedded
+    val core: Day,
     @Relation(
         parentColumn = "id",
         entityColumn = "day_id"
@@ -29,4 +27,22 @@ data class DayWithMetrics(
     val metrics: List<MetricEntry>
 )
 
+@Entity(tableName = "location")
+data class Location(
+    @PrimaryKey
+    val name: String,
+    @Embedded
+    val coordinates: Coordinates?
+)
+
+data class Coordinates(
+    val lon: Long,
+    val lat: Long
+)
+
+data class Date(
+    val year: Int,
+    val month: Int,
+    val day: Int
+)
 

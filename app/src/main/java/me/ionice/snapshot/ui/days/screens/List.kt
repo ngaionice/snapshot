@@ -136,8 +136,8 @@ private fun EntryList(
         }
     } else {
         LazyColumn(modifier = modifier) {
-            items(items = days, key = { day -> day.day.id }) { day ->
-                EntryListItem(day = day) { onDaySelect(day.day.id) }
+            items(items = days, key = { day -> day.core.id }) { day ->
+                EntryListItem(day = day) { onDaySelect(day.core.id) }
             }
         }
     }
@@ -146,8 +146,8 @@ private fun EntryList(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EntryListItem(day: DayWithMetrics, onClick: () -> Unit) {
-    val date = LocalDate.ofEpochDay(day.day.id)
-    val location: String = day.day.location
+    val date = LocalDate.ofEpochDay(day.core.id)
+    val location: String = day.core.location
     val metricCount = day.metrics.size
 
     Row(
