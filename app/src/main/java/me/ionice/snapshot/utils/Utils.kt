@@ -1,7 +1,6 @@
 package me.ionice.snapshot.utils
 
 import java.time.DayOfWeek
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
@@ -13,7 +12,6 @@ object Utils {
     val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     val locale: Locale = Locale.US
-    val zoneId: ZoneId = ZoneId.systemDefault()
 
     val firstDayOfWeek: DayOfWeek = WeekFields.of(locale).firstDayOfWeek
     val lastDayOfWeek: DayOfWeek = DayOfWeek.of(((firstDayOfWeek.value + 5) % DayOfWeek.values().size) + 1)

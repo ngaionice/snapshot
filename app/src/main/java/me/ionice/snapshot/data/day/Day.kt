@@ -1,9 +1,6 @@
 package me.ionice.snapshot.data.day
 
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Relation
+import androidx.room.*
 import me.ionice.snapshot.data.metric.MetricEntry
 import java.time.LocalDate
 
@@ -27,12 +24,14 @@ data class DayWithMetrics(
     val metrics: List<MetricEntry>
 )
 
-@Entity(tableName = "location")
+@Entity(tableName = "location", indices = [Index(value = ["lon", "lat"], unique = true)])
 data class Location(
     @PrimaryKey
     val name: String,
     @Embedded
-    val coordinates: Coordinates?
+    val coordinates: Coordinates?,
+    val createdAt: Long, // epoch second
+    val lastUsedAt: Long // epoch second
 )
 
 data class Coordinates(

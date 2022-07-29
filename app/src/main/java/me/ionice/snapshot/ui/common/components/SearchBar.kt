@@ -35,7 +35,6 @@ fun SearchHeaderBar(
     var searching by rememberSaveable { mutableStateOf(false) }
     var searchString by rememberSaveable { mutableStateOf("") }
 
-    // TODO: update to use updateTransition for even more control
     val horizontalPadding: Int by animateIntAsState(if (searching) 0 else 24)
     val verticalPadding: Int by animateIntAsState(if (searching) 0 else 8)
 
@@ -129,7 +128,6 @@ fun SearchHeaderBar(
 @Preview
 @Composable
 fun SearchBarPreview() {
-
     SearchHeaderBar(placeholderText = "Search in day summaries",
         leadingIcon = {
             IconButton(onClick = {}) {
@@ -141,6 +139,5 @@ fun SearchBarPreview() {
                 Icon(Icons.Filled.CalendarMonth, contentDescription = "Year")
             }
         }, onSearchStringChange = {}) {
-
     }
 }

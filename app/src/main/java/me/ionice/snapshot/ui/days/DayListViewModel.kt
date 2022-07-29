@@ -17,8 +17,8 @@ class DayListViewModel(
     private val viewModelState = MutableStateFlow(DayListViewModelState(loading = true))
 
     val uiState = viewModelState
-        .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .map { it.toUiState2() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState2())
 
     init {
         val today = LocalDate.now()
@@ -27,7 +27,7 @@ class DayListViewModel(
         // load weekly entries
         viewModelScope.launch {
             val currentDayId = today.toEpochDay()
-            val weekStartDayId = currentDayId - (today.dayOfWeek.value - 1)
+            val weekStartDayId = currentDayId - today.dayOfWeek.value
             dayRepository.getDaysFlow(weekStartDayId, currentDayId).collect { days ->
                 viewModelState.update {
                     it.copy(weekEntries = days)
@@ -83,13 +83,21 @@ class DayListViewModel(
 
     fun search(query: DaySearchQuery) {
         viewModelState.update {
-            it.copy(query = query)
+            it.copy(
+                searchQuery = query,
+                // TODO: make it suspend + run query method when available
+                searchResults = it.yearEntries.filter { entry ->
+                    entry.core.summary.contains(
+                        query.searchString,
+                        true
+                    )
+                })
         }
     }
 
     fun clearSearch() {
         viewModelState.update {
-            it.copy(query = null)
+            it.copy(searchQuery = null)
         }
     }
 
@@ -115,26 +123,24 @@ data class DayListViewModelState(
     val weekEntries: List<DayWithMetrics> = emptyList(),
     val yearEntries: List<DayWithMetrics> = emptyList(),
     val memories: List<DayWithMetrics> = emptyList(),
-    val query: DaySearchQuery? = null
+    val searchQuery: DaySearchQuery? = null,
+    val searchResults: List<DayWithMetrics> = emptyList()
 ) {
 
-    fun toUiState(): DayListUiState = if (query == null) {
-        DayListUiState(
-            loading = loading,
-            year = listYear,
-            weekEntries = weekEntries,
-            yearEntries = yearEntries,
-            memories = memories
-        )
-    } else {
-        DayListUiState(
-            loading = loading,
-            year = listYear,
-            weekEntries = weekEntries,
-            yearEntries = yearEntries.filter {
-                it.core.summary.contains(query.querySummaryString, true)
-            },
-            memories = memories
+    fun toUiState2(): DayListUiState {
+        if (loading) return DayListUiState.Loading
+        if (searchQuery == null) {
+            return DayListUiState.Overview(
+                year = listYear,
+                weekEntries = weekEntries,
+                yearEntries = yearEntries,
+                memories = memories
+            )
+        }
+        return DayListUiState.Search(
+            query = searchQuery,
+            // TODO: update when results searching become available
+            results = searchResults
         )
     }
 }
@@ -143,18 +149,34 @@ data class DayListViewModelState(
  * An object representing the properties of a search against Day entries.
  */
 data class DaySearchQuery(
-    val yearRange: Int?, // null if searching all
-    val querySummaryString: String
-    // potentially add filters down the road?
-)
+    val yearRange: Int?, // TODO: remove when ListOld is deleted
+    val searchString: String = "",
+    val dateRange: Pair<LocalDate, LocalDate> = Pair(LocalDate.MIN, LocalDate.MAX),
+    val locations: List<String> = emptyList()
+) {
+    companion object {
+        fun initialize(): DaySearchQuery = DaySearchQuery(yearRange = null)
+    }
+}
 
 /**
  * UI state for the List screen.
+ *
+ * Derived from [DayListViewModelState], but separated into different classes to more accurately reflect the state of the screen
  */
-data class DayListUiState(
-    val loading: Boolean,
-    val year: Int,
-    val weekEntries: List<DayWithMetrics>,
-    val yearEntries: List<DayWithMetrics>,
-    val memories: List<DayWithMetrics>
-)
+sealed interface DayListUiState {
+
+    object Loading : DayListUiState
+
+    data class Overview(
+        val year: Int,
+        val weekEntries: List<DayWithMetrics>,
+        val yearEntries: List<DayWithMetrics>,
+        val memories: List<DayWithMetrics>
+    ) : DayListUiState
+
+    data class Search(
+        val query: DaySearchQuery,
+        val results: List<DayWithMetrics>
+    ) : DayListUiState
+}
