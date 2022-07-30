@@ -17,8 +17,8 @@ class DayListViewModel(
     private val viewModelState = MutableStateFlow(DayListViewModelState(loading = true))
 
     val uiState = viewModelState
-        .map { it.toUiState2() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState2())
+        .map { it.toUiState() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
     init {
         val today = LocalDate.now()
@@ -81,17 +81,18 @@ class DayListViewModel(
         }
     }
 
+    fun setQuery(query: DaySearchQuery) {
+        viewModelState.update {
+            it.copy(searchQuery = query)
+        }
+    }
+
     fun search(query: DaySearchQuery) {
         viewModelState.update {
             it.copy(
                 searchQuery = query,
                 // TODO: make it suspend + run query method when available
-                searchResults = it.yearEntries.filter { entry ->
-                    entry.core.summary.contains(
-                        query.searchString,
-                        true
-                    )
-                })
+                searchResults = emptyList())
         }
     }
 
@@ -127,7 +128,7 @@ data class DayListViewModelState(
     val searchResults: List<DayWithMetrics> = emptyList()
 ) {
 
-    fun toUiState2(): DayListUiState {
+    fun toUiState(): DayListUiState {
         if (loading) return DayListUiState.Loading
         if (searchQuery == null) {
             return DayListUiState.Overview(
@@ -137,10 +138,18 @@ data class DayListViewModelState(
                 memories = memories
             )
         }
+
+        val quickResults = yearEntries.filter { entry ->
+            entry.core.summary.contains(
+                searchQuery.searchString,
+                true
+            )
+        }
         return DayListUiState.Search(
             query = searchQuery,
+            quickResults = quickResults.slice(0..minOf(4, quickResults.size - 1)),
             // TODO: update when results searching become available
-            results = searchResults
+            fullResults = searchResults
         )
     }
 }
@@ -177,6 +186,7 @@ sealed interface DayListUiState {
 
     data class Search(
         val query: DaySearchQuery,
-        val results: List<DayWithMetrics>
+        val quickResults: List<DayWithMetrics>,
+        val fullResults: List<DayWithMetrics>
     ) : DayListUiState
 }

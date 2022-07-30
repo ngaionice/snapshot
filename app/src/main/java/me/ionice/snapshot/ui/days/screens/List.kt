@@ -31,14 +31,15 @@ fun ListRoute(
             viewModel.insertDay(it)
             onSelectDay(it)
         },
-        onChangeYear = viewModel::switchYear,
+        onYearChange = viewModel::switchYear,
         onSearchBarStateChange = {
             if (it) {
-                viewModel.search(DaySearchQuery.initialize())
+                viewModel.setQuery(DaySearchQuery.initialize())
             } else {
                 viewModel.clearSearch()
             }
-        }
+        },
+        onSearchQueryChange = viewModel::setQuery
     )
 }
 
@@ -48,15 +49,19 @@ private fun ListScreen(
     uiState: DayListUiState,
     onSelectDay: (Long) -> Unit,
     onAddDay: (Long) -> Unit,
-    onChangeYear: (Int) -> Unit,
-    onSearchBarStateChange: (Boolean) -> Unit
+    onYearChange: (Int) -> Unit,
+    onSearchBarStateChange: (Boolean) -> Unit,
+    onSearchQueryChange: (DaySearchQuery) -> Unit
 ) {
     val scrollState = rememberLazyListState()
     var expandedWeek by rememberSaveable { mutableStateOf(-1) }
 
     LazyColumn(state = scrollState) {
         stickyHeader {
-            SearchBar(onSearchBarStateChange = onSearchBarStateChange)
+            // TODO: update to use nested scroll outside of LazyColumn later
+            SearchBar(onSearchBarStateChange = onSearchBarStateChange, onQueryStringChange = {
+                onSearchQueryChange((uiState as DayListUiState.Search).query.copy(searchString = it))
+            })
         }
 
         when (uiState) {
@@ -75,25 +80,29 @@ private fun ListScreen(
                 onAddDay = onAddDay,
                 onChangeYear = {
                     expandedWeek = -1
-                    onChangeYear(it)
+                    onYearChange(it)
                 },
                 expandedWeek = expandedWeek,
                 setExpandedWeek = { expandedWeek = it }
             )
             is DayListUiState.Search -> getSearchScreen(
                 listScope = this,
-                query = uiState.query,
-                onQueryChange = {}
+                uiState = uiState,
+                onQueryChange = onSearchQueryChange,
+                onSearch = {}
             )
         }
     }
 }
 
 @Composable
-private fun SearchBar(onSearchBarStateChange: (Boolean) -> Unit) {
+private fun SearchBar(
+    onQueryStringChange: (String) -> Unit,
+    onSearchBarStateChange: (Boolean) -> Unit
+) {
     SearchHeaderBar(
         placeholderText = "Search entries",
-        onSearchStringChange = {},
+        onSearchStringChange = onQueryStringChange,
         onSearchBarActiveStateChange = onSearchBarStateChange,
         leadingIcon = {
             Icon(

@@ -55,7 +55,7 @@ fun SearchHeaderBar(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 4.dp, vertical = (8 - verticalPadding).dp)
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = (8 - verticalPadding).dp)
         ) {
             if (searching) {
                 IconButton(onClick = {
@@ -86,7 +86,7 @@ fun SearchHeaderBar(
                         onValueChange = {
                             searchString = it
                         }, maxLines = 1,
-                        modifier = Modifier.focusRequester(textFieldFocusRequester),
+                        modifier = Modifier.focusRequester(textFieldFocusRequester).fillMaxWidth(),
                         textStyle = TextStyle.Default.copy(color = LocalContentColor.current),
                         cursorBrush = SolidColor(LocalContentColor.current)
                     )
@@ -112,8 +112,10 @@ fun SearchHeaderBar(
         }
     }
 
-    LaunchedEffect(key1 = searchString) {
-        onSearchStringChange(searchString)
+    if (searching) {
+        LaunchedEffect(key1 = searchString) {
+            onSearchStringChange(searchString)
+        }
     }
 
     LaunchedEffect(key1 = searching) {
