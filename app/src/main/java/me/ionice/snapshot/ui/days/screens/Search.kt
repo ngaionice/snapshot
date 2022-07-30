@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.data.day.DayWithMetrics
@@ -25,7 +26,8 @@ fun getSearchScreen(
     listScope: LazyListScope,
     uiState: DayListUiState.Search,
     onQueryChange: (DaySearchQuery) -> Unit,
-    onSearch: (DaySearchQuery) -> Unit
+    onSearch: (DaySearchQuery) -> Unit,
+    onSelectDayFromQuickResults: (Long) -> Unit
 ) {
     val (query, quickResults) = uiState
     val (_, searchString) = query
@@ -48,7 +50,7 @@ fun getSearchScreen(
             QuickResults(
                 queryString = searchString,
                 results = quickResults,
-                onViewItem = {}
+                onSelectDay = onSelectDayFromQuickResults
             )
         }
     }
@@ -139,7 +141,7 @@ private fun SearchButton(queryString: String, onSearch: () -> Unit) {
 private fun QuickResults(
     queryString: String,
     results: List<DayWithMetrics>,
-    onViewItem: (Long) -> Unit
+    onSelectDay: (Long) -> Unit
 ) {
     if (results.isEmpty()) return
 
@@ -151,7 +153,7 @@ private fun QuickResults(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onViewItem(it.core.id) }
+                        .clickable { onSelectDay(it.core.id) }
                         .padding(horizontal = 24.dp, vertical = 16.dp)
                 ) {
                     val date = LocalDate.ofEpochDay(it.core.id)
@@ -165,7 +167,11 @@ private fun QuickResults(
                         ),
                         style = MaterialTheme.typography.labelMedium
                     )
-                    Text(text = getSearchResultDisplayText(queryString, it.core.summary))
+                    Text(
+                        text = getSearchResultDisplayText(queryString, it.core.summary),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
                 }
             }
         }

@@ -24,30 +24,27 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchHeaderBar(
+    isSearching: Boolean,
+    setIsSearching: (Boolean) -> Unit,
     placeholderText: String,
     modifier: Modifier = Modifier,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    onSearchStringChange: (String) -> Unit,
-    onSearchBarActiveStateChange: ((Boolean) -> Unit)? = null,
+    onSearchStringChange: (String) -> Unit
 ) {
 
-    var searching by rememberSaveable { mutableStateOf(false) }
     var searchString by rememberSaveable { mutableStateOf("") }
 
-    val horizontalPadding: Int by animateIntAsState(if (searching) 0 else 24)
-    val verticalPadding: Int by animateIntAsState(if (searching) 0 else 8)
+    val horizontalPadding: Int by animateIntAsState(if (isSearching) 0 else 24)
+    val verticalPadding: Int by animateIntAsState(if (isSearching) 0 else 8)
 
     val textFieldFocusRequester = remember { FocusRequester() }
 
-    val onActiveStateChange: (Boolean) -> Unit = onSearchBarActiveStateChange ?: {}
-
     Card(
         onClick = {
-            searching = true
-            onActiveStateChange(true)
+            setIsSearching(true)
         },
-        shape = if (searching) Shapes.None else Shapes.Full,
+        shape = if (isSearching) Shapes.None else Shapes.Full,
         modifier = modifier.padding(
             horizontal = horizontalPadding.dp,
             vertical = verticalPadding.dp
@@ -57,10 +54,9 @@ fun SearchHeaderBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = (8 - verticalPadding).dp)
         ) {
-            if (searching) {
+            if (isSearching) {
                 IconButton(onClick = {
-                    searching = false
-                    onActiveStateChange(false)
+                    setIsSearching(false)
                 }) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                 }
@@ -80,22 +76,26 @@ fun SearchHeaderBar(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
-                if (searching) {
+                if (isSearching) {
                     BasicTextField(
                         value = searchString,
                         onValueChange = {
                             searchString = it
                         }, maxLines = 1,
-                        modifier = Modifier.focusRequester(textFieldFocusRequester).fillMaxWidth(),
+                        modifier = Modifier
+                            .focusRequester(textFieldFocusRequester)
+                            .fillMaxWidth(),
                         textStyle = TextStyle.Default.copy(color = LocalContentColor.current),
                         cursorBrush = SolidColor(LocalContentColor.current)
                     )
                     textFieldFocusRequester.requestFocus()
+                } else  {
+                    searchString = ""
                 }
             }
 
             Spacer(modifier = Modifier.width(4.dp))
-            if (searching) {
+            if (isSearching) {
                 IconButton(onClick = {
                     searchString = ""
                     textFieldFocusRequester.requestFocus()
@@ -112,24 +112,22 @@ fun SearchHeaderBar(
         }
     }
 
-    if (searching) {
+    if (isSearching) {
         LaunchedEffect(key1 = searchString) {
             onSearchStringChange(searchString)
         }
     }
 
-    LaunchedEffect(key1 = searching) {
-        onActiveStateChange(searching)
-    }
-
-    BackHandler(enabled = searching) {
-        searching = false
+    BackHandler(enabled = isSearching) {
+        setIsSearching(false)
     }
 }
 
 @Preview
 @Composable
 fun SearchBarPreview() {
+    var isSearching = false
+
     SearchHeaderBar(placeholderText = "Search in day summaries",
         leadingIcon = {
             IconButton(onClick = {}) {
@@ -140,6 +138,8 @@ fun SearchBarPreview() {
             IconButton(onClick = {}) {
                 Icon(Icons.Filled.CalendarMonth, contentDescription = "Year")
             }
-        }, onSearchStringChange = {}) {
-    }
+        },
+        onSearchStringChange = {},
+        isSearching = isSearching,
+        setIsSearching = { isSearching = it })
 }

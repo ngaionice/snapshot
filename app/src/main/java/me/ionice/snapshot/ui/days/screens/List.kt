@@ -55,13 +55,21 @@ private fun ListScreen(
 ) {
     val scrollState = rememberLazyListState()
     var expandedWeek by rememberSaveable { mutableStateOf(-1) }
+    var isSearching by rememberSaveable { mutableStateOf(false) }
 
     LazyColumn(state = scrollState) {
         stickyHeader {
             // TODO: update to use nested scroll outside of LazyColumn later
-            SearchBar(onSearchBarStateChange = onSearchBarStateChange, onQueryStringChange = {
-                onSearchQueryChange((uiState as DayListUiState.Search).query.copy(searchString = it))
-            })
+            SearchBar(
+                isSearching = isSearching,
+                setIsSearching = {
+                    isSearching = it
+                    onSearchBarStateChange(it)
+                },
+                onQueryStringChange = {
+                    onSearchQueryChange((uiState as DayListUiState.Search).query.copy(searchString = it))
+                }
+            )
         }
 
         when (uiState) {
@@ -89,7 +97,12 @@ private fun ListScreen(
                 listScope = this,
                 uiState = uiState,
                 onQueryChange = onSearchQueryChange,
-                onSearch = {}
+                onSearch = {},
+                onSelectDayFromQuickResults = {
+                    onSelectDay(it)
+                    isSearching = false
+                    onSearchBarStateChange(false)
+                }
             )
         }
     }
@@ -97,13 +110,15 @@ private fun ListScreen(
 
 @Composable
 private fun SearchBar(
-    onQueryStringChange: (String) -> Unit,
-    onSearchBarStateChange: (Boolean) -> Unit
+    isSearching: Boolean,
+    setIsSearching: (Boolean) -> Unit,
+    onQueryStringChange: (String) -> Unit
 ) {
     SearchHeaderBar(
+        isSearching = isSearching,
+        setIsSearching = setIsSearching,
         placeholderText = "Search entries",
         onSearchStringChange = onQueryStringChange,
-        onSearchBarActiveStateChange = onSearchBarStateChange,
         leadingIcon = {
             Icon(
                 Icons.Filled.Search,
