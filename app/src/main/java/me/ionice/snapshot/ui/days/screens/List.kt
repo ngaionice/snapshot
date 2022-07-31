@@ -1,21 +1,27 @@
 package me.ionice.snapshot.ui.days.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import me.ionice.snapshot.ui.common.components.SearchBarState
 import me.ionice.snapshot.ui.common.components.SearchHeaderBar
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
 import me.ionice.snapshot.ui.days.DayListUiState
 import me.ionice.snapshot.ui.days.DayListViewModel
 import me.ionice.snapshot.ui.days.DaySearchQuery
+import kotlin.math.roundToInt
 
 @Composable
 fun ListRoute(
@@ -32,7 +38,7 @@ fun ListRoute(
             onSelectDay(it)
         },
         onYearChange = viewModel::switchYear,
-        onSearchBarStateChange = {
+        setIsSearching = {
             if (it) {
                 viewModel.setQuery(DaySearchQuery.initialize())
             } else {
@@ -43,86 +49,125 @@ fun ListRoute(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ListScreen(
     uiState: DayListUiState,
     onSelectDay: (Long) -> Unit,
     onAddDay: (Long) -> Unit,
     onYearChange: (Int) -> Unit,
-    onSearchBarStateChange: (Boolean) -> Unit,
+    setIsSearching: (Boolean) -> Unit,
     onSearchQueryChange: (DaySearchQuery) -> Unit
 ) {
-    val scrollState = rememberLazyListState()
     var expandedWeek by rememberSaveable { mutableStateOf(-1) }
-    var isSearching by rememberSaveable { mutableStateOf(false) }
+    var searchBarState by rememberSaveable { mutableStateOf(SearchBarState.NOT_SEARCHING) }
+    var searchString by rememberSaveable { mutableStateOf("") }
 
-    LazyColumn(state = scrollState) {
-        stickyHeader {
-            // TODO: update to use nested scroll outside of LazyColumn later
-            SearchBar(
-                isSearching = isSearching,
-                setIsSearching = {
-                    isSearching = it
-                    onSearchBarStateChange(it)
-                },
-                onQueryStringChange = {
-                    onSearchQueryChange((uiState as DayListUiState.Search).query.copy(searchString = it))
-                }
-            )
+    val searchBarHeight = 64.dp
+    val searchBarHeightPx = with(LocalDensity.current) { searchBarHeight.roundToPx().toFloat() }
+    val searchBarOffsetHeightPx = remember { mutableStateOf(0f) }
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
+                val newOffset = searchBarOffsetHeightPx.value + delta
+                searchBarOffsetHeightPx.value = newOffset.coerceIn(-searchBarHeightPx, 0f)
+
+                return Offset.Zero
+            }
         }
+    }
 
-        when (uiState) {
-            is DayListUiState.Loading -> {
-                item {
+    val contentPadding = PaddingValues(top = searchBarHeight)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection)
+    ) {
+        Column {
+            when (uiState) {
+                is DayListUiState.Loading -> {
                     LoadingScreen()
                 }
+                is DayListUiState.Overview -> OverviewScreen(
+                    contentPadding = contentPadding,
+                    daysInWeek = uiState.weekEntries,
+                    daysInYear = uiState.yearEntries,
+                    memories = uiState.memories,
+                    year = uiState.year,
+                    onSelectDay = onSelectDay,
+                    onAddDay = onAddDay,
+                    onChangeYear = {
+                        expandedWeek = -1
+                        onYearChange(it)
+                    },
+                    expandedWeek = expandedWeek,
+                    setExpandedWeek = { expandedWeek = it }
+                )
+                is DayListUiState.Search -> SearchScreen(
+                    contentPadding = contentPadding,
+                    uiState = uiState,
+                    onQueryChange = onSearchQueryChange,
+                    onSearch = {},
+                    onSelectDayFromQuickResults = {
+                        onSelectDay(it)
+                        searchBarState = SearchBarState.NOT_SEARCHING
+                    }
+                )
             }
-            is DayListUiState.Overview -> getOverviewScreen(
-                listScope = this,
-                daysInWeek = uiState.weekEntries,
-                daysInYear = uiState.yearEntries,
-                memories = uiState.memories,
-                year = uiState.year,
-                onSelectDay = onSelectDay,
-                onAddDay = onAddDay,
-                onChangeYear = {
-                    expandedWeek = -1
-                    onYearChange(it)
-                },
-                expandedWeek = expandedWeek,
-                setExpandedWeek = { expandedWeek = it }
-            )
-            is DayListUiState.Search -> getSearchScreen(
-                listScope = this,
-                uiState = uiState,
-                onQueryChange = onSearchQueryChange,
-                onSearch = {},
-                onSelectDayFromQuickResults = {
-                    onSelectDay(it)
-                    isSearching = false
-                    onSearchBarStateChange(false)
-                }
-            )
         }
+
+        SearchBar(
+            searchBarState = searchBarState,
+            setSearchBarState = {
+                searchBarState = it
+                setIsSearching(it != SearchBarState.NOT_SEARCHING)
+            },
+            modifier = Modifier
+                .height(searchBarHeight)
+                .offset { IntOffset(x = 0, y = searchBarOffsetHeightPx.value.roundToInt()) },
+            searchString = searchString,
+            setSearchString = {
+                searchString = it
+                onSearchQueryChange((uiState as DayListUiState.Search).query.copy(searchString = it))
+            }
+        )
+    }
+
+    // reset search state and everything when search bar state becomes not searching
+    LaunchedEffect(key1 = searchBarState) {
+        if (searchBarState == SearchBarState.NOT_SEARCHING) {
+            searchString = ""
+            setIsSearching(false)
+        }
+    }
+
+    // if a search has been initiated, cancel the search and reset to default
+    BackHandler(enabled = searchBarState != SearchBarState.NOT_SEARCHING) {
+        searchBarState = SearchBarState.NOT_SEARCHING
     }
 }
 
 @Composable
 private fun SearchBar(
-    isSearching: Boolean,
-    setIsSearching: (Boolean) -> Unit,
-    onQueryStringChange: (String) -> Unit
+    searchString: String,
+    setSearchString: (String) -> Unit,
+    searchBarState: SearchBarState,
+    setSearchBarState: (SearchBarState) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     SearchHeaderBar(
-        isSearching = isSearching,
-        setIsSearching = setIsSearching,
+        searchBarState = searchBarState,
+        setSearchBarState = setSearchBarState,
+        modifier = modifier,
         placeholderText = "Search entries",
-        onSearchStringChange = onQueryStringChange,
+        searchString = searchString,
+        setSearchString = setSearchString,
         leadingIcon = {
             Icon(
                 Icons.Filled.Search,
-                contentDescription = null,
+                contentDescription = "Search",
                 modifier = Modifier.padding(12.dp)
             )
         },

@@ -50,10 +50,10 @@ import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 
-
+@Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun getOverviewScreen(
-    listScope: LazyListScope,
+fun OverviewScreen(
+    contentPadding: PaddingValues,
     daysInWeek: List<DayWithMetrics>,
     daysInYear: List<DayWithMetrics>,
     memories: List<DayWithMetrics>,
@@ -65,27 +65,29 @@ fun getOverviewScreen(
     setExpandedWeek: (Int) -> Unit
 ) {
 
-    listScope.item {
-        CurrentWeek(days = daysInWeek, onSelectDay = onSelectDay, onAddDay = onAddDay)
-    }
-
-    if (memories.isNotEmpty()) {
-        listScope.item {
-            Memories(days = memories, onSelectDay = onSelectDay)
+    LazyColumn(contentPadding = contentPadding) {
+        item {
+            CurrentWeek(days = daysInWeek, onSelectDay = onSelectDay, onAddDay = onAddDay)
         }
-    }
 
-    listScope.stickyHeader {
-        WeekListHeader(year = year, onChangeYear = onChangeYear)
-    }
+        if (memories.isNotEmpty()) {
+            item {
+                Memories(days = memories, onSelectDay = onSelectDay)
+            }
+        }
 
-    getWeekList(
-        daysInYear = daysInYear,
-        onSelectDay = onSelectDay,
-        listScope = listScope,
-        expandedWeek = expandedWeek,
-        setExpandedWeek = setExpandedWeek
-    )
+        stickyHeader {
+            WeekListHeader(year = year, onChangeYear = onChangeYear)
+        }
+
+        getWeekList(
+            daysInYear = daysInYear,
+            onSelectDay = onSelectDay,
+            listScope = this,
+            expandedWeek = expandedWeek,
+            setExpandedWeek = setExpandedWeek
+        )
+    }
 }
 
 @Composable

@@ -2,13 +2,13 @@ package me.ionice.snapshot.ui.days.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,32 +21,46 @@ import me.ionice.snapshot.ui.days.DaySearchQuery
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
-
-fun getSearchScreen(
-    listScope: LazyListScope,
+@Composable
+fun SearchScreen(
+    contentPadding: PaddingValues,
     uiState: DayListUiState.Search,
     onQueryChange: (DaySearchQuery) -> Unit,
     onSearch: (DaySearchQuery) -> Unit,
     onSelectDayFromQuickResults: (Long) -> Unit
 ) {
+    var showingResults by remember { mutableStateOf(false) }
+
+    if (!showingResults) {
+        SearchOptionsScreen(
+            contentPadding = contentPadding,
+            uiState = uiState,
+            onSearch = onSearch,
+            onSelectDayFromQuickResults = onSelectDayFromQuickResults
+        )
+    } else {
+        SearchResultsScreen()
+    }
+}
+
+@Composable
+private fun SearchOptionsScreen(
+    contentPadding: PaddingValues,
+    uiState: DayListUiState.Search,
+    onSearch: (DaySearchQuery) -> Unit,
+    onSelectDayFromQuickResults: (Long) -> Unit
+) {
+
     val (query, quickResults) = uiState
     val (_, searchString) = query
 
-    listScope.item {
+    Column(modifier = Modifier.padding(contentPadding)) {
         SearchFilters(query = query, onYearRangeChange = {}, onLocationsChange = {})
-    }
-
-    if (searchString.isEmpty()) {
-        listScope.item {
+        if (searchString.isEmpty()) {
             SearchHistory(recentSearches = listOf("snapshot", "work", "swimming"), onSearch = {})
-        }
-    } else {
-        if (searchString.length >= 3) {
-            listScope.item {
-                SearchButton(queryString = searchString, onSearch = { onSearch(query) })
-            }
-        }
-        listScope.item {
+        } else {
+            SearchButton(queryString = searchString, onSearch = { onSearch(query) })
+
             QuickResults(
                 queryString = searchString,
                 results = quickResults,
@@ -54,6 +68,10 @@ fun getSearchScreen(
             )
         }
     }
+}
+
+@Composable
+private fun SearchResultsScreen() {
 
 }
 
@@ -178,6 +196,54 @@ private fun QuickResults(
     }
 }
 
+@Composable
+private fun FullResults(
+    queryString: String,
+    results: List<DayWithMetrics>,
+    onSelectDay: (Long) -> Unit
+) {
+    if (results.isEmpty()) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Text("No results found.")
+        }
+        return
+    }
+
+    val currentYear = LocalDate.now().year
+
+    PageSection(title = "Results", headerTextColor = MaterialTheme.colorScheme.onSurface) {
+        LazyColumn {
+            results.forEach {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSelectDay(it.core.id) }
+                            .padding(horizontal = 24.dp, vertical = 16.dp)
+                    ) {
+                        val date = LocalDate.ofEpochDay(it.core.id)
+                        Text(
+                            text = date.format(
+                                if (date.year == currentYear) {
+                                    Utils.shortDateFormatter
+                                } else {
+                                    Utils.dateFormatter
+                                }
+                            ),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                        Text(
+                            text = getSearchResultDisplayText(queryString, it.core.summary),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 /**
  * @param summary The summary to be extracted for display text. If it does not contain [queryString], an empty string will be returned.
  */
@@ -204,11 +270,6 @@ private fun getSearchResultDisplayText(queryString: String, summary: String): St
     }
 
     return summary.substring(get2ndLastWordStartIdx(summary, targetIdx))
-}
-
-@Composable
-private fun FullResults() {
-
 }
 
 @Preview

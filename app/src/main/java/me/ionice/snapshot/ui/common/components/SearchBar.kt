@@ -11,124 +11,208 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
+enum class SearchBarState {
+    ACTIVE,
+    INACTIVE,
+    NOT_SEARCHING
+}
+
 @Composable
 fun SearchHeaderBar(
-    isSearching: Boolean,
-    setIsSearching: (Boolean) -> Unit,
+    searchString: String,
+    setSearchString: (String) -> Unit,
+    searchBarState: SearchBarState,
+    setSearchBarState: (SearchBarState) -> Unit,
     placeholderText: String,
     modifier: Modifier = Modifier,
     leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    onSearchStringChange: (String) -> Unit
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
 
-    var searchString by rememberSaveable { mutableStateOf("") }
-
-    val horizontalPadding: Int by animateIntAsState(if (isSearching) 0 else 24)
-    val verticalPadding: Int by animateIntAsState(if (isSearching) 0 else 8)
+    val horizontalPadding: Int by animateIntAsState(if (searchBarState == SearchBarState.ACTIVE) 0 else 24)
+    val verticalPadding: Int by animateIntAsState(if (searchBarState == SearchBarState.ACTIVE) 0 else 8)
 
     val textFieldFocusRequester = remember { FocusRequester() }
 
-    Card(
-        onClick = {
-            setIsSearching(true)
-        },
-        shape = if (isSearching) Shapes.None else Shapes.Full,
-        modifier = modifier.padding(
-            horizontal = horizontalPadding.dp,
-            vertical = verticalPadding.dp
-        )
+    SearchBarBase(
+        searchBarState = searchBarState,
+        setSearchBarState = setSearchBarState,
+        horizontalPadding = horizontalPadding,
+        verticalPadding = verticalPadding,
+        modifier = modifier
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = (8 - verticalPadding).dp)
         ) {
-            if (isSearching) {
-                IconButton(onClick = {
-                    setIsSearching(false)
-                }) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                }
-            } else {
-                if (leadingIcon != null) {
-                    leadingIcon()
-                } else {
-                    Spacer(modifier = Modifier.width(12.dp))
-                }
-            }
+            SearchBarLeadingIcon(
+                searchBarState = searchBarState,
+                setSearchBarState = {
+                    setSearchBarState(it)
+                    if (it == SearchBarState.NOT_SEARCHING) {
+                        setSearchString("")
+                    }
+                },
+                leadingIcon = leadingIcon
+            )
 
             Spacer(modifier = Modifier.width(4.dp))
+
             Box(modifier = Modifier.weight(1f)) {
-                if (searchString.isEmpty()) {
-                    Text(
-                        text = placeholderText,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-                if (isSearching) {
-                    BasicTextField(
-                        value = searchString,
-                        onValueChange = {
-                            searchString = it
-                        }, maxLines = 1,
-                        modifier = Modifier
-                            .focusRequester(textFieldFocusRequester)
-                            .fillMaxWidth(),
-                        textStyle = TextStyle.Default.copy(color = LocalContentColor.current),
-                        cursorBrush = SolidColor(LocalContentColor.current)
-                    )
-                    textFieldFocusRequester.requestFocus()
-                } else  {
-                    searchString = ""
-                }
+                SearchBarTextField(
+                    searchBarState = searchBarState,
+                    searchString = searchString,
+                    onSearchStringChange = setSearchString,
+                    focusRequester = textFieldFocusRequester,
+                    placeholderText = placeholderText
+                )
             }
 
             Spacer(modifier = Modifier.width(4.dp))
-            if (isSearching) {
-                IconButton(onClick = {
-                    searchString = ""
+
+            SearchBarTrailingIcon(
+                searchBarState = searchBarState,
+                onSearchStringClear = {
+                    setSearchString("")
                     textFieldFocusRequester.requestFocus()
-                }) {
-                    Icon(Icons.Filled.Cancel, contentDescription = "Clear")
-                }
-            } else {
-                if (trailingIcon != null) {
-                    trailingIcon()
-                } else {
-                    Spacer(modifier = Modifier.width(12.dp))
-                }
-            }
+                },
+                trailingIcon = trailingIcon
+            )
         }
     }
 
-    if (isSearching) {
-        LaunchedEffect(key1 = searchString) {
-            onSearchStringChange(searchString)
+    LaunchedEffect(key1 = searchString) {
+        if (searchBarState == SearchBarState.ACTIVE) {
+            setSearchString(searchString)
         }
     }
 
-    BackHandler(enabled = isSearching) {
-        setIsSearching(false)
+    BackHandler(enabled = searchBarState != SearchBarState.NOT_SEARCHING) {
+        setSearchBarState(SearchBarState.NOT_SEARCHING)
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchBarBase(
+    searchBarState: SearchBarState,
+    setSearchBarState: (SearchBarState) -> Unit,
+    horizontalPadding: Int,
+    verticalPadding: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Card(
+        onClick = {
+            setSearchBarState(SearchBarState.ACTIVE)
+        },
+        shape = if (searchBarState == SearchBarState.ACTIVE) Shapes.None else Shapes.Full,
+        modifier = modifier.padding(
+            horizontal = horizontalPadding.dp,
+            vertical = verticalPadding.dp
+        )
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun SearchBarLeadingIcon(
+    searchBarState: SearchBarState,
+    setSearchBarState: (SearchBarState) -> Unit,
+    leadingIcon: @Composable (() -> Unit)? = null
+) {
+    if (searchBarState == SearchBarState.NOT_SEARCHING) {
+        if (leadingIcon != null) {
+            leadingIcon()
+        } else {
+            Spacer(modifier = Modifier.width(12.dp))
+        }
+    } else {
+        IconButton(onClick = {
+            setSearchBarState(SearchBarState.NOT_SEARCHING)
+        }) {
+            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+        }
+    }
+}
+
+@Composable
+private fun SearchBarTrailingIcon(
+    searchBarState: SearchBarState,
+    onSearchStringClear: () -> Unit,
+    trailingIcon: @Composable (() -> Unit)? = null
+) {
+    if (searchBarState == SearchBarState.NOT_SEARCHING) {
+        if (trailingIcon != null) {
+            trailingIcon()
+        } else {
+            Spacer(modifier = Modifier.width(12.dp))
+        }
+    } else {
+        IconButton(onClick = onSearchStringClear) {
+            Icon(Icons.Filled.Cancel, contentDescription = "Clear")
+        }
+    }
+}
+
+@Composable
+private fun SearchBarTextField(
+    searchBarState: SearchBarState,
+    searchString: String,
+    onSearchStringChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    placeholderText: String
+) {
+    if (searchString.isEmpty()) {
+        Text(
+            text = placeholderText,
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+    if (searchBarState == SearchBarState.ACTIVE) {
+        BasicTextField(
+            value = searchString,
+            onValueChange = onSearchStringChange,
+            maxLines = 1,
+            modifier = Modifier
+                .focusRequester(focusRequester)
+                .fillMaxWidth(),
+            textStyle = TextStyle.Default.copy(color = LocalContentColor.current),
+            cursorBrush = SolidColor(LocalContentColor.current)
+        )
+        focusRequester.requestFocus()
+    } else {
+        Text(
+            text = searchString,
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+
 }
 
 @Preview
 @Composable
 fun SearchBarPreview() {
-    var isSearching = false
+    var searchBarState by remember { mutableStateOf(SearchBarState.NOT_SEARCHING) }
+    var searchString by remember { mutableStateOf("") }
 
-    SearchHeaderBar(placeholderText = "Search in day summaries",
+    SearchHeaderBar(
+        placeholderText = "Search summaries",
         leadingIcon = {
             IconButton(onClick = {}) {
                 Icon(Icons.Filled.Search, contentDescription = "Search")
@@ -139,7 +223,9 @@ fun SearchBarPreview() {
                 Icon(Icons.Filled.CalendarMonth, contentDescription = "Year")
             }
         },
-        onSearchStringChange = {},
-        isSearching = isSearching,
-        setIsSearching = { isSearching = it })
+        searchString = searchString,
+        setSearchString = { searchString = it },
+        searchBarState = searchBarState,
+        setSearchBarState = { searchBarState = it }
+    )
 }
