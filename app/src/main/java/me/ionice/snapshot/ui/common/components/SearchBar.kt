@@ -29,8 +29,8 @@ enum class SearchBarState {
 
 @Composable
 fun SearchHeaderBar(
-    searchString: String,
-    setSearchString: (String) -> Unit,
+    searchTerm: String,
+    setSearchTerm: (String) -> Unit,
     searchBarState: SearchBarState,
     setSearchBarState: (SearchBarState) -> Unit,
     placeholderText: String,
@@ -60,7 +60,7 @@ fun SearchHeaderBar(
                 setSearchBarState = {
                     setSearchBarState(it)
                     if (it == SearchBarState.NOT_SEARCHING) {
-                        setSearchString("")
+                        setSearchTerm("")
                     }
                 },
                 leadingIcon = leadingIcon
@@ -71,8 +71,8 @@ fun SearchHeaderBar(
             Box(modifier = Modifier.weight(1f)) {
                 SearchBarTextField(
                     searchBarState = searchBarState,
-                    searchString = searchString,
-                    onSearchStringChange = setSearchString,
+                    searchTerm = searchTerm,
+                    onSearchTermChange = setSearchTerm,
                     focusRequester = textFieldFocusRequester,
                     placeholderText = placeholderText
                 )
@@ -82,8 +82,8 @@ fun SearchHeaderBar(
 
             SearchBarTrailingIcon(
                 searchBarState = searchBarState,
-                onSearchStringClear = {
-                    setSearchString("")
+                onSearchTermClear = {
+                    setSearchTerm("")
                     textFieldFocusRequester.requestFocus()
                 },
                 trailingIcon = trailingIcon
@@ -91,9 +91,9 @@ fun SearchHeaderBar(
         }
     }
 
-    LaunchedEffect(key1 = searchString) {
+    LaunchedEffect(key1 = searchTerm) {
         if (searchBarState == SearchBarState.ACTIVE) {
-            setSearchString(searchString)
+            setSearchTerm(searchTerm)
         }
     }
 
@@ -150,7 +150,7 @@ private fun SearchBarLeadingIcon(
 @Composable
 private fun SearchBarTrailingIcon(
     searchBarState: SearchBarState,
-    onSearchStringClear: () -> Unit,
+    onSearchTermClear: () -> Unit,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
     if (searchBarState == SearchBarState.NOT_SEARCHING) {
@@ -160,7 +160,7 @@ private fun SearchBarTrailingIcon(
             Spacer(modifier = Modifier.width(12.dp))
         }
     } else {
-        IconButton(onClick = onSearchStringClear) {
+        IconButton(onClick = onSearchTermClear) {
             Icon(Icons.Filled.Cancel, contentDescription = "Clear")
         }
     }
@@ -169,12 +169,12 @@ private fun SearchBarTrailingIcon(
 @Composable
 private fun SearchBarTextField(
     searchBarState: SearchBarState,
-    searchString: String,
-    onSearchStringChange: (String) -> Unit,
+    searchTerm: String,
+    onSearchTermChange: (String) -> Unit,
     focusRequester: FocusRequester,
     placeholderText: String
 ) {
-    if (searchString.isEmpty()) {
+    if (searchTerm.isEmpty()) {
         Text(
             text = placeholderText,
             style = MaterialTheme.typography.bodyMedium,
@@ -184,8 +184,8 @@ private fun SearchBarTextField(
     }
     if (searchBarState == SearchBarState.ACTIVE) {
         BasicTextField(
-            value = searchString,
-            onValueChange = onSearchStringChange,
+            value = searchTerm,
+            onValueChange = onSearchTermChange,
             maxLines = 1,
             modifier = Modifier
                 .focusRequester(focusRequester)
@@ -196,7 +196,7 @@ private fun SearchBarTextField(
         focusRequester.requestFocus()
     } else {
         Text(
-            text = searchString,
+            text = searchTerm,
             style = MaterialTheme.typography.bodyMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -209,7 +209,7 @@ private fun SearchBarTextField(
 @Composable
 fun SearchBarPreview() {
     var searchBarState by remember { mutableStateOf(SearchBarState.NOT_SEARCHING) }
-    var searchString by remember { mutableStateOf("") }
+    var searchTerm by remember { mutableStateOf("") }
 
     SearchHeaderBar(
         placeholderText = "Search summaries",
@@ -223,8 +223,8 @@ fun SearchBarPreview() {
                 Icon(Icons.Filled.CalendarMonth, contentDescription = "Year")
             }
         },
-        searchString = searchString,
-        setSearchString = { searchString = it },
+        searchTerm = searchTerm,
+        setSearchTerm = { searchTerm = it },
         searchBarState = searchBarState,
         setSearchBarState = { searchBarState = it }
     )

@@ -60,7 +60,7 @@ private fun ListScreen(
 ) {
     var expandedWeek by rememberSaveable { mutableStateOf(-1) }
     var searchBarState by rememberSaveable { mutableStateOf(SearchBarState.NOT_SEARCHING) }
-    var searchString by rememberSaveable { mutableStateOf("") }
+    var searchTerm by rememberSaveable { mutableStateOf("") }
 
     val searchBarHeight = 64.dp
     val searchBarHeightPx = with(LocalDensity.current) { searchBarHeight.roundToPx().toFloat() }
@@ -127,10 +127,10 @@ private fun ListScreen(
             modifier = Modifier
                 .height(searchBarHeight)
                 .offset { IntOffset(x = 0, y = searchBarOffsetHeightPx.value.roundToInt()) },
-            searchString = searchString,
-            setSearchString = {
-                searchString = it
-                onSearchQueryChange((uiState as DayListUiState.Search).query.copy(searchString = it))
+            searchTerm = searchTerm,
+            setSearchTerm = {
+                searchTerm = it
+                onSearchQueryChange((uiState as DayListUiState.Search).query.copy(searchTerm = it))
             }
         )
     }
@@ -138,7 +138,7 @@ private fun ListScreen(
     // reset search state and everything when search bar state becomes not searching
     LaunchedEffect(key1 = searchBarState) {
         if (searchBarState == SearchBarState.NOT_SEARCHING) {
-            searchString = ""
+            searchTerm = ""
             setIsSearching(false)
         }
     }
@@ -151,8 +151,8 @@ private fun ListScreen(
 
 @Composable
 private fun SearchBar(
-    searchString: String,
-    setSearchString: (String) -> Unit,
+    searchTerm: String,
+    setSearchTerm: (String) -> Unit,
     searchBarState: SearchBarState,
     setSearchBarState: (SearchBarState) -> Unit,
     modifier: Modifier = Modifier
@@ -162,8 +162,8 @@ private fun SearchBar(
         setSearchBarState = setSearchBarState,
         modifier = modifier,
         placeholderText = "Search entries",
-        searchString = searchString,
-        setSearchString = setSearchString,
+        searchTerm = searchTerm,
+        setSearchTerm = setSearchTerm,
         leadingIcon = {
             Icon(
                 Icons.Filled.Search,

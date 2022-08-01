@@ -141,7 +141,7 @@ data class DayListViewModelState(
 
         val quickResults = yearEntries.filter { entry ->
             entry.core.summary.contains(
-                searchQuery.searchString,
+                searchQuery.searchTerm,
                 true
             )
         }
@@ -159,7 +159,7 @@ data class DayListViewModelState(
  */
 data class DaySearchQuery(
     val yearRange: Int?, // TODO: remove when ListOld is deleted
-    val searchString: String = "",
+    val searchTerm: String = "",
     val dateRange: Pair<LocalDate, LocalDate> = Pair(LocalDate.MIN, LocalDate.MAX),
     val locations: List<String> = emptyList()
 ) {

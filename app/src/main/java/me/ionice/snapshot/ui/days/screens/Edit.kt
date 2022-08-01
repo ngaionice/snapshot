@@ -32,6 +32,7 @@ import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.BaseScreen
 import me.ionice.snapshot.ui.common.components.SectionHeader
 import me.ionice.snapshot.ui.days.DayEntryUiState
+import me.ionice.snapshot.ui.days.components.BottomSheetLayout
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
@@ -64,7 +65,7 @@ fun EditScreen(
         }
     }
 
-    BottomSheetScaffold(sheetState = sheetState, sheetContent = {
+    BottomSheetLayout(sheetState = sheetState, sheetContent = {
         MetricKeySelector(
             metricKeys = uiState.metricKeys.filter { key ->
                 !existingMetricIds.contains(key.id)
@@ -284,26 +285,5 @@ private fun MetricKeySelectionListItem(metricKey: MetricKey, onSelection: () -> 
         .padding(horizontal = 24.dp, vertical = 16.dp)
     ) {
         Text(text = metricKey.name)
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun BottomSheetScaffold(
-    sheetState: ModalBottomSheetState,
-    sheetContent: @Composable () -> Unit,
-    screenContent: @Composable () -> Unit
-) {
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetShape = RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp),
-        sheetBackgroundColor = MaterialTheme.colorScheme.background,
-        sheetContent = {
-            Box(modifier = Modifier.defaultMinSize(minHeight = 1.dp)) {
-                sheetContent()
-            }
-        }
-    ) {
-        screenContent()
     }
 }

@@ -31,48 +31,59 @@ fun SearchScreen(
 ) {
     var showingResults by remember { mutableStateOf(false) }
 
-    if (!showingResults) {
-        SearchOptionsScreen(
-            contentPadding = contentPadding,
-            uiState = uiState,
-            onSearch = onSearch,
-            onSelectDayFromQuickResults = onSelectDayFromQuickResults
+    val (query, _, fullResults) = uiState
+
+    Column(
+        modifier = Modifier
+            .padding(contentPadding)
+            .fillMaxSize()
+    ) {
+        SearchFilters(
+            query = query,
+            onYearRangeChange = { onQueryChange(query.copy(dateRange = it)) },
+            onLocationsChange = { onQueryChange(query.copy(locations = it)) }
         )
-    } else {
-        SearchResultsScreen()
-    }
-}
 
-@Composable
-private fun SearchOptionsScreen(
-    contentPadding: PaddingValues,
-    uiState: DayListUiState.Search,
-    onSearch: (DaySearchQuery) -> Unit,
-    onSelectDayFromQuickResults: (Long) -> Unit
-) {
-
-    val (query, quickResults) = uiState
-    val (_, searchString) = query
-
-    Column(modifier = Modifier.padding(contentPadding)) {
-        SearchFilters(query = query, onYearRangeChange = {}, onLocationsChange = {})
-        if (searchString.isEmpty()) {
-            SearchHistory(recentSearches = listOf("snapshot", "work", "swimming"), onSearch = {})
+        if (!showingResults) {
+            SearchOptionsScreen(
+                uiState = uiState,
+                onSearch = {
+                    onSearch(it)
+                    showingResults = true
+                },
+                onSelectDayFromQuickResults = onSelectDayFromQuickResults
+            )
         } else {
-            SearchButton(queryString = searchString, onSearch = { onSearch(query) })
-
-            QuickResults(
-                queryString = searchString,
-                results = quickResults,
-                onSelectDay = onSelectDayFromQuickResults
+            SearchResultsScreen(
+                searchTerm = query.searchTerm,
+                results = fullResults,
+                onSelectDay = {}
             )
         }
     }
 }
 
 @Composable
-private fun SearchResultsScreen() {
+private fun SearchOptionsScreen(
+    uiState: DayListUiState.Search,
+    onSearch: (DaySearchQuery) -> Unit,
+    onSelectDayFromQuickResults: (Long) -> Unit
+) {
 
+    val (query, quickResults) = uiState
+    val (_, searchTerm) = query
+
+    if (searchTerm.isEmpty()) {
+        SearchHistory(recentSearches = listOf("snapshot", "work", "swimming"), onSearch = {})
+    } else {
+        SearchButton(searchTerm = searchTerm, onSearch = { onSearch(query) })
+
+        QuickResults(
+            searchTerm = searchTerm,
+            results = quickResults,
+            onSelectDay = onSelectDayFromQuickResults
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -138,7 +149,7 @@ private fun SearchHistory(recentSearches: List<String>, onSearch: (String) -> Un
 }
 
 @Composable
-private fun SearchButton(queryString: String, onSearch: () -> Unit) {
+private fun SearchButton(searchTerm: String, onSearch: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -151,13 +162,13 @@ private fun SearchButton(queryString: String, onSearch: () -> Unit) {
             imageVector = Icons.Filled.ManageSearch,
             contentDescription = "Search"
         )
-        Text(text = "Search $queryString in entries")
+        Text(text = "Search $searchTerm in entries")
     }
 }
 
 @Composable
 private fun QuickResults(
-    queryString: String,
+    searchTerm: String,
     results: List<DayWithMetrics>,
     onSelectDay: (Long) -> Unit
 ) {
@@ -186,7 +197,7 @@ private fun QuickResults(
                         style = MaterialTheme.typography.labelMedium
                     )
                     Text(
-                        text = getSearchResultDisplayText(queryString, it.core.summary),
+                        text = getSearchResultDisplayText(searchTerm, it.core.summary),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
@@ -197,8 +208,8 @@ private fun QuickResults(
 }
 
 @Composable
-private fun FullResults(
-    queryString: String,
+private fun SearchResultsScreen(
+    searchTerm: String,
     results: List<DayWithMetrics>,
     onSelectDay: (Long) -> Unit
 ) {
@@ -233,7 +244,7 @@ private fun FullResults(
                             style = MaterialTheme.typography.labelMedium
                         )
                         Text(
-                            text = getSearchResultDisplayText(queryString, it.core.summary),
+                            text = getSearchResultDisplayText(searchTerm, it.core.summary),
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1
                         )
@@ -245,14 +256,14 @@ private fun FullResults(
 }
 
 /**
- * @param summary The summary to be extracted for display text. If it does not contain [queryString], an empty string will be returned.
+ * @param summary The summary to be extracted for display text. If it does not contain [searchTerm], an empty string will be returned.
  */
-private fun getSearchResultDisplayText(queryString: String, summary: String): String {
+private fun getSearchResultDisplayText(searchTerm: String, summary: String): String {
 
-    val targetIdx = summary.indexOf(string = queryString, ignoreCase = true)
+    val targetIdx = summary.indexOf(string = searchTerm, ignoreCase = true)
     if (targetIdx == -1) return ""
 
-    // Get the index of the 2nd last word before the query string
+    // Get the index of the 2nd last word before the search term
     // Why 2nd last word? Copied from Gmail, they probably determined w/ research that the 2nd last word provides enough context
     val get2ndLastWordStartIdx: (String, Int) -> Int = { string, startIdx ->
         var count = 0

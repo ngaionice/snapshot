@@ -98,7 +98,7 @@ private fun CurrentWeek(
 ) {
     val currentDay = LocalDate.now()
     val currentDayId = currentDay.toEpochDay()
-    val dayOffset = currentDay.dayOfWeek.value
+    val dayOffset = currentDay.dayOfWeek.value % 7
     val currentWeek: List<Long> = ((currentDayId - dayOffset)..currentDayId).toList().reversed()
 
     val map = mutableMapOf<Long, DayWithMetrics>()
@@ -198,6 +198,14 @@ private fun getWeekList(
     expandedWeek: Int,
     setExpandedWeek: (Int) -> Unit
 ) {
+    if (daysInYear.isEmpty()) {
+        listScope.item {
+            Row(modifier = Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text("No entries found.")
+            }
+        }
+    }
+
     val weekMap: MutableMap<Int, MutableList<DayWithMetrics>> = mutableMapOf()
     val weekFields = WeekFields.of(locale)
     val maxWeek = LocalDate.now().get(weekFields.weekOfWeekBasedYear())
@@ -237,6 +245,7 @@ private fun getWeekList(
         }
     }
 
+    // empty spacer for consistency
     listScope.item {
         PageSectionContent {}
     }
