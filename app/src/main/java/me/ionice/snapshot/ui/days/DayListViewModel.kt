@@ -81,24 +81,27 @@ class DayListViewModel(
         }
     }
 
+    fun setScreenMode(mode: DayListViewModelState.ScreenMode) {
+        viewModelState.update {
+            when (mode) {
+                DayListViewModelState.ScreenMode.OVERVIEW -> {
+                    it.copy(screenMode = mode, searchQuery = null)
+                }
+                DayListViewModelState.ScreenMode.SEARCH_OPTIONS -> {
+                    it.copy(screenMode = mode, searchQuery = DaySearchQuery())
+                }
+                DayListViewModelState.ScreenMode.SEARCH_RESULTS -> {
+                    if (it.searchQuery == null) throw IllegalArgumentException("Screen mode set to SEARCH_RESULTS when query is null.")
+                    // TODO: initiate search in coroutine scope
+                    it.copy(screenMode = mode)
+                }
+            }
+        }
+    }
+
     fun setQuery(query: DaySearchQuery) {
         viewModelState.update {
             it.copy(searchQuery = query)
-        }
-    }
-
-    fun search(query: DaySearchQuery) {
-        viewModelState.update {
-            it.copy(
-                searchQuery = query,
-                // TODO: make it suspend + run query method when available
-                searchResults = emptyList())
-        }
-    }
-
-    fun clearSearch() {
-        viewModelState.update {
-            it.copy(searchQuery = null)
         }
     }
 
@@ -120,6 +123,7 @@ class DayListViewModel(
  */
 data class DayListViewModelState(
     val loading: Boolean,
+    val screenMode: ScreenMode = ScreenMode.OVERVIEW,
     val listYear: Int = LocalDate.now().year,
     val weekEntries: List<DayWithMetrics> = emptyList(),
     val yearEntries: List<DayWithMetrics> = emptyList(),
@@ -128,29 +132,44 @@ data class DayListViewModelState(
     val searchResults: List<DayWithMetrics> = emptyList()
 ) {
 
+    enum class ScreenMode {
+        OVERVIEW,
+        SEARCH_OPTIONS,
+        SEARCH_RESULTS
+    }
+
     fun toUiState(): DayListUiState {
         if (loading) return DayListUiState.Loading
-        if (searchQuery == null) {
-            return DayListUiState.Overview(
-                year = listYear,
-                weekEntries = weekEntries,
-                yearEntries = yearEntries,
-                memories = memories
-            )
+        return when (screenMode) {
+            ScreenMode.OVERVIEW -> {
+                DayListUiState.Overview(
+                    year = listYear,
+                    weekEntries = weekEntries,
+                    yearEntries = yearEntries,
+                    memories = memories
+                )
+            }
+            ScreenMode.SEARCH_OPTIONS -> {
+                if (searchQuery == null) throw IllegalArgumentException("ScreenMode set to SEARCH_OPTIONS but query is null.")
+                val quickResults = yearEntries.filter { entry ->
+                    entry.core.summary.contains(
+                        searchQuery.searchTerm,
+                        true
+                    )
+                }
+                DayListUiState.Search.Options(
+                    query = searchQuery,
+                    quickResults = quickResults.slice(0..minOf(4, quickResults.size - 1)),
+                )
+            }
+            ScreenMode.SEARCH_RESULTS -> {
+                if (searchQuery == null) throw IllegalArgumentException("ScreenMode set to SEARCH_RESULTS but query is null.")
+                DayListUiState.Search.Results(
+                    query = searchQuery,
+                    results = searchResults
+                )
+            }
         }
-
-        val quickResults = yearEntries.filter { entry ->
-            entry.core.summary.contains(
-                searchQuery.searchTerm,
-                true
-            )
-        }
-        return DayListUiState.Search(
-            query = searchQuery,
-            quickResults = quickResults.slice(0..minOf(4, quickResults.size - 1)),
-            // TODO: update when results searching become available
-            fullResults = searchResults
-        )
     }
 }
 
@@ -158,13 +177,37 @@ data class DayListViewModelState(
  * An object representing the properties of a search against Day entries.
  */
 data class DaySearchQuery(
-    val yearRange: Int?, // TODO: remove when ListOld is deleted
     val searchTerm: String = "",
-    val dateRange: Pair<LocalDate, LocalDate> = Pair(LocalDate.MIN, LocalDate.MAX),
+    val dateRange: DateRange = DateRange.Any,
     val locations: List<String> = emptyList()
 ) {
-    companion object {
-        fun initialize(): DaySearchQuery = DaySearchQuery(yearRange = null)
+    sealed interface DateRange {
+
+        fun getDateRange(): Pair<LocalDate, LocalDate>
+
+        object Any : DateRange {
+            override fun getDateRange() = Pair(LocalDate.MIN, LocalDate.MAX)
+        }
+
+        object OneMonthPlus : DateRange {
+            override fun getDateRange() = Pair(LocalDate.MIN, LocalDate.now().minusMonths(1))
+        }
+
+        object ThreeMonthsPlus : DateRange {
+            override fun getDateRange() = Pair(LocalDate.MIN, LocalDate.now().minusMonths(3))
+        }
+
+        object SixMonthsPlus : DateRange {
+            override fun getDateRange() = Pair(LocalDate.MIN, LocalDate.now().minusMonths(6))
+        }
+
+        object OneYearPlus : DateRange {
+            override fun getDateRange() = Pair(LocalDate.MIN, LocalDate.now().minusYears(1))
+        }
+
+        data class Custom(val startDate: LocalDate, val endDate: LocalDate) : DateRange {
+            override fun getDateRange() = Pair(startDate, endDate)
+        }
     }
 }
 
@@ -184,9 +227,18 @@ sealed interface DayListUiState {
         val memories: List<DayWithMetrics>
     ) : DayListUiState
 
-    data class Search(
-        val query: DaySearchQuery,
-        val quickResults: List<DayWithMetrics>,
-        val fullResults: List<DayWithMetrics>
-    ) : DayListUiState
+    sealed interface Search : DayListUiState {
+
+        val query: DaySearchQuery
+
+        data class Options(
+            override val query: DaySearchQuery,
+            val quickResults: List<DayWithMetrics>
+        ) : Search
+
+        data class Results(
+            override val query: DaySearchQuery,
+            val results: List<DayWithMetrics>
+        ) : Search
+    }
 }

@@ -16,11 +16,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -61,9 +58,8 @@ fun OverviewScreen(
     onSelectDay: (Long) -> Unit,
     onAddDay: (Long) -> Unit,
     onChangeYear: (Int) -> Unit,
-    expandedWeek: Int,
-    setExpandedWeek: (Int) -> Unit
 ) {
+    var expandedWeek by remember { mutableStateOf(-1) }
 
     LazyColumn(contentPadding = contentPadding) {
         item {
@@ -77,7 +73,10 @@ fun OverviewScreen(
         }
 
         stickyHeader {
-            WeekListHeader(year = year, onChangeYear = onChangeYear)
+            WeekListHeader(year = year, onChangeYear = {
+                onChangeYear(it)
+                expandedWeek = -1
+            })
         }
 
         getWeekList(
@@ -85,7 +84,7 @@ fun OverviewScreen(
             onSelectDay = onSelectDay,
             listScope = this,
             expandedWeek = expandedWeek,
-            setExpandedWeek = setExpandedWeek
+            setExpandedWeek = { expandedWeek = it }
         )
     }
 }
@@ -200,7 +199,10 @@ private fun getWeekList(
 ) {
     if (daysInYear.isEmpty()) {
         listScope.item {
-            Row(modifier = Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Row(
+                modifier = Modifier.fillParentMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
                 Text("No entries found.")
             }
         }

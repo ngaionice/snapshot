@@ -4,17 +4,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.ManageSearch
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.data.day.DayWithMetrics
+import me.ionice.snapshot.ui.common.components.ColumnItem
 import me.ionice.snapshot.ui.common.components.PageSection
 import me.ionice.snapshot.ui.days.DayListUiState
 import me.ionice.snapshot.ui.days.DaySearchQuery
@@ -22,105 +24,86 @@ import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
 @Composable
-fun SearchScreen(
+fun SearchOptionsScreen(
     contentPadding: PaddingValues,
-    uiState: DayListUiState.Search,
-    onQueryChange: (DaySearchQuery) -> Unit,
+    uiState: DayListUiState.Search.Options,
     onSearch: (DaySearchQuery) -> Unit,
     onSelectDayFromQuickResults: (Long) -> Unit
 ) {
-    var showingResults by remember { mutableStateOf(false) }
 
-    val (query, _, fullResults) = uiState
+    val (query, quickResults) = uiState
+    val (searchTerm) = query
 
-    Column(
-        modifier = Modifier
-            .padding(contentPadding)
-            .fillMaxSize()
-    ) {
-        SearchFilters(
-            query = query,
-            onYearRangeChange = { onQueryChange(query.copy(dateRange = it)) },
-            onLocationsChange = { onQueryChange(query.copy(locations = it)) }
-        )
-
-        if (!showingResults) {
-            SearchOptionsScreen(
-                uiState = uiState,
-                onSearch = {
-                    onSearch(it)
-                    showingResults = true
-                },
-                onSelectDayFromQuickResults = onSelectDayFromQuickResults
-            )
+    Column(modifier = Modifier.padding(contentPadding)) {
+        if (searchTerm.isEmpty()) {
+            SearchHistory(recentSearches = listOf("snapshot", "work", "swimming"), onSearch = {})
         } else {
-            SearchResultsScreen(
-                searchTerm = query.searchTerm,
-                results = fullResults,
-                onSelectDay = {}
+            SearchButton(searchTerm = searchTerm, onSearch = { onSearch(query) })
+
+            QuickResults(
+                searchTerm = searchTerm,
+                results = quickResults,
+                onSelectDay = onSelectDayFromQuickResults
             )
         }
     }
 }
 
 @Composable
-private fun SearchOptionsScreen(
-    uiState: DayListUiState.Search,
-    onSearch: (DaySearchQuery) -> Unit,
-    onSelectDayFromQuickResults: (Long) -> Unit
+fun SearchResultsScreen(
+    contentPadding: PaddingValues,
+    searchTerm: String,
+    results: List<DayWithMetrics>,
+    onSelectDay: (Long) -> Unit
 ) {
-
-    val (query, quickResults) = uiState
-    val (_, searchTerm) = query
-
-    if (searchTerm.isEmpty()) {
-        SearchHistory(recentSearches = listOf("snapshot", "work", "swimming"), onSearch = {})
-    } else {
-        SearchButton(searchTerm = searchTerm, onSearch = { onSearch(query) })
-
-        QuickResults(
-            searchTerm = searchTerm,
-            results = quickResults,
-            onSelectDay = onSelectDayFromQuickResults
-        )
+    if (results.isEmpty()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(contentPadding),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text("No results found.")
+        }
+        return
     }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SearchFilters(
-    query: DaySearchQuery,
-    onYearRangeChange: (Pair<LocalDate, LocalDate>) -> Unit,
-    onLocationsChange: (List<String>) -> Unit
-) {
-    Row(
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    val currentYear = LocalDate.now().year
+
+    PageSection(
+        title = "Results",
+        headerTextColor = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.padding(contentPadding)
     ) {
-        FilterChip(
-            selected = query.dateRange.first.compareTo(LocalDate.MIN) != 0 ||
-                    query.dateRange.second.compareTo(LocalDate.MAX) != 0,
-            onClick = { },
-            label = { Text("Date") },
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = "Filter by date range"
-                )
+        LazyColumn {
+            results.forEach {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSelectDay(it.core.id) }
+                            .padding(horizontal = 24.dp, vertical = 16.dp)
+                    ) {
+                        val date = LocalDate.ofEpochDay(it.core.id)
+                        Text(
+                            text = date.format(
+                                if (date.year == currentYear) {
+                                    Utils.shortDateFormatter
+                                } else {
+                                    Utils.dateFormatter
+                                }
+                            ),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                        Text(
+                            text = getSearchResultDisplayText(searchTerm, it.core.summary),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+                }
             }
-        )
-
-        FilterChip(
-            selected = false,
-            onClick = { },
-            label = { Text("Location") },
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = "Filter by location"
-                )
-            }
-        )
+        }
     }
 }
 
@@ -179,13 +162,8 @@ private fun QuickResults(
     PageSection(title = "Quick results", headerTextColor = MaterialTheme.colorScheme.onSurface) {
         Column {
             results.forEach {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onSelectDay(it.core.id) }
-                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                ) {
-                    val date = LocalDate.ofEpochDay(it.core.id)
+                val date = LocalDate.ofEpochDay(it.core.id)
+                ColumnItem(onClick = { onSelectDay(it.core.id) }) {
                     Text(
                         text = date.format(
                             if (date.year == currentYear) {
@@ -201,54 +179,6 @@ private fun QuickResults(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SearchResultsScreen(
-    searchTerm: String,
-    results: List<DayWithMetrics>,
-    onSelectDay: (Long) -> Unit
-) {
-    if (results.isEmpty()) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Text("No results found.")
-        }
-        return
-    }
-
-    val currentYear = LocalDate.now().year
-
-    PageSection(title = "Results", headerTextColor = MaterialTheme.colorScheme.onSurface) {
-        LazyColumn {
-            results.forEach {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSelectDay(it.core.id) }
-                            .padding(horizontal = 24.dp, vertical = 16.dp)
-                    ) {
-                        val date = LocalDate.ofEpochDay(it.core.id)
-                        Text(
-                            text = date.format(
-                                if (date.year == currentYear) {
-                                    Utils.shortDateFormatter
-                                } else {
-                                    Utils.dateFormatter
-                                }
-                            ),
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                        Text(
-                            text = getSearchResultDisplayText(searchTerm, it.core.summary),
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                    }
                 }
             }
         }

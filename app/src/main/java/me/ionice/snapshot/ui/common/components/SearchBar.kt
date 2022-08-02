@@ -2,6 +2,7 @@ package me.ionice.snapshot.ui.common.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -28,7 +29,7 @@ enum class SearchBarState {
 }
 
 @Composable
-fun SearchHeaderBar(
+fun SearchBar(
     searchTerm: String,
     setSearchTerm: (String) -> Unit,
     searchBarState: SearchBarState,
@@ -39,8 +40,14 @@ fun SearchHeaderBar(
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
 
-    val horizontalPadding: Int by animateIntAsState(if (searchBarState == SearchBarState.ACTIVE) 0 else 24)
-    val verticalPadding: Int by animateIntAsState(if (searchBarState == SearchBarState.ACTIVE) 0 else 8)
+    val horizontalPadding: Int by animateIntAsState(
+        if (searchBarState == SearchBarState.ACTIVE) 0 else 24,
+        tween(durationMillis = 100)
+    )
+    val verticalPadding: Int by animateIntAsState(
+        if (searchBarState == SearchBarState.ACTIVE) 0 else 8,
+        tween(durationMillis = 100)
+    )
 
     val textFieldFocusRequester = remember { FocusRequester() }
 
@@ -51,43 +58,49 @@ fun SearchHeaderBar(
         verticalPadding = verticalPadding,
         modifier = modifier
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = (8 - verticalPadding).dp)
-        ) {
-            SearchBarLeadingIcon(
-                searchBarState = searchBarState,
-                setSearchBarState = {
-                    setSearchBarState(it)
-                    if (it == SearchBarState.NOT_SEARCHING) {
-                        setSearchTerm("")
-                    }
-                },
-                leadingIcon = leadingIcon
-            )
-
-            Spacer(modifier = Modifier.width(4.dp))
-
-            Box(modifier = Modifier.weight(1f)) {
-                SearchBarTextField(
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = (8 - verticalPadding).dp)
+            ) {
+                SearchBarLeadingIcon(
                     searchBarState = searchBarState,
-                    searchTerm = searchTerm,
-                    onSearchTermChange = setSearchTerm,
-                    focusRequester = textFieldFocusRequester,
-                    placeholderText = placeholderText
+                    setSearchBarState = {
+                        setSearchBarState(it)
+                        if (it == SearchBarState.NOT_SEARCHING) {
+                            setSearchTerm("")
+                        }
+                    },
+                    leadingIcon = leadingIcon
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Box(modifier = Modifier.weight(1f)) {
+                    SearchBarTextField(
+                        searchBarState = searchBarState,
+                        searchTerm = searchTerm,
+                        onSearchTermChange = setSearchTerm,
+                        focusRequester = textFieldFocusRequester,
+                        placeholderText = placeholderText
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                SearchBarTrailingIcon(
+                    searchBarState = searchBarState,
+                    onSearchTermClear = {
+                        setSearchTerm("")
+                        setSearchBarState(SearchBarState.ACTIVE)
+                        textFieldFocusRequester.requestFocus()
+                    },
+                    trailingIcon = trailingIcon
                 )
             }
-
-            Spacer(modifier = Modifier.width(4.dp))
-
-            SearchBarTrailingIcon(
-                searchBarState = searchBarState,
-                onSearchTermClear = {
-                    setSearchTerm("")
-                    textFieldFocusRequester.requestFocus()
-                },
-                trailingIcon = trailingIcon
-            )
+            if (searchBarState == SearchBarState.ACTIVE) {
+                Divider()
+            }
         }
     }
 
@@ -193,7 +206,6 @@ private fun SearchBarTextField(
             textStyle = TextStyle.Default.copy(color = LocalContentColor.current),
             cursorBrush = SolidColor(LocalContentColor.current)
         )
-        focusRequester.requestFocus()
     } else {
         Text(
             text = searchTerm,
@@ -203,6 +215,11 @@ private fun SearchBarTextField(
         )
     }
 
+    LaunchedEffect(key1 = searchBarState) {
+        if (searchBarState == SearchBarState.ACTIVE) {
+            focusRequester.requestFocus()
+        }
+    }
 }
 
 @Preview
@@ -211,7 +228,7 @@ fun SearchBarPreview() {
     var searchBarState by remember { mutableStateOf(SearchBarState.NOT_SEARCHING) }
     var searchTerm by remember { mutableStateOf("") }
 
-    SearchHeaderBar(
+    SearchBar(
         placeholderText = "Search summaries",
         leadingIcon = {
             IconButton(onClick = {}) {

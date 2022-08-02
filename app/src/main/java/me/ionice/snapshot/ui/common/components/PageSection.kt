@@ -13,11 +13,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun PageSection(
     title: String,
+    modifier: Modifier = Modifier,
     headerTextColor: Color? = null,
     headerBackgroundColor: Color? = null,
     content: @Composable () -> Unit
 ) {
-    Column(modifier = Modifier.padding(bottom = 16.dp)) {
+    Column(modifier = modifier.padding(bottom = 16.dp)) {
         PageSectionHeader(
             title = title,
             textColor = headerTextColor,
