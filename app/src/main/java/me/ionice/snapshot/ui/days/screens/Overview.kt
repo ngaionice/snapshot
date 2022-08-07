@@ -35,8 +35,8 @@ import me.ionice.snapshot.ui.common.components.PageSectionHeader
 import me.ionice.snapshot.ui.common.components.VerticalDivider
 import me.ionice.snapshot.ui.days.components.LargeDayCard
 import me.ionice.snapshot.ui.days.components.LargeDayCardInformation
-import me.ionice.snapshot.ui.days.components.SmallAddDayCard
-import me.ionice.snapshot.ui.days.components.SmallDayCard
+import me.ionice.snapshot.ui.entries.components.ThisWeekAddEntryCard
+import me.ionice.snapshot.ui.entries.components.ThisWeekCard
 import me.ionice.snapshot.utils.FakeData
 import me.ionice.snapshot.utils.RelativeTime
 import me.ionice.snapshot.utils.Utils
@@ -114,13 +114,13 @@ private fun CurrentWeek(
             items(items = currentWeek, key = { dayId -> dayId }) { dayId ->
                 val day = map[dayId]
                 if (day == null) {
-                    SmallAddDayCard(
+                    ThisWeekAddEntryCard(
                         dayId = dayId,
                         onClick = { onAddDay(dayId) },
                         modifier = Modifier.fillParentMaxWidth(0.3333f)
                     )
                 } else {
-                    SmallDayCard(
+                    ThisWeekCard(
                         day = day,
                         onClick = { onSelectDay(dayId) },
                         modifier = Modifier.fillParentMaxWidth(0.3333f)
