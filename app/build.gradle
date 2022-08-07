@@ -62,7 +62,7 @@ dependencies {
     // Compose
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.activity:activity-compose:1.5.0'
+    implementation 'androidx.activity:activity-compose:1.5.1'
     implementation 'androidx.compose.material3:material3:1.0.0-alpha14'
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
@@ -71,8 +71,8 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:0.24.13-rc"
 
     // Lifecycles
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
 
     // Co-routines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
@@ -91,7 +91,7 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:$workmanager_version"
 
     // Navigation
-    implementation "androidx.navigation:navigation-compose:2.5.0"
+    implementation "androidx.navigation:navigation-compose:2.5.1"
 
     // Saved state for ViewModel
 //    implementation "androidx.savedstate:savedstate-ktx:1.1.0"
@@ -99,8 +99,9 @@ dependencies {
     // Material Components for Android: for CalendarView
     implementation 'com.google.android.material:material:1.6.1'
 
-    // for status bar transparency
-    implementation 'com.google.accompanist:accompanist-systemuicontroller:0.24.9-beta'
+    // Accompanist for various functions: status bar control and placeholders/skeletons
+    implementation 'com.google.accompanist:accompanist-systemuicontroller:0.25.0'
+    implementation "com.google.accompanist:accompanist-placeholder-material:0.25.0"
 
     // Google Services: for access to Google Drive
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
