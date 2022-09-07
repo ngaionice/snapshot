@@ -5,9 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import me.ionice.snapshot.data.AppContainer
-import me.ionice.snapshot.ui.days.DayListDestination
-import me.ionice.snapshot.ui.days.dayGraph
-import me.ionice.snapshot.ui.metrics.metricGraph
+import me.ionice.snapshot.ui.entries.EntriesListDestination
+import me.ionice.snapshot.ui.entries.entriesGraph
 import me.ionice.snapshot.ui.settings.settingsGraph
 
 @Composable
@@ -18,18 +17,14 @@ fun SnapshotNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = DayListDestination.route,
+        startDestination = EntriesListDestination.route,
         modifier = modifier
     ) {
-        dayGraph(
+        entriesGraph(
             navController = navController,
             dayRepository = appContainer.dayRepository,
-            metricRepository = appContainer.metricRepository
-        )
-
-        metricGraph(
-            navController = navController,
-            metricRepository = appContainer.metricRepository
+            locationRepository = appContainer.locationRepository,
+            tagRepository = appContainer.tagRepository
         )
 
         settingsGraph(

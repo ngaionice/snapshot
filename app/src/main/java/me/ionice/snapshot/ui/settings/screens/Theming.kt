@@ -6,7 +6,7 @@ import androidx.compose.ui.res.stringResource
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.BaseScreen
-import me.ionice.snapshot.ui.common.screens.FunctionalityNotYetAvailableScreen
+import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.settings.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,5 +22,5 @@ fun ThemingRoute(viewModel: SettingsViewModel, onBack: () -> Unit) {
 
 @Composable
 private fun ThemingScreen() {
-    FunctionalityNotYetAvailableScreen()
+    FunctionalityNotAvailableScreen()
 }

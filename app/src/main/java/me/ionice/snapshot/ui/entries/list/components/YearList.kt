@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.entries.components
+package me.ionice.snapshot.ui.entries.list.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -20,18 +20,19 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 import me.ionice.snapshot.R
-import me.ionice.snapshot.data.day.DayWithMetrics
+import me.ionice.snapshot.data.database.model.Day
 import me.ionice.snapshot.ui.common.components.PageSectionContent
 import me.ionice.snapshot.ui.common.components.PageSectionHeader
 import me.ionice.snapshot.ui.common.components.VerticalDivider
-import me.ionice.snapshot.ui.entries.YearUiState
+import me.ionice.snapshot.ui.entries.list.YearUiState
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 
 @Composable
-fun YearListHeader(year: Int, onChangeYear: (Int) -> Unit) {
+fun YearListHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
+    val year = yearProvider()
     PageSectionHeader(
         title = year.toString(),
         textColor = MaterialTheme.colorScheme.onSurface,
@@ -43,13 +44,11 @@ fun YearListHeader(year: Int, onChangeYear: (Int) -> Unit) {
         ) {
             IconButton(onClick = { onChangeYear(year - 1) }) {
                 Icon(
-                    imageVector = Icons.Filled.NavigateBefore,
-                    contentDescription = "Previous year"
+                    imageVector = Icons.Filled.NavigateBefore, contentDescription = "Previous year"
                 )
             }
             IconButton(
-                onClick = { onChangeYear(year + 1) },
-                enabled = year < LocalDate.now().year
+                onClick = { onChangeYear(year + 1) }, enabled = year < LocalDate.now().year
             ) {
                 Icon(imageVector = Icons.Filled.NavigateNext, contentDescription = "Next year")
             }
@@ -91,8 +90,7 @@ fun LazyListScope.getYearList(
     if (entries.isEmpty()) {
         item {
             Row(
-                modifier = Modifier.fillParentMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                modifier = Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.Center
             ) {
                 Text("No entries found.")
             }
@@ -103,7 +101,7 @@ fun LazyListScope.getYearList(
     val weekFields = WeekFields.of(Utils.locale)
 
     val map = entries.groupBy { day ->
-        val date = LocalDate.ofEpochDay(day.core.id)
+        val date = LocalDate.ofEpochDay(day.properties.id)
         date.get(weekFields.weekOfWeekBasedYear())
             .let { if (it == 53 && date.dayOfYear < 7) 0 else it }
     }
@@ -131,17 +129,16 @@ fun LazyListScope.getYearList(
 
 @Composable
 private fun YearListItem(
-    days: List<DayWithMetrics>,
+    days: List<Day>,
     week: Int,
     isExpanded: Boolean,
     onSelectWeek: () -> Unit,
     onSelectEntry: (Long) -> Unit
 ) {
-    val startOfWeek = LocalDate.ofEpochDay(days.last().core.id)
+    val startOfWeek = LocalDate.ofEpochDay(days.last().properties.id)
         .with(TemporalAdjusters.previousOrSame(Utils.firstDayOfWeek))
-    val endOfWeek =
-        LocalDate.ofEpochDay(days.last().core.id)
-            .with(TemporalAdjusters.nextOrSame(Utils.lastDayOfWeek))
+    val endOfWeek = LocalDate.ofEpochDay(days.last().properties.id)
+        .with(TemporalAdjusters.nextOrSame(Utils.lastDayOfWeek))
 
     Column {
         Row(modifier = Modifier
@@ -154,18 +151,17 @@ private fun YearListItem(
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal)
                 )
                 Text(
-                    text = Utils.shortDateFormatter.format(startOfWeek) + " - " +
-                            Utils.shortDateFormatter.format(endOfWeek),
-                    style = MaterialTheme.typography.titleMedium
+                    text = Utils.shortDateFormatter.format(startOfWeek) + " - " + Utils.shortDateFormatter.format(
+                        endOfWeek
+                    ), style = MaterialTheme.typography.titleMedium
                 )
             }
         }
         AnimatedVisibility(visible = isExpanded) {
             Column {
                 days.forEach {
-                    YearListSubItem(
-                        dayProvider = { it },
-                        onViewItem = { onSelectEntry(it.core.id) })
+                    YearListSubItem(dayProvider = { it },
+                        onViewItem = { onSelectEntry(it.properties.id) })
                 }
             }
         }
@@ -174,7 +170,7 @@ private fun YearListItem(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun YearListSubItem(dayProvider: () -> DayWithMetrics, onViewItem: () -> Unit) {
+private fun YearListSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
     val day = dayProvider()
     Row(modifier = Modifier
         .background(color = MaterialTheme.colorScheme.surface)
@@ -183,17 +179,16 @@ private fun YearListSubItem(dayProvider: () -> DayWithMetrics, onViewItem: () ->
         .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = Utils.shortDateFormatter.format(LocalDate.ofEpochDay(day.core.id)),
+            text = Utils.shortDateFormatter.format(LocalDate.ofEpochDay(day.properties.id)),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
         VerticalDivider(color = MaterialTheme.colorScheme.onSurface)
         Text(
             text = pluralStringResource(
-                R.plurals.day_screen_metric_count,
-                day.metrics.size,
-                day.metrics.size
-            ), style = MaterialTheme.typography.titleSmall,
+                R.plurals.day_screen_tag_count, day.tags.size, day.tags.size
+            ),
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
     }

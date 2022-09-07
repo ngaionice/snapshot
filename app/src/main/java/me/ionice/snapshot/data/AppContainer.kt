@@ -2,10 +2,9 @@ package me.ionice.snapshot.data
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
-import me.ionice.snapshot.data.day.DayRepository
-import me.ionice.snapshot.data.day.DayRepositoryImpl
-import me.ionice.snapshot.data.metric.MetricRepository
-import me.ionice.snapshot.data.metric.MetricRepositoryImpl
+import kotlinx.coroutines.Dispatchers
+import me.ionice.snapshot.data.database.SnapshotDatabase
+import me.ionice.snapshot.data.database.repository.*
 import me.ionice.snapshot.data.network.NetworkRepository
 import me.ionice.snapshot.data.network.NetworkRepositoryImpl
 import me.ionice.snapshot.data.preferences.PreferencesRepository
@@ -13,7 +12,8 @@ import me.ionice.snapshot.data.preferences.PreferencesRepositoryImpl
 
 interface AppContainer {
     val dayRepository: DayRepository
-    val metricRepository: MetricRepository
+    val locationRepository: LocationRepository
+    val tagRepository: TagRepository
     val networkRepository: NetworkRepository
     val preferencesRepository: PreferencesRepository
 }
@@ -21,13 +21,20 @@ interface AppContainer {
 class AppContainerImpl(private val applicationContext: Context) : AppContainer {
 
     private val Context.datastore by preferencesDataStore(name = "snapshot_preferences")
+    private val dispatcher = Dispatchers.IO
+
+    val database = SnapshotDatabase.getInstance(applicationContext)
 
     override val dayRepository: DayRepository by lazy {
-        DayRepositoryImpl(SnapshotDatabase.getInstance(applicationContext))
+        OfflineDayRepository(dispatcher, database.dayDao, database.locationDao, database.tagDao)
     }
 
-    override val metricRepository: MetricRepository by lazy {
-        MetricRepositoryImpl(SnapshotDatabase.getInstance(applicationContext))
+    override val locationRepository: LocationRepository by lazy {
+        OfflineLocationRepository(dispatcher, database.locationDao)
+    }
+
+    override val tagRepository: TagRepository by lazy {
+        OfflineTagRepository(dispatcher, database.tagDao)
     }
 
     override val networkRepository: NetworkRepository by lazy {

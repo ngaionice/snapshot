@@ -11,20 +11,10 @@ import androidx.compose.ui.res.stringResource
 import me.ionice.snapshot.R
 
 @Composable
-fun FunctionalityNotYetAvailableScreen() {
+fun FunctionalityNotAvailableScreen(message: String? = null) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         Text(
-            text = stringResource(R.string.common_functionality_soon),
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
-}
-
-@Composable
-fun FunctionalityNotAvailableScreen(reason: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = stringResource(R.string.common_functionality_na_with_reason, reason),
+            text = message ?: stringResource(R.string.common_functionality_soon),
             style = MaterialTheme.typography.bodyMedium
         )
     }

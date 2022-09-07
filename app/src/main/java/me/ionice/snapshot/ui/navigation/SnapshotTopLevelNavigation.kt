@@ -1,17 +1,14 @@
 package me.ionice.snapshot.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DataUsage
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Today
-import androidx.compose.material.icons.outlined.DataUsage
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Today
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import me.ionice.snapshot.ui.days.DAY_ROUTE
-import me.ionice.snapshot.ui.metrics.METRIC_ROUTE
+import me.ionice.snapshot.ui.entries.ENTRIES_ROUTE
 import me.ionice.snapshot.ui.settings.SETTINGS_ROUTE
 
 class SnapshotTopLevelNavigation(private val navController: NavHostController) {
@@ -42,17 +39,17 @@ data class TopLevelDestination(
 
 val TOP_LEVEL_DESTINATIONS = listOf(
     TopLevelDestination(
-        route = DAY_ROUTE,
+        route = ENTRIES_ROUTE,
         selectedIcon = Icons.Filled.Today,
         unselectedIcon = Icons.Outlined.Today,
-        name = "Days"
+        name = "Entries"
     ),
-    TopLevelDestination(
-        route = METRIC_ROUTE,
-        selectedIcon = Icons.Filled.DataUsage,
-        unselectedIcon = Icons.Outlined.DataUsage,
-        name = "Metrics"
-    ),
+//    TopLevelDestination(
+//        route = METRIC_ROUTE,
+//        selectedIcon = Icons.Filled.DataUsage,
+//        unselectedIcon = Icons.Outlined.DataUsage,
+//        name = "Metrics"
+//    ),
     TopLevelDestination(
         route = SETTINGS_ROUTE,
         selectedIcon = Icons.Filled.Settings,

@@ -80,7 +80,7 @@ private fun BackupScreen(
 
 @Composable
 private fun CannotBackupScreen() {
-    FunctionalityNotAvailableScreen(reason = stringResource(R.string.settings_screen_backup_na_reason))
+    FunctionalityNotAvailableScreen(message = "Cannot access backups as ${stringResource(R.string.settings_screen_backup_na_reason)}.")
 }
 
 @Composable

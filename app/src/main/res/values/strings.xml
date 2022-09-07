@@ -10,23 +10,15 @@
     <string name="day_screen_summary_header">Summary</string>
     <string name="day_screen_location_header">Location</string>
     <string name="day_screen_metrics_header">Metrics</string>
-    <string name="day_screen_delete_metric">Delete metric</string>
-    <string name="day_screen_add_metric">Add metric</string>
+    <string name="day_screen_delete_tag">Delete tag</string>
+    <string name="day_screen_add_tag">Add tag</string>
     <string name="day_screen_search">Search summaries</string>
     <string name="day_screen_switch_year">Switch years</string>
 
-    <plurals name="day_screen_metric_count">
-        <item quantity="one">%d metric</item>
-        <item quantity="other">%d metrics</item>
+    <plurals name="day_screen_tag_count">
+        <item quantity="one">%d tag</item>
+        <item quantity="other">%d tags</item>
     </plurals>
-
-    <!--  metrics screen  -->
-    <string name="metrics_screen_header">Metrics</string>
-    <string name="metrics_screen_add_key">Add metric type</string>
-    <string name="metrics_screen_add_name_helper">Metric name</string>
-    <string name="metrics_screen_add_name_save">Save</string>
-    <string name="metrics_screen_add_name_cancel">Cancel</string>
-    <string name="common_no_results">No entries found.</string>
 
     <!--  common components  -->
     <string name="common_back">Back</string>

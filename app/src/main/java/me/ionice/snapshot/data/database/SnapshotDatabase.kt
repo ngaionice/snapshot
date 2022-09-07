@@ -1,43 +1,34 @@
-package me.ionice.snapshot.data
+package me.ionice.snapshot.data.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import me.ionice.snapshot.data.day.Day
-import me.ionice.snapshot.data.day.DayDao
-import me.ionice.snapshot.data.metric.MetricDao
-import me.ionice.snapshot.data.metric.MetricEntry
-import me.ionice.snapshot.data.metric.MetricKey
+import androidx.sqlite.db.SimpleSQLiteQuery
+import me.ionice.snapshot.data.database.dao.DayDao
+import me.ionice.snapshot.data.database.dao.LocationDao
+import me.ionice.snapshot.data.database.dao.TagDao
+import me.ionice.snapshot.data.database.dao.UtilsDao
+import me.ionice.snapshot.data.database.model.*
 
 @Database(
-    entities = [Day::class, MetricKey::class, MetricEntry::class],
-    version = 1
+    entities = [DayProperties::class, DaySummaryFts::class, LocationProperties::class, LocationEntry::class, TagProperties::class, TagEntry::class, TagEntryFts::class],
+    version = 2
 )
 abstract class SnapshotDatabase : RoomDatabase() {
 
     abstract val dayDao: DayDao
-    abstract val metricDao: MetricDao
+    abstract val locationDao: LocationDao
+    abstract val tagDao: TagDao
+    abstract val utilsDao: UtilsDao
 
     companion object {
         @Volatile
         private var INSTANCE: SnapshotDatabase? = null
 
-        @Volatile
-        private var LOCKED: Boolean = false
-
         fun getInstance(context: Context): SnapshotDatabase {
             synchronized(this) {
                 var instance = INSTANCE
-
-                // if locked, then don't create a new one until it is unlocked
-                while (LOCKED) {
-                    runBlocking {
-                        delay(1000)
-                    }
-                }
 
                 if (instance == null) {
                     instance = Room.databaseBuilder(
@@ -51,14 +42,11 @@ abstract class SnapshotDatabase : RoomDatabase() {
             }
         }
 
-        fun closeAndLockInstance() {
-            LOCKED = true
-            INSTANCE?.close()
-            INSTANCE = null
-        }
-
-        fun unlockInstance() {
-            LOCKED = false
+        fun runCheckpoint() {
+            if (INSTANCE == null) {
+                throw IllegalStateException("Database instance is null, failed to run checkpoint.")
+            }
+            INSTANCE!!.utilsDao.runRawQuery(SimpleSQLiteQuery("pragma wal_checkpoint(full)"))
         }
 
         const val DATABASE_NAME = "snapshot_database"

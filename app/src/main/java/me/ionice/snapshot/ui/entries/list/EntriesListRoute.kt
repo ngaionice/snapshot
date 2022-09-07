@@ -1,48 +1,46 @@
-package me.ionice.snapshot.ui.entries
+package me.ionice.snapshot.ui.entries.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import me.ionice.snapshot.ui.common.components.TopAppBar
-import me.ionice.snapshot.ui.entries.components.ThisWeek
-import me.ionice.snapshot.ui.entries.components.YearListHeader
-import me.ionice.snapshot.ui.entries.components.getYearList
+import me.ionice.snapshot.ui.entries.list.components.ThisWeek
+import me.ionice.snapshot.ui.entries.list.components.YearListHeader
+import me.ionice.snapshot.ui.entries.list.components.getYearList
+import me.ionice.snapshot.ui.navigation.Navigator
+import me.ionice.snapshot.ui.settings.SettingsHomeDestination
 
 @Composable
-fun EntriesRoute(
-    viewModel: EntriesViewModel,
-    onSelectEntry: (Long) -> Unit,
-    onSelectSettings: () -> Unit
-) {
+fun EntriesListRoute(viewModel: EntriesListViewModel, navigator: Navigator) {
     val uiState by viewModel.uiState.collectAsState()
 
-    EntriesScreen(
+    EntriesListScreen(
         weekEntriesProvider = { uiState.weekUiState },
         yearEntriesProvider = { uiState.yearUiState },
-        year = uiState.year,
+        yearProvider = { uiState.year },
         onAddEntry = {
             viewModel.addEntry(it)
-            onSelectEntry(it)
+            navigator.navigateToEntry(it)
         },
-        onSelectEntry = onSelectEntry,
-        onSelectSettings = onSelectSettings,
+        onSelectEntry = navigator::navigateToEntry,
+        onSelectSettings = { navigator.navigateToDestination(SettingsHomeDestination) },
         onChangeYear = viewModel::changeViewingYear
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-private fun EntriesScreen(
+private fun EntriesListScreen(
     weekEntriesProvider: () -> WeekUiState,
     yearEntriesProvider: () -> YearUiState,
-    year: Int,
+    yearProvider: () -> Int,
     onAddEntry: (Long) -> Unit,
     onSelectEntry: (Long) -> Unit,
     onSelectSettings: () -> Unit,
@@ -54,13 +52,13 @@ private fun EntriesScreen(
         topBar = {
             TopAppBar {
                 IconButton(onClick = onSelectSettings) {
-                    Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
+                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
                 }
             }
         },
         floatingActionButton = {
             IconButton(onClick = { /*TODO*/ }, enabled = false) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add entry")
+                Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add entry")
             }
         }
     ) { padding ->
@@ -75,7 +73,7 @@ private fun EntriesScreen(
 
             stickyHeader {
                 YearListHeader(
-                    year = year,
+                    yearProvider = yearProvider,
                     onChangeYear = {
                         onChangeYear(it)
                         expandedWeek = -1

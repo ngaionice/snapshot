@@ -1,4 +1,4 @@
-package me.ionice.snapshot.ui.entries.components
+package me.ionice.snapshot.ui.entries.list.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,9 +14,9 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
-import me.ionice.snapshot.data.day.DayWithMetrics
+import me.ionice.snapshot.data.database.model.Day
 import me.ionice.snapshot.ui.common.components.PageSection
-import me.ionice.snapshot.ui.entries.WeekUiState
+import me.ionice.snapshot.ui.entries.list.WeekUiState
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -57,7 +57,7 @@ fun ThisWeek(
 
     val today = LocalDate.now().toEpochDay()
     val dateRange = (today downTo today - 6).toList()
-    val entries = (uiState as WeekUiState.Success).entries.associateBy { it.core.id }
+    val entries = (uiState as WeekUiState.Success).entries.associateBy { it.properties.id }
 
     PageSection(title = "This week", headerTextColor = MaterialTheme.colorScheme.onSurface) {
         LazyRow(
@@ -84,10 +84,10 @@ fun ThisWeek(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ThisWeekCard(day: DayWithMetrics, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun ThisWeekCard(day: Day, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val containerColor = MaterialTheme.colorScheme.surfaceVariant
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val date = LocalDate.ofEpochDay(day.core.id)
+    val date = LocalDate.ofEpochDay(day.properties.id)
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = containerColor),
@@ -119,7 +119,7 @@ fun ThisWeekCard(day: DayWithMetrics, onClick: () -> Unit, modifier: Modifier = 
                 verticalAlignment = Alignment.Bottom
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = day.metrics.size.toString(), color = contentColor)
+                    Text(text = day.tags.size.toString(), color = contentColor)
                     Icon(imageVector = Icons.Filled.BarChart, contentDescription = "Metrics")
                 }
             }

@@ -16,13 +16,15 @@ fun PageSection(
     modifier: Modifier = Modifier,
     headerTextColor: Color? = null,
     headerBackgroundColor: Color? = null,
+    headerAction: @Composable () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     Column(modifier = modifier.padding(bottom = 16.dp)) {
         PageSectionHeader(
             title = title,
             textColor = headerTextColor,
-            backgroundColor = headerBackgroundColor
+            backgroundColor = headerBackgroundColor,
+            action = headerAction
         )
         content()
     }
@@ -33,7 +35,7 @@ fun PageSectionHeader(
     title: String,
     textColor: Color? = null,
     backgroundColor: Color? = null,
-    action: @Composable (() -> Unit)? = null
+    action: @Composable () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -47,7 +49,7 @@ fun PageSectionHeader(
             color = textColor ?: MaterialTheme.colorScheme.onPrimaryContainer
         )
         Spacer(modifier = Modifier.weight(1f))
-        action?.invoke()
+        action()
     }
 }
 

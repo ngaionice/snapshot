@@ -31,4 +31,19 @@ object RelativeTime {
         }
         return if ("" == res.toString()) "0 seconds ago" else res.toString()
     }
+
+    fun getPastDuration(epochSecond: Long): String {
+        val duration = (Instant.now().epochSecond - epochSecond) * 1000
+        val res = StringBuffer()
+        for (i in times.indices) {
+            val current: Long = times[i]
+            val temp = duration / current
+            if (temp > 0) {
+                res.append(temp).append(" ").append(timesString[i])
+                    .append(if (temp != 1L) "s" else "").append(" ago")
+                break
+            }
+        }
+        return if ("" == res.toString()) "0 seconds ago" else res.toString()
+    }
 }

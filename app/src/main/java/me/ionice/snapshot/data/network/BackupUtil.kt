@@ -22,7 +22,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.ionice.snapshot.R
-import me.ionice.snapshot.data.SnapshotDatabase
+import me.ionice.snapshot.data.database.SnapshotDatabase
 import me.ionice.snapshot.work.BackupStatusNotifyWorker
 import me.ionice.snapshot.work.OneOffBackupSyncWorker
 import me.ionice.snapshot.work.PeriodicBackupSyncWorker
@@ -54,7 +54,7 @@ class BackupUtil(private val context: Context) {
      * and queues up an expedited WorkManager job to back up the database to Google Drive.
      */
     fun startBackup() {
-        SnapshotDatabase.closeAndLockInstance()
+        SnapshotDatabase.runCheckpoint()
         enqueueDatabaseWork(OneOffBackupSyncWorker.WORK_TYPE_BACKUP)
     }
 
@@ -63,7 +63,7 @@ class BackupUtil(private val context: Context) {
      * and queues up an expedited WorkManager job to restore the database from Google Drive.
      */
     fun startRestore() {
-        SnapshotDatabase.closeAndLockInstance()
+        SnapshotDatabase.runCheckpoint()
         enqueueDatabaseWork(OneOffBackupSyncWorker.WORK_TYPE_RESTORE)
     }
 
@@ -117,7 +117,7 @@ class BackupUtil(private val context: Context) {
      */
     private suspend fun backupOrRestoreDatabase(isRestoring: Boolean): Result<Unit> {
         Mutex().withLock {
-            SnapshotDatabase.closeAndLockInstance()
+            SnapshotDatabase.runCheckpoint()
             val result =
                 if (isRestoring) {
                     // delete the current database and insert the downloaded one
@@ -129,7 +129,6 @@ class BackupUtil(private val context: Context) {
                 } else {
                     uploadDatabase()
                 }
-            SnapshotDatabase.unlockInstance()
             return result
         }
     }
