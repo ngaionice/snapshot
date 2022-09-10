@@ -24,4 +24,6 @@ interface DayRepository {
     fun getListFlowByYear(year: Int): Flow<List<Day>>
 
     fun getListFlowInIdRange(start: Long, end: Long): Flow<List<Day>>
+
+    fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<Day>>
 }

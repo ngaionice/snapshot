@@ -35,4 +35,8 @@ interface DayDao {
     @Transaction
     @Query("select * from Day where id >= :start and id <= :end order by id desc")
     fun getListFlowByIdRange(start: Long, end: Long): Flow<List<Day>>
+
+    @Transaction
+    @Query("select * from Day where month = :month and dayOfMonth = :dayOfMonth order by id desc")
+    fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<Day>>
 }

@@ -16,4 +16,6 @@ interface TagRepository {
     suspend fun getAllProperties(): List<TagProperties>
 
     fun getAllPropertiesFlow(): Flow<List<TagProperties>>
+
+    fun getRecentlyUsedFlow(): Flow<List<TagProperties>>
 }

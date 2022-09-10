@@ -46,4 +46,7 @@ interface TagDao {
     @Query("select * from Tag")
     fun getAllPropertiesFlow(): Flow<List<TagProperties>>
 
+    @Query("select * from Tag order by lastUsedAt desc limit 10")
+    fun getRecentlyUsedFlow(): Flow<List<TagProperties>>
+
 }

@@ -85,4 +85,8 @@ class OfflineDayRepository(
     override fun getListFlowInIdRange(start: Long, end: Long): Flow<List<Day>> {
         return dayDao.getListFlowByIdRange(start, end)
     }
+
+    override fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<Day>> {
+        return dayDao.getListFlowByDayOfYear(month, dayOfMonth)
+    }
 }

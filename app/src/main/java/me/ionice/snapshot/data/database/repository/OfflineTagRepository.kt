@@ -55,4 +55,8 @@ class OfflineTagRepository(
     override fun getAllPropertiesFlow(): Flow<List<TagProperties>> {
         return tagDao.getAllPropertiesFlow()
     }
+
+    override fun getRecentlyUsedFlow(): Flow<List<TagProperties>> {
+        return tagDao.getRecentlyUsedFlow()
+    }
 }
