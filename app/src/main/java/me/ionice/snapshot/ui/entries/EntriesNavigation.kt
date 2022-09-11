@@ -1,11 +1,21 @@
 package me.ionice.snapshot.ui.entries
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.*
-import androidx.navigation.compose.composable
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.navigation
 import me.ionice.snapshot.data.database.repository.DayRepository
 import me.ionice.snapshot.data.database.repository.LocationRepository
 import me.ionice.snapshot.data.database.repository.TagRepository
+import me.ionice.snapshot.ui.common.animationDurationMs
 import me.ionice.snapshot.ui.entries.list.EntriesListRoute
 import me.ionice.snapshot.ui.entries.list.EntriesListViewModel
 import me.ionice.snapshot.ui.entries.single.EntriesSingleRoute
@@ -26,6 +36,9 @@ object EntriesSingleDestination : NavigationDestination {
     const val dayIdArg = "dayId"
 }
 
+
+
+@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.entriesGraph(
     navController: NavHostController,
     dayRepository: DayRepository,
@@ -34,7 +47,23 @@ fun NavGraphBuilder.entriesGraph(
 ) {
     navigation(
         route = EntriesListDestination.route,
-        startDestination = "${EntriesListDestination.route}/${EntriesListDestination.destination}"
+        startDestination = "${EntriesListDestination.route}/${EntriesListDestination.destination}",
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentScope.SlideDirection.Left, tween(
+                    animationDurationMs
+                )
+            )
+        },
+        exitTransition = { fadeOut(tween(animationDurationMs)) },
+        popEnterTransition = { fadeIn(tween(animationDurationMs)) },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentScope.SlideDirection.Right, tween(
+                    animationDurationMs
+                )
+            )
+        },
     ) {
         val navigator = NavigatorImpl(navController)
         composable(

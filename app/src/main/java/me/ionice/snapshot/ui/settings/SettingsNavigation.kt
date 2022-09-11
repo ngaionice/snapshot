@@ -1,11 +1,17 @@
 package me.ionice.snapshot.ui.settings
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.navigation
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.navigation
 import me.ionice.snapshot.data.network.NetworkRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
+import me.ionice.snapshot.ui.common.animationDurationMs
 import me.ionice.snapshot.ui.navigation.NavigationDestination
 import me.ionice.snapshot.ui.navigation.parentViewModel
 import me.ionice.snapshot.ui.settings.screens.BackupRoute
@@ -35,6 +41,7 @@ object SettingsThemingDestination : NavigationDestination {
     override val destination = "theming"
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.settingsGraph(
     navController: NavController,
     networkRepository: NetworkRepository,
@@ -42,7 +49,23 @@ fun NavGraphBuilder.settingsGraph(
 ) {
     navigation(
         route = SETTINGS_ROUTE,
-        startDestination = "${SettingsHomeDestination.route}/${SettingsHomeDestination.destination}"
+        startDestination = "${SettingsHomeDestination.route}/${SettingsHomeDestination.destination}",
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentScope.SlideDirection.Left, tween(
+                    animationDurationMs
+                )
+            )
+        },
+        exitTransition = { fadeOut(tween(animationDurationMs)) },
+        popEnterTransition = { fadeIn(tween(animationDurationMs)) },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentScope.SlideDirection.Right, tween(
+                    animationDurationMs
+                )
+            )
+        }
     ) {
         composable(route = "${SettingsHomeDestination.route}/${SettingsHomeDestination.destination}") {
             HomeRoute(
