@@ -39,12 +39,11 @@ class OfflineTagRepository(
             val newTags = entries.associateBy({ it.dayId }, { it.content })
             val oldTags = existing.entries.associateBy({ it.dayId }, { it.content })
             (oldTags.keys subtract newTags.keys).map { TagEntry(it, tagId, oldTags[it]) }
-                .let { tagDao::deleteEntries }
+                .let { tagDao.deleteEntries(it) }
             (newTags.keys subtract oldTags.keys).map { TagEntry(it, tagId, newTags[it]) }
-                .let { tagDao::insertEntries }
+                .let { tagDao.insertEntries(it) }
             (newTags.keys intersect oldTags.keys).filter { newTags[it] != oldTags[it] }
-                .map { TagEntry(it, tagId, newTags[it]) }.let { tagDao::updateEntries }
-            Unit
+                .map { TagEntry(it, tagId, newTags[it]) }.let { tagDao.updateEntries(it) }
         }
     }
 

@@ -52,10 +52,9 @@ class OfflineLocationRepository(
             val oldEntries = existing.entries.map { it.dayId }.toSet()
             val newEntries = entries.map { it.dayId }.toSet()
             (newEntries subtract oldEntries).map { LocationEntry(it, locationId) }
-                .let { locationDao::insertEntries }
+                .let { locationDao.insertEntries(it) }
             (oldEntries subtract newEntries).map { LocationEntry(it, locationId) }
-                .let { locationDao::deleteEntries }
-            Unit
+                .let { locationDao.deleteEntries(it) }
         }
     }
 

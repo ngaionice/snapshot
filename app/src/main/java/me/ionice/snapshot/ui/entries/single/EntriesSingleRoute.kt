@@ -15,11 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import me.ionice.snapshot.data.database.model.Coordinates
 import me.ionice.snapshot.data.database.model.Day
+import me.ionice.snapshot.data.database.model.LocationEntry
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.ErrorScreen
 import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
 import me.ionice.snapshot.ui.entries.single.components.EntryHeader
+import me.ionice.snapshot.ui.entries.single.components.EntryLocationSection
 import me.ionice.snapshot.ui.entries.single.components.EntrySectionToggle
 import me.ionice.snapshot.ui.entries.single.components.EntrySummarySection
 import me.ionice.snapshot.ui.navigation.Navigator
@@ -72,6 +74,7 @@ fun EntriesSingleScreen(
             } else {
                 EntryScreen(
                     day = uiState.dayUiState.data,
+                    locationProvider = { uiState.locationUiState },
                     editingCopy = uiState.editingCopy,
                     onBack = onBack,
                     onEdit = onEdit,
@@ -90,6 +93,7 @@ fun EntriesSingleScreen(
 fun EntryScreen(
     day: Day,
     editingCopy: Day?,
+    locationProvider: () -> LocationUiState,
     onBack: () -> Unit,
     onEdit: (Day?) -> Unit,
     onSave: () -> Unit,
@@ -157,18 +161,39 @@ fun EntryScreen(
                         } else {
                             day.properties.summary
                         },
-                        onTextChange = {
-                            if (editingCopy != null) {
+                        onTextChange = { text ->
+                            editingCopy?.let {
                                 onEdit(
-                                    editingCopy.copy(
-                                        properties = editingCopy.properties.copy(summary = it)
+                                    it.copy(
+                                        properties = it.properties.copy(summary = text)
                                     )
                                 )
                             }
                         })
                 }
                 EntrySection.Location -> {
-                    FunctionalityNotAvailableScreen()
+                    EntryLocationSection(
+                        editing = editing,
+                        uiStateProvider = locationProvider,
+                        selectedLocation = if (editing && editingCopy != null) {
+                            editingCopy.location
+                        } else {
+                            day.location
+                        },
+                        onSelectLocation = { loc ->
+                            editingCopy?.let {
+                                onEdit(
+                                    it.copy(
+                                        location = LocationEntry(
+                                            dayId = it.properties.id,
+                                            locationId = loc.id
+                                        )
+                                    )
+                                )
+                            }
+                        },
+                        onAddLocation = onAddLocation
+                    )
                 }
                 EntrySection.Tags -> {
                     FunctionalityNotAvailableScreen()

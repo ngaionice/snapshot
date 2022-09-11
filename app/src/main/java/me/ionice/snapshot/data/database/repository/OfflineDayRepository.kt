@@ -57,19 +57,20 @@ class OfflineDayRepository(
                 // compare location, if not equal then need to delete old and insert new
                 val oldLoc = existingEntry.location
                 if (oldLoc != location) {
-                    oldLoc?.let { locationDao::deleteEntry }
-                    location?.let { locationDao::insertEntry }
+                    println("inserting location")
+                    println(location)
+                    oldLoc?.let { locationDao.deleteEntry(it) }
+                    location?.let { locationDao.insertEntry(it) }
                 }
                 // compare tags: delete old ones, insert new ones, update common ones
                 val newTags = tags.associateBy({ it.tagId }, { it.content })
                 val oldTags = existingEntry.tags.associateBy({ it.tagId }, { it.content })
                 (oldTags.keys subtract newTags.keys).map { TagEntry(dayId, it, oldTags[it]) }
-                    .let { tagDao::deleteEntries }
+                    .let { tagDao.deleteEntries(it) }
                 (newTags.keys subtract oldTags.keys).map { TagEntry(dayId, it, newTags[it]) }
-                    .let { tagDao::insertEntries }
+                    .let { tagDao.insertEntries(it) }
                 (newTags.keys intersect oldTags.keys).filter { newTags[it] != oldTags[it] }
-                    .map { TagEntry(dayId, it, newTags[it]) }.let { tagDao::updateEntries }
-                Unit
+                    .map { TagEntry(dayId, it, newTags[it]) }.let { tagDao.updateEntries(it) }
             }
         }
     }
