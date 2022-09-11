@@ -97,25 +97,25 @@ fun EntryScreen(
     onAddLocation: (String, Coordinates) -> Unit,
     onAddTag: (String) -> Unit
 ) {
-    var editing by rememberSaveable { mutableStateOf(false) }
-    var selectedSection by rememberSaveable { mutableStateOf(EntrySection.Summary) }
+    val (editing, setEditing) = rememberSaveable { mutableStateOf(false) }
+    val (selectedSection, setSelectedSection) = rememberSaveable { mutableStateOf(EntrySection.Summary) }
 
     val backAction: () -> Unit = {
-        if (editing) editing = false
+        if (editing) setEditing(false)
         else onBack()
     }
     val actionButtons: @Composable () -> Unit = {
         if (editing) {
             IconButton(onClick = {
                 onSave()
-                editing = false
+                setEditing(false)
             }) {
                 Icon(imageVector = Icons.Filled.Save, contentDescription = "save")
             }
         } else {
             IconButton(onClick = {
                 onEdit(day)
-                editing = true
+                setEditing(true)
             }) {
                 Icon(imageVector = Icons.Filled.Edit, contentDescription = "edit")
             }
@@ -132,7 +132,7 @@ fun EntryScreen(
         }
     }
 
-    BackHandler(enabled = editing) { editing = false }
+    BackHandler(enabled = editing) { setEditing(false) }
 
     Scaffold(
         topBar = {
@@ -145,7 +145,9 @@ fun EntryScreen(
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             EntryHeader(dayId = day.properties.id)
-            EntrySectionToggle(selectedProvider = {selectedSection}, onSelect = { selectedSection = it })
+            EntrySectionToggle(
+                selectedProvider = { selectedSection }, onSelect = setSelectedSection
+            )
             when (selectedSection) {
                 EntrySection.Summary -> {
                     EntrySummarySection(
