@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "me.ionice.snapshot"
         minSdk 29
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -45,7 +45,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion '1.3.1'
     }
     packagingOptions {
         resources {
@@ -57,13 +57,13 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
 
     // Compose
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.activity:activity-compose:1.5.1'
-    implementation 'androidx.compose.material3:material3:1.0.0-alpha14'
+    implementation 'androidx.compose.material3:material3:1.0.0-beta02'
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
@@ -91,20 +91,20 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:$workmanager_version"
 
     // Navigation
-    implementation "androidx.navigation:navigation-compose:2.5.1"
+    implementation "androidx.navigation:navigation-compose:2.5.2"
 
     // Saved state for ViewModel
 //    implementation "androidx.savedstate:savedstate-ktx:1.1.0"
 
     // Material Components for Android: for CalendarView
-    implementation 'com.google.android.material:material:1.6.1'
+//    implementation 'com.google.android.material:material:1.6.1'
 
     // Accompanist for various functions: status bar control and placeholders/skeletons
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.25.0'
     implementation "com.google.accompanist:accompanist-placeholder-material:0.25.0"
 
     // Google Services: for access to Google Drive
-    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.http-client:google-http-client-gson:1.41.8'
     implementation 'com.google.api-client:google-api-client-android:1.34.1'
     implementation 'com.google.apis:google-api-services-drive:v3-rev20220508-1.32.1'

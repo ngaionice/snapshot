@@ -21,7 +21,7 @@ fun TopAppBar(
         },
         modifier = modifier,
         actions = actions,
-        scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarScrollState())
+        scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     )
 }
 

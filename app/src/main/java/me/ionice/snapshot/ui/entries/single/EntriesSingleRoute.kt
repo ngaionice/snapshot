@@ -140,7 +140,7 @@ fun EntryScreen(
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(
+            TopAppBar(
                 title = {},
                 navigationIcon = { BackButton(backAction) },
                 actions = { actionButtons() }
@@ -208,7 +208,7 @@ fun EntryScreen(
 fun NotFoundScreen(dayId: Long, onBack: () -> Unit) {
     Scaffold(
         topBar = {
-            SmallTopAppBar(title = {}, navigationIcon = { BackButton(onBack = onBack) })
+            TopAppBar(title = {}, navigationIcon = { BackButton(onBack = onBack) })
         }
     ) {
         Column(

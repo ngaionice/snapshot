@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -129,7 +130,7 @@ private fun SearchBarBase(
         onClick = {
             setSearchBarState(SearchBarState.ACTIVE)
         },
-        shape = if (searchBarState == SearchBarState.ACTIVE) Shapes.None else Shapes.Full,
+        shape = if (searchBarState == SearchBarState.ACTIVE) RoundedCornerShape(0) else RoundedCornerShape(100),
         modifier = modifier.padding(
             horizontal = horizontalPadding.dp,
             vertical = verticalPadding.dp
