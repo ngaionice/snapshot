@@ -62,7 +62,6 @@ fun EntryLocationSection(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LocationIndicator(
     locationsProvider: () -> List<LocationProperties>,
@@ -70,10 +69,7 @@ private fun LocationIndicator(
 ) {
     val locations = locationsProvider()
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             selectedLocation?.let { loc ->
                 locations.find { it.id == loc.locationId }.let { properties ->
                     Text(text = properties?.name ?: "Select a location!")
@@ -102,25 +98,23 @@ private fun LocationDropdownSelector(
     val selectedLocationProperties =
         selectedLocation?.let { loc -> locations.find { it.id == loc.locationId } }
 
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = setExpanded) {
-            OutlinedTextField(
-                value = selectedLocationProperties?.name ?: "Select a location",
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            )
-            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { setExpanded(false) }) {
-                locations.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option.name) },
-                        onClick = {
-                            onSelectLocation(option)
-                            setExpanded(false)
-                        }
-                    )
-                }
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = setExpanded) {
+        OutlinedTextField(
+            value = selectedLocationProperties?.name ?: "Select a location",
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+        )
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { setExpanded(false) }) {
+            locations.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option.name) },
+                    onClick = {
+                        onSelectLocation(option)
+                        setExpanded(false)
+                    }
+                )
             }
         }
     }
