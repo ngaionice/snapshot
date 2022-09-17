@@ -13,18 +13,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import me.ionice.snapshot.data.database.model.Coordinates
-import me.ionice.snapshot.data.database.model.Day
-import me.ionice.snapshot.data.database.model.LocationEntry
-import me.ionice.snapshot.data.database.model.LocationProperties
+import me.ionice.snapshot.data.database.model.*
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.ErrorScreen
-import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
-import me.ionice.snapshot.ui.entries.single.components.EntryHeader
-import me.ionice.snapshot.ui.entries.single.components.EntryLocationSection
-import me.ionice.snapshot.ui.entries.single.components.EntrySectionToggle
-import me.ionice.snapshot.ui.entries.single.components.EntrySummarySection
+import me.ionice.snapshot.ui.entries.single.components.*
 import me.ionice.snapshot.ui.navigation.Navigator
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
@@ -76,6 +69,7 @@ fun EntriesSingleScreen(
                 EntryScreen(
                     day = uiState.dayUiState.data,
                     locationProvider = { uiState.locationUiState },
+                    tagProvider = { uiState.tagUiState },
                     editingCopy = uiState.editingCopy,
                     onBack = onBack,
                     onEdit = onEdit,
@@ -95,6 +89,7 @@ fun EntryScreen(
     day: Day,
     editingCopy: Day?,
     locationProvider: () -> LocationUiState,
+    tagProvider: () -> TagUiState,
     onBack: () -> Unit,
     onEdit: (Day?) -> Unit,
     onSave: () -> Unit,
@@ -160,6 +155,14 @@ fun EntryScreen(
             )
         }
     }
+    val tags = if (editing && editingCopy != null) {
+        editingCopy.tags
+    } else {
+        day.tags
+    }
+    val onTagsChange: (List<TagEntry>) -> Unit = { newTags ->
+        editingCopy?.let { onEdit(it.copy(tags = newTags)) }
+    }
 
     BackHandler(enabled = editing) { setEditing(false) }
 
@@ -195,7 +198,14 @@ fun EntryScreen(
                     )
                 }
                 EntrySection.Tags -> {
-                    FunctionalityNotAvailableScreen()
+                    EntryTagSection(
+                        editing = editing,
+                        dayId = day.properties.id,
+                        uiStateProvider = tagProvider,
+                        selectedTags = tags,
+                        onAddTag = onAddTag,
+                        onSelectedTagsChange = onTagsChange
+                    )
                 }
             }
         }
@@ -227,7 +237,7 @@ fun NotFoundScreen(dayId: Long, onBack: () -> Unit) {
 }
 
 enum class EntrySection(val description: String, val icon: ImageVector) {
-    Summary(description = "Summary", icon = Icons.Filled.Notes),
+    Summary(description = "Summary", icon = Icons.Filled.TextSnippet),
     Location(description = "Location", icon = Icons.Filled.LocationOn),
     Tags(description = "Tags", icon = Icons.Filled.Tag)
 }

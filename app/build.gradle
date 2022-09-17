@@ -96,13 +96,11 @@ dependencies {
     // Saved state for ViewModel
 //    implementation "androidx.savedstate:savedstate-ktx:1.1.0"
 
-    // Material Components for Android: for CalendarView
-//    implementation 'com.google.android.material:material:1.6.1'
-
-    // Accompanist for various functions: status bar control and placeholders/skeletons
-    implementation 'com.google.accompanist:accompanist-systemuicontroller:0.25.0'
-    implementation "com.google.accompanist:accompanist-placeholder-material:0.25.0"
-    implementation "com.google.accompanist:accompanist-navigation-animation:0.25.0"
+    // Accompanist for various functions
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
 
     // Google Services: for access to Google Drive
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
