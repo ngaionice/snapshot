@@ -5,21 +5,15 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
-import me.ionice.snapshot.data.database.repository.DayRepository
-import me.ionice.snapshot.data.database.repository.LocationRepository
-import me.ionice.snapshot.data.database.repository.TagRepository
 import me.ionice.snapshot.ui.common.animationDurationMs
 import me.ionice.snapshot.ui.entries.list.EntriesListRoute
-import me.ionice.snapshot.ui.entries.list.EntriesListViewModel
 import me.ionice.snapshot.ui.entries.single.EntriesSingleRoute
-import me.ionice.snapshot.ui.entries.single.EntriesSingleViewModel
 import me.ionice.snapshot.ui.navigation.NavigationDestination
 import me.ionice.snapshot.ui.navigation.NavigatorImpl
 
@@ -37,14 +31,8 @@ object EntriesSingleDestination : NavigationDestination {
 }
 
 
-
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.entriesGraph(
-    navController: NavHostController,
-    dayRepository: DayRepository,
-    locationRepository: LocationRepository,
-    tagRepository: TagRepository
-) {
+fun NavGraphBuilder.entriesGraph(navController: NavHostController) {
     navigation(
         route = EntriesListDestination.route,
         startDestination = "${EntriesListDestination.route}/${EntriesListDestination.destination}",
@@ -70,10 +58,7 @@ fun NavGraphBuilder.entriesGraph(
             route = "${EntriesListDestination.route}/${EntriesListDestination.destination}",
             enterTransition = { fadeIn(tween(animationDurationMs)) }
         ) {
-            EntriesListRoute(
-                viewModel = viewModel(factory = EntriesListViewModel.provideFactory(dayRepository)),
-                navigator = navigator
-            )
+            EntriesListRoute(navigator = navigator)
         }
 
         composable(
@@ -83,11 +68,6 @@ fun NavGraphBuilder.entriesGraph(
             })
         ) {
             EntriesSingleRoute(
-                viewModel = viewModel(
-                    factory = EntriesSingleViewModel.provideFactory(
-                        dayRepository, locationRepository, tagRepository
-                    )
-                ),
                 dayId = it.arguments?.getLong(EntriesSingleDestination.dayIdArg)!!,
                 navigator = navigator
             )

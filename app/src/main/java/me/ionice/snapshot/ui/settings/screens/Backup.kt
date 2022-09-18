@@ -12,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.components.BackButton
@@ -27,7 +28,7 @@ import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BackupRoute(viewModel: SettingsViewModel, onBack: () -> Unit) {
+fun BackupRoute(viewModel: SettingsViewModel = hiltViewModel(), onBack: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
 
     BaseScreen(

@@ -1,8 +1,8 @@
 package me.ionice.snapshot.ui.entries.list
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -11,9 +11,13 @@ import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.utils.Result
 import me.ionice.snapshot.utils.asResult
 import java.time.LocalDate
+import javax.inject.Inject
 
+@HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
-class EntriesListViewModel(private val dayRepository: DayRepository) : ViewModel() {
+class EntriesListViewModel @Inject constructor(
+    private val dayRepository: DayRepository
+) : ViewModel() {
 
     private val today = MutableStateFlow(LocalDate.now().toEpochDay())
     private val year = MutableStateFlow(LocalDate.now().year)
@@ -46,16 +50,6 @@ class EntriesListViewModel(private val dayRepository: DayRepository) : ViewModel
 
     fun addEntry(dayId: Long) {
         viewModelScope.launch { dayRepository.create(dayId) }
-    }
-
-    companion object {
-        fun provideFactory(dayRepository: DayRepository): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return EntriesListViewModel(dayRepository) as T
-                }
-            }
     }
 }
 

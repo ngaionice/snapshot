@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.hilt.navigation.compose.hiltViewModel
 import me.ionice.snapshot.data.database.model.*
 import me.ionice.snapshot.ui.common.DayUiState
 import me.ionice.snapshot.ui.common.LocationsUiState
@@ -26,7 +27,7 @@ import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
 @Composable
-fun EntriesSingleRoute(viewModel: EntriesSingleViewModel, dayId: Long, navigator: Navigator) {
+fun EntriesSingleRoute(viewModel: EntriesSingleViewModel = hiltViewModel(), dayId: Long, navigator: Navigator) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(dayId) { viewModel.load(dayId) }

@@ -5,14 +5,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
-import me.ionice.snapshot.data.database.repository.DayRepository
-import me.ionice.snapshot.data.database.repository.LocationRepository
-import me.ionice.snapshot.data.database.repository.TagRepository
 import me.ionice.snapshot.ui.common.animationDurationMs
 import me.ionice.snapshot.ui.navigation.NavigationDestination
 import me.ionice.snapshot.ui.navigation.NavigatorImpl
@@ -25,12 +21,7 @@ object LibraryHomeDestination : NavigationDestination {
 }
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.libraryGraph(
-    navController: NavHostController,
-    dayRepository: DayRepository,
-    locationRepository: LocationRepository,
-    tagRepository: TagRepository
-) {
+fun NavGraphBuilder.libraryGraph(navController: NavHostController) {
     navigation(route = LibraryHomeDestination.route,
         startDestination = "${LibraryHomeDestination.route}/${LibraryHomeDestination.destination}",
         enterTransition = {
@@ -55,15 +46,7 @@ fun NavGraphBuilder.libraryGraph(
             route = "${LibraryHomeDestination.route}/${LibraryHomeDestination.destination}",
             enterTransition = { fadeIn(tween(animationDurationMs)) },
             popExitTransition = { fadeOut(tween(animationDurationMs)) }) {
-            LibraryRoute(
-                viewModel = viewModel(
-                    factory = LibraryViewModel.provideFactory(
-                        dayRepository,
-                        locationRepository,
-                        tagRepository
-                    )
-                ), navigator = navigator
-            )
+            LibraryRoute(navigator = navigator)
         }
     }
 }

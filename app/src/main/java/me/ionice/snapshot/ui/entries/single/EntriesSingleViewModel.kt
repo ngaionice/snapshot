@@ -1,8 +1,8 @@
 package me.ionice.snapshot.ui.entries.single
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,9 +16,11 @@ import me.ionice.snapshot.ui.common.LocationsUiState
 import me.ionice.snapshot.ui.common.TagsUiState
 import me.ionice.snapshot.utils.Result
 import me.ionice.snapshot.utils.asResult
+import javax.inject.Inject
 
+@HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
-class EntriesSingleViewModel(
+class EntriesSingleViewModel @Inject constructor(
     private val dayRepository: DayRepository,
     private val locationRepository: LocationRepository,
     private val tagRepository: TagRepository
@@ -88,21 +90,6 @@ class EntriesSingleViewModel(
 
     fun addTag(name: String) {
         viewModelScope.launch { tagRepository.add(name) }
-    }
-
-    companion object {
-        fun provideFactory(
-            dayRepository: DayRepository,
-            locationRepository: LocationRepository,
-            tagRepository: TagRepository
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return EntriesSingleViewModel(
-                    dayRepository, locationRepository, tagRepository
-                ) as T
-            }
-        }
     }
 }
 

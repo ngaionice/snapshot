@@ -1,17 +1,19 @@
 package me.ionice.snapshot.ui.settings
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.network.NetworkRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
 import java.time.LocalDateTime
 import java.time.LocalTime
+import javax.inject.Inject
 
-class SettingsViewModel(
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
@@ -159,32 +161,26 @@ class SettingsViewModel(
         println("Loading backup prefs")
         viewModelState.update {
             if (!networkRepository.isOnline()) {
-                it.copy(backupPreferences = SettingsViewModelState.Backup(dataAvailable = false, backupEnabled = false))
+                it.copy(
+                    backupPreferences = SettingsViewModelState.Backup(
+                        dataAvailable = false,
+                        backupEnabled = false
+                    )
+                )
             } else {
-                it.copy(backupPreferences = SettingsViewModelState.Backup(
-                    dataAvailable = true,
-                    backupEnabled = backupPreferencesState.value.isEnabled,
-                    signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
-                    lastBackupTime = networkRepository.getLastBackupTime(),
-                    isBackupInProgress = networkRepository.getBackupStatus().isInProgress,
-                    autoBackupFrequency = backupPreferencesState.value.autoBackupFrequency,
-                    autoBackupTime = backupPreferencesState.value.autoBackupTime
-                ))
+                it.copy(
+                    backupPreferences = SettingsViewModelState.Backup(
+                        dataAvailable = true,
+                        backupEnabled = backupPreferencesState.value.isEnabled,
+                        signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
+                        lastBackupTime = networkRepository.getLastBackupTime(),
+                        isBackupInProgress = networkRepository.getBackupStatus().isInProgress,
+                        autoBackupFrequency = backupPreferencesState.value.autoBackupFrequency,
+                        autoBackupTime = backupPreferencesState.value.autoBackupTime
+                    )
+                )
             }
         }
-    }
-
-    companion object {
-        fun provideFactory(
-            networkRepository: NetworkRepository,
-            preferencesRepository: PreferencesRepository
-        ): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SettingsViewModel(networkRepository, preferencesRepository) as T
-                }
-            }
     }
 }
 

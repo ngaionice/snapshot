@@ -9,11 +9,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
-import me.ionice.snapshot.data.network.NetworkRepository
-import me.ionice.snapshot.data.preferences.PreferencesRepository
 import me.ionice.snapshot.ui.common.animationDurationMs
 import me.ionice.snapshot.ui.navigation.NavigationDestination
-import me.ionice.snapshot.ui.navigation.parentViewModel
 import me.ionice.snapshot.ui.settings.screens.BackupRoute
 import me.ionice.snapshot.ui.settings.screens.HomeRoute
 import me.ionice.snapshot.ui.settings.screens.NotificationsRoute
@@ -42,11 +39,7 @@ object SettingsThemingDestination : NavigationDestination {
 }
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.settingsGraph(
-    navController: NavController,
-    networkRepository: NetworkRepository,
-    preferencesRepository: PreferencesRepository
-) {
+fun NavGraphBuilder.settingsGraph(navController: NavController) {
     navigation(
         route = SETTINGS_ROUTE,
         startDestination = "${SettingsHomeDestination.route}/${SettingsHomeDestination.destination}",
@@ -75,40 +68,13 @@ fun NavGraphBuilder.settingsGraph(
             )
         }
         composable(route = "${SettingsBackupDestination.route}/${SettingsBackupDestination.destination}") {
-            BackupRoute(
-                viewModel = it.parentViewModel(
-                    navController = navController,
-                    factory = SettingsViewModel.provideFactory(
-                        networkRepository,
-                        preferencesRepository
-                    )
-                ),
-                onBack = navController::popBackStack
-            )
+            BackupRoute(onBack = navController::popBackStack)
         }
         composable(route = "${SettingsNotificationsDestination.route}/${SettingsNotificationsDestination.destination}") {
-            NotificationsRoute(
-                viewModel = it.parentViewModel(
-                    navController = navController,
-                    factory = SettingsViewModel.provideFactory(
-                        networkRepository,
-                        preferencesRepository
-                    )
-                ),
-                onBack = navController::popBackStack
-            )
+            NotificationsRoute(onBack = navController::popBackStack)
         }
         composable(route = "${SettingsThemingDestination.route}/${SettingsThemingDestination.destination}") {
-            ThemingRoute(
-                viewModel = it.parentViewModel(
-                    navController = navController,
-                    factory = SettingsViewModel.provideFactory(
-                        networkRepository,
-                        preferencesRepository
-                    )
-                ),
-                onBack = navController::popBackStack
-            )
+            ThemingRoute(onBack = navController::popBackStack)
         }
     }
 }

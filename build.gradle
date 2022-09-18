@@ -5,6 +5,11 @@ buildscript {
         coroutine_version = '1.6.3'
         workmanager_version = '2.7.1'
         accompanist_version = '0.25.1'
+        hilt_version = '2.42'
+        hilt_androidX_version = '1.0.0'
+    }
+    dependencies {
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {

@@ -1,8 +1,8 @@
 package me.ionice.snapshot.ui.library
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import me.ionice.snapshot.data.database.repository.DayRepository
@@ -14,9 +14,11 @@ import me.ionice.snapshot.ui.common.TagsUiState
 import me.ionice.snapshot.utils.Result
 import me.ionice.snapshot.utils.asResult
 import java.time.LocalDate
+import javax.inject.Inject
 
+@HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
-class LibraryViewModel(
+class LibraryViewModel @Inject constructor(
     private val dayRepository: DayRepository,
     locationRepository: LocationRepository,
     tagRepository: TagRepository
@@ -52,19 +54,6 @@ class LibraryViewModel(
             DaysUiState.Loading, LocationsUiState.Loading, TagsUiState.Loading
         )
     )
-
-    companion object {
-        fun provideFactory(
-            dayRepository: DayRepository,
-            locationRepository: LocationRepository,
-            tagRepository: TagRepository
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return LibraryViewModel(dayRepository, locationRepository, tagRepository) as T
-            }
-        }
-    }
 }
 
 data class LibraryUiState(

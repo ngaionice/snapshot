@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import me.ionice.snapshot.data.AppContainer
 import me.ionice.snapshot.ui.common.animationDurationMs
 import me.ionice.snapshot.ui.entries.EntriesListDestination
 import me.ionice.snapshot.ui.entries.entriesGraph
@@ -22,7 +21,6 @@ import me.ionice.snapshot.ui.settings.settingsGraph
 @Composable
 fun SnapshotNavHost(
     navController: NavHostController,
-    appContainer: AppContainer,
     modifier: Modifier = Modifier
 ) {
     AnimatedNavHost(
@@ -36,24 +34,10 @@ fun SnapshotNavHost(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        entriesGraph(
-            navController = navController,
-            dayRepository = appContainer.dayRepository,
-            locationRepository = appContainer.locationRepository,
-            tagRepository = appContainer.tagRepository
-        )
+        entriesGraph(navController = navController)
 
-        libraryGraph(
-            navController = navController,
-            dayRepository = appContainer.dayRepository,
-            locationRepository = appContainer.locationRepository,
-            tagRepository = appContainer.tagRepository
-        )
+        libraryGraph(navController = navController)
 
-        settingsGraph(
-            navController = navController,
-            networkRepository = appContainer.networkRepository,
-            preferencesRepository = appContainer.preferencesRepository
-        )
+        settingsGraph(navController = navController)
     }
 }

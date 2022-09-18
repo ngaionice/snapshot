@@ -4,17 +4,13 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.graphics.Color
-import me.ionice.snapshot.data.AppContainer
-import me.ionice.snapshot.data.AppContainerImpl
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class SnapshotApplication : Application() {
-
-    lateinit var container: AppContainer
 
     override fun onCreate() {
         super.onCreate()
-        container = AppContainerImpl(this)
-
         createNotificationChannels()
     }
 

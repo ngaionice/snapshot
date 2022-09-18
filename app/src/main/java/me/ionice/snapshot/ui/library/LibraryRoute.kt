@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.LocationsUiState
 import me.ionice.snapshot.ui.common.TagsUiState
@@ -21,7 +22,7 @@ import me.ionice.snapshot.ui.settings.SettingsHomeDestination
 
 @Composable
 fun LibraryRoute(
-    viewModel: LibraryViewModel,
+    viewModel: LibraryViewModel = hiltViewModel(),
     navigator: Navigator
 ) {
     val uiState by viewModel.uiState.collectAsState()

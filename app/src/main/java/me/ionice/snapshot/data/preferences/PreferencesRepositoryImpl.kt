@@ -1,8 +1,8 @@
 package me.ionice.snapshot.data.preferences
 
 import android.content.Context
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,12 +19,11 @@ import me.ionice.snapshot.work.PeriodicBackupSyncWorker
 import java.io.IOException
 import java.time.LocalTime
 
-class PreferencesRepositoryImpl(
-    private val applicationContext: Context,
-    private val dataStore: DataStore<Preferences>
-) : PreferencesRepository {
+class PreferencesRepositoryImpl(private val applicationContext: Context) : PreferencesRepository {
 
     private val backupUtil = BackupUtil(applicationContext)
+    private val Context.datastore by preferencesDataStore(name = "snapshot_preferences")
+    private val dataStore = applicationContext.datastore
 
     init {
         val manager = WorkManager.getInstance(applicationContext)

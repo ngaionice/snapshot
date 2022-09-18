@@ -1,6 +1,5 @@
 package me.ionice.snapshot
 
-import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,17 +17,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dagger.hilt.android.AndroidEntryPoint
 import me.ionice.snapshot.ui.navigation.SnapshotNavHost
 import me.ionice.snapshot.ui.navigation.SnapshotNavigationBar
 import me.ionice.snapshot.ui.navigation.SnapshotTopLevelNavigation
 import me.ionice.snapshot.ui.theme.SnapshotTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            SnapshotApp(application)
+            SnapshotApp()
         }
     }
 }
@@ -38,14 +39,15 @@ class MainActivity : ComponentActivity() {
     ExperimentalAnimationApi::class
 )
 @Composable
-fun SnapshotApp(application: Application) {
-
-    val appContainer = (application as SnapshotApplication).container
+fun SnapshotApp() {
 
     SnapshotTheme {
         val systemUiController = rememberSystemUiController()
         val isDarkTheme = isSystemInDarkTheme()
-        systemUiController.setSystemBarsColor(MaterialTheme.colorScheme.background, darkIcons = !isDarkTheme)
+        systemUiController.setSystemBarsColor(
+            MaterialTheme.colorScheme.background,
+            darkIcons = !isDarkTheme
+        )
 
         val navController = rememberAnimatedNavController()
         val snapshotTopLevelNavigation =
@@ -69,7 +71,6 @@ fun SnapshotApp(application: Application) {
             ) {
                 SnapshotNavHost(
                     navController = navController,
-                    appContainer = appContainer,
                     modifier = Modifier
                         .padding(padding)
                         .consumedWindowInsets(padding)

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.components.TopAppBar
 import me.ionice.snapshot.ui.entries.list.components.EntryInsertDialog
@@ -17,7 +18,7 @@ import me.ionice.snapshot.ui.navigation.Navigator
 import me.ionice.snapshot.ui.settings.SettingsHomeDestination
 
 @Composable
-fun EntriesListRoute(viewModel: EntriesListViewModel, navigator: Navigator) {
+fun EntriesListRoute(viewModel: EntriesListViewModel = hiltViewModel(), navigator: Navigator) {
     val uiState by viewModel.uiState.collectAsState()
 
     EntriesListScreen(
