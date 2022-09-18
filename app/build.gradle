@@ -96,6 +96,9 @@ dependencies {
     // Saved state for ViewModel
 //    implementation "androidx.savedstate:savedstate-ktx:1.1.0"
 
+    // Material 3 theming for launch screens and other misc. places
+    implementation 'com.google.android.material:material:1.6.1'
+
     // Accompanist for various functions
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
