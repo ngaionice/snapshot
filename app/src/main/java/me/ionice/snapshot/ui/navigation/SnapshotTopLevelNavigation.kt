@@ -1,15 +1,15 @@
 package me.ionice.snapshot.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.FolderCopy
 import androidx.compose.material.icons.filled.Today
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.FolderCopy
 import androidx.compose.material.icons.outlined.Today
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import me.ionice.snapshot.ui.entries.ENTRIES_ROUTE
-import me.ionice.snapshot.ui.settings.SETTINGS_ROUTE
+import me.ionice.snapshot.ui.library.LIBRARY_ROUTE
 
 class SnapshotTopLevelNavigation(private val navController: NavHostController) {
 
@@ -44,16 +44,10 @@ val TOP_LEVEL_DESTINATIONS = listOf(
         unselectedIcon = Icons.Outlined.Today,
         name = "Entries"
     ),
-//    TopLevelDestination(
-//        route = METRIC_ROUTE,
-//        selectedIcon = Icons.Filled.DataUsage,
-//        unselectedIcon = Icons.Outlined.DataUsage,
-//        name = "Metrics"
-//    ),
     TopLevelDestination(
-        route = SETTINGS_ROUTE,
-        selectedIcon = Icons.Filled.Settings,
-        unselectedIcon = Icons.Outlined.Settings,
-        name = "Settings"
+        route = LIBRARY_ROUTE,
+        selectedIcon = Icons.Filled.FolderCopy,
+        unselectedIcon = Icons.Outlined.FolderCopy,
+        name = "Library"
     )
 )

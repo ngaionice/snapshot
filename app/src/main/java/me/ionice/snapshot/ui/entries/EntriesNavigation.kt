@@ -67,7 +67,8 @@ fun NavGraphBuilder.entriesGraph(
     ) {
         val navigator = NavigatorImpl(navController)
         composable(
-            route = "${EntriesListDestination.route}/${EntriesListDestination.destination}"
+            route = "${EntriesListDestination.route}/${EntriesListDestination.destination}",
+            enterTransition = { fadeIn(tween(animationDurationMs)) }
         ) {
             EntriesListRoute(
                 viewModel = viewModel(factory = EntriesListViewModel.provideFactory(dayRepository)),
