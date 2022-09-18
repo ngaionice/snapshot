@@ -21,10 +21,10 @@ import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.database.model.Day
+import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.components.PageSectionContent
 import me.ionice.snapshot.ui.common.components.PageSectionHeader
 import me.ionice.snapshot.ui.common.components.VerticalDivider
-import me.ionice.snapshot.ui.entries.list.YearUiState
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
@@ -57,21 +57,21 @@ fun YearListHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
 }
 
 fun LazyListScope.getYearList(
-    uiStateProvider: () -> YearUiState,
+    uiStateProvider: () -> DaysUiState,
     expandedWeek: Int,
     setExpandedWeek: (Int) -> Unit,
     onSelectEntry: (Long) -> Unit
 ) {
     val uiState = uiStateProvider()
 
-    if (uiState is YearUiState.Loading) {
+    if (uiState is DaysUiState.Loading) {
         items(7) {
             PlaceholderYearListItem()
         }
         return
     }
 
-    if (uiState is YearUiState.Error) {
+    if (uiState is DaysUiState.Error) {
         item {
             Box(
                 modifier = Modifier
@@ -85,7 +85,7 @@ fun LazyListScope.getYearList(
         return
     }
 
-    val entries = (uiState as YearUiState.Success).entries
+    val entries = (uiState as DaysUiState.Success).data
 
     if (entries.isEmpty()) {
         item {
@@ -194,7 +194,6 @@ private fun YearListSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaceholderYearListItem() {
     Card(

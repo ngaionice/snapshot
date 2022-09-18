@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import me.ionice.snapshot.data.database.model.Day
 import me.ionice.snapshot.data.database.repository.DayRepository
+import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.utils.Result
 import me.ionice.snapshot.utils.asResult
 import java.time.LocalDate
@@ -24,20 +24,20 @@ class EntriesListViewModel(private val dayRepository: DayRepository) : ViewModel
         dayRepository.getListFlowByYear(it).asResult()
     }) { year, weekEntriesResult, yearEntriesResult ->
         val weekEntries = when (weekEntriesResult) {
-            is Result.Loading -> WeekUiState.Loading
-            is Result.Success -> WeekUiState.Success(weekEntriesResult.data)
-            is Result.Error -> WeekUiState.Error
+            is Result.Loading -> DaysUiState.Loading
+            is Result.Success -> DaysUiState.Success(weekEntriesResult.data)
+            is Result.Error -> DaysUiState.Error
         }
         val yearEntries = when (yearEntriesResult) {
-            is Result.Loading -> YearUiState.Loading
-            is Result.Success -> YearUiState.Success(yearEntriesResult.data)
-            is Result.Error -> YearUiState.Error
+            is Result.Loading -> DaysUiState.Loading
+            is Result.Success -> DaysUiState.Success(yearEntriesResult.data)
+            is Result.Error -> DaysUiState.Error
         }
         EntriesListUiState(year, weekEntries, yearEntries)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
-        initialValue = EntriesListUiState(year.value, WeekUiState.Loading, YearUiState.Loading)
+        initialValue = EntriesListUiState(year.value, DaysUiState.Loading, DaysUiState.Loading)
     )
 
     fun changeViewingYear(year: Int) {
@@ -59,20 +59,8 @@ class EntriesListViewModel(private val dayRepository: DayRepository) : ViewModel
     }
 }
 
-sealed interface WeekUiState {
-    object Loading : WeekUiState
-    object Error : WeekUiState
-    data class Success(val entries: List<Day>) : WeekUiState
-}
-
-sealed interface YearUiState {
-    object Loading : YearUiState
-    object Error : YearUiState
-    data class Success(val entries: List<Day>) : YearUiState
-}
-
 data class EntriesListUiState(
-    val year: Int, val weekUiState: WeekUiState, val yearUiState: YearUiState
+    val year: Int, val weekUiState: DaysUiState, val yearUiState: DaysUiState
 )
 
 

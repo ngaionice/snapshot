@@ -14,6 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import me.ionice.snapshot.data.database.model.*
+import me.ionice.snapshot.ui.common.DayUiState
+import me.ionice.snapshot.ui.common.LocationsUiState
+import me.ionice.snapshot.ui.common.TagsUiState
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.ErrorScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
@@ -68,8 +71,8 @@ fun EntriesSingleScreen(
             } else {
                 EntryScreen(
                     day = uiState.dayUiState.data,
-                    locationProvider = { uiState.locationUiState },
-                    tagProvider = { uiState.tagUiState },
+                    locationProvider = { uiState.locationsUiState },
+                    tagProvider = { uiState.tagsUiState },
                     editingCopy = uiState.editingCopy,
                     onBack = onBack,
                     onEdit = onEdit,
@@ -88,8 +91,8 @@ fun EntriesSingleScreen(
 fun EntryScreen(
     day: Day,
     editingCopy: Day?,
-    locationProvider: () -> LocationUiState,
-    tagProvider: () -> TagUiState,
+    locationProvider: () -> LocationsUiState,
+    tagProvider: () -> TagsUiState,
     onBack: () -> Unit,
     onEdit: (Day?) -> Unit,
     onSave: () -> Unit,

@@ -13,27 +13,27 @@ import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.data.database.model.Coordinates
 import me.ionice.snapshot.data.database.model.LocationEntry
 import me.ionice.snapshot.data.database.model.LocationProperties
+import me.ionice.snapshot.ui.common.LocationsUiState
 import me.ionice.snapshot.ui.common.components.PageSectionContent
 import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
-import me.ionice.snapshot.ui.entries.single.LocationUiState
 
 @Composable
 fun EntryLocationSection(
-    uiStateProvider: () -> LocationUiState,
+    uiStateProvider: () -> LocationsUiState,
     editing: Boolean,
     selectedLocation: LocationEntry?,
     onSelectLocation: (LocationProperties) -> Unit,
     onAddLocation: (String, Coordinates) -> Unit
 ) {
     when (val uiState = uiStateProvider()) {
-        is LocationUiState.Loading -> {
+        is LocationsUiState.Loading -> {
             LoadingScreen()
         }
-        is LocationUiState.Error -> {
+        is LocationsUiState.Error -> {
             FunctionalityNotAvailableScreen("Failed to load location data.")
         }
-        is LocationUiState.Success -> {
+        is LocationsUiState.Success -> {
             PageSectionContent {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Row(

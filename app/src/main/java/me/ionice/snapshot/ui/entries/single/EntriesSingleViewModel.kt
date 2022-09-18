@@ -8,11 +8,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.database.model.Coordinates
 import me.ionice.snapshot.data.database.model.Day
-import me.ionice.snapshot.data.database.model.LocationProperties
-import me.ionice.snapshot.data.database.model.TagProperties
 import me.ionice.snapshot.data.database.repository.DayRepository
 import me.ionice.snapshot.data.database.repository.LocationRepository
 import me.ionice.snapshot.data.database.repository.TagRepository
+import me.ionice.snapshot.ui.common.DayUiState
+import me.ionice.snapshot.ui.common.LocationsUiState
+import me.ionice.snapshot.ui.common.TagsUiState
 import me.ionice.snapshot.utils.Result
 import me.ionice.snapshot.utils.asResult
 
@@ -38,21 +39,21 @@ class EntriesSingleViewModel(
             is Result.Success -> DayUiState.Success(dayResult.data)
         }
         val locationState = when (locationResult) {
-            is Result.Loading -> LocationUiState.Loading
-            is Result.Error -> LocationUiState.Error
-            is Result.Success -> LocationUiState.Success(locationResult.data)
+            is Result.Loading -> LocationsUiState.Loading
+            is Result.Error -> LocationsUiState.Error
+            is Result.Success -> LocationsUiState.Success(locationResult.data)
         }
         val tagState = when (tagResult) {
-            is Result.Loading -> TagUiState.Loading
-            is Result.Error -> TagUiState.Error
-            is Result.Success -> TagUiState.Success(tagResult.data)
+            is Result.Loading -> TagsUiState.Loading
+            is Result.Error -> TagsUiState.Error
+            is Result.Success -> TagsUiState.Success(tagResult.data)
         }
         EntriesSingleUiState(dayId, dayState, locationState, tagState, dayCopy)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = EntriesSingleUiState(
-            dayId.value, DayUiState.Loading, LocationUiState.Loading, TagUiState.Loading, null
+            dayId.value, DayUiState.Loading, LocationsUiState.Loading, TagsUiState.Loading, null
         )
     )
 
@@ -105,28 +106,10 @@ class EntriesSingleViewModel(
     }
 }
 
-sealed interface DayUiState {
-    object Loading : DayUiState
-    object Error : DayUiState
-    data class Success(val data: Day?) : DayUiState
-}
-
-sealed interface LocationUiState {
-    object Loading : LocationUiState
-    object Error : LocationUiState
-    data class Success(val data: List<LocationProperties>) : LocationUiState
-}
-
-sealed interface TagUiState {
-    object Loading : TagUiState
-    object Error : TagUiState
-    data class Success(val data: List<TagProperties>) : TagUiState
-}
-
 data class EntriesSingleUiState(
     val dayId: Long?,
     val dayUiState: DayUiState,
-    val locationUiState: LocationUiState,
-    val tagUiState: TagUiState,
+    val locationsUiState: LocationsUiState,
+    val tagsUiState: TagsUiState,
     val editingCopy: Day?
 )

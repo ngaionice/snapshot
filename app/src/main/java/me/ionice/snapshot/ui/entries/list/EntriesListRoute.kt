@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.components.TopAppBar
 import me.ionice.snapshot.ui.entries.list.components.EntryInsertDialog
 import me.ionice.snapshot.ui.entries.list.components.ThisWeek
@@ -36,8 +37,8 @@ fun EntriesListRoute(viewModel: EntriesListViewModel, navigator: Navigator) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun EntriesListScreen(
-    weekEntriesProvider: () -> WeekUiState,
-    yearEntriesProvider: () -> YearUiState,
+    weekEntriesProvider: () -> DaysUiState,
+    yearEntriesProvider: () -> DaysUiState,
     yearProvider: () -> Int,
     onAddEntry: (Long) -> Unit,
     onSelectEntry: (Long) -> Unit,

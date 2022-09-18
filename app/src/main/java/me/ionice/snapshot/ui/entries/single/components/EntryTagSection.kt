@@ -18,16 +18,16 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
 import me.ionice.snapshot.data.database.model.TagEntry
 import me.ionice.snapshot.data.database.model.TagProperties
+import me.ionice.snapshot.ui.common.TagsUiState
 import me.ionice.snapshot.ui.common.components.PageSectionContent
 import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
-import me.ionice.snapshot.ui.entries.single.TagUiState
 
 @Composable
 fun EntryTagSection(
     editing: Boolean,
     dayId: Long,
-    uiStateProvider: () -> TagUiState,
+    uiStateProvider: () -> TagsUiState,
     selectedTags: List<TagEntry>,
     onAddTag: (String) -> Unit,
     onSelectedTagsChange: (List<TagEntry>) -> Unit
@@ -40,13 +40,13 @@ fun EntryTagSection(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             when (val uiState = uiStateProvider()) {
-                is TagUiState.Loading -> {
+                is TagsUiState.Loading -> {
                     LoadingScreen()
                 }
-                is TagUiState.Error -> {
+                is TagsUiState.Error -> {
                     FunctionalityNotAvailableScreen("Failed to load tag data.")
                 }
-                is TagUiState.Success -> {
+                is TagsUiState.Success -> {
                     val tagsMap = uiState.data.associateBy({ it.id }, { it })
                     if (editing) {
                         val selectedTagIds = selectedTags.map { it.tagId }.toSet()

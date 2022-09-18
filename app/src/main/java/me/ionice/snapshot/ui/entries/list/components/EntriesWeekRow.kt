@@ -15,8 +15,8 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 import me.ionice.snapshot.data.database.model.Day
+import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.components.PageSection
-import me.ionice.snapshot.ui.entries.list.WeekUiState
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 import java.time.format.TextStyle
@@ -25,13 +25,13 @@ private const val CARD_WIDTH = 0.3333f
 
 @Composable
 fun ThisWeek(
-    uiStateProvider: () -> WeekUiState,
+    uiStateProvider: () -> DaysUiState,
     onAddEntry: (Long) -> Unit,
     onSelectEntry: (Long) -> Unit
 ) {
     val uiState = uiStateProvider()
 
-    if (uiState is WeekUiState.Loading) {
+    if (uiState is DaysUiState.Loading) {
         LazyRow(
             contentPadding = PaddingValues(24.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -43,7 +43,7 @@ fun ThisWeek(
         return
     }
 
-    if (uiState is WeekUiState.Error) {
+    if (uiState is DaysUiState.Error) {
         Box(
             modifier = Modifier
                 .padding(24.dp)
@@ -57,7 +57,7 @@ fun ThisWeek(
 
     val today = LocalDate.now().toEpochDay()
     val dateRange = (today downTo today - 6).toList()
-    val entries = (uiState as WeekUiState.Success).entries.associateBy { it.properties.id }
+    val entries = (uiState as DaysUiState.Success).data.associateBy { it.properties.id }
 
     PageSection(title = "This week", headerTextColor = MaterialTheme.colorScheme.onSurface) {
         LazyRow(
@@ -174,7 +174,6 @@ fun ThisWeekAddEntryCard(dayId: Long, onClick: () -> Unit, modifier: Modifier = 
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaceholderThisWeekCard(modifier: Modifier = Modifier) {
     Card(
