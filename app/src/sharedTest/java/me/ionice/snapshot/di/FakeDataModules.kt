@@ -55,15 +55,15 @@ object RepositoryMockModule {
 
     @Provides
     @Singleton
-    fun provideDayRepository(): DayRepository = MockDayRepository()
+    fun provideDayRepository(): DayRepository = FakeDayRepository()
 
     @Provides
     @Singleton
-    fun provideLocationRepository(): LocationRepository = MockLocationRepository()
+    fun provideLocationRepository(): LocationRepository = FakeLocationRepository()
 
     @Provides
     @Singleton
-    fun provideTagRepository(): TagRepository = MockTagRepository()
+    fun provideTagRepository(): TagRepository = FakeTagRepository()
 
     @Provides
     @Singleton
