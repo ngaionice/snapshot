@@ -21,13 +21,15 @@ import me.ionice.snapshot.ui.common.TagsUiState
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.ErrorScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
+import me.ionice.snapshot.ui.entries.EntriesUiState
+import me.ionice.snapshot.ui.entries.EntriesViewModel
 import me.ionice.snapshot.ui.entries.single.components.*
 import me.ionice.snapshot.ui.navigation.Navigator
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
 @Composable
-fun EntriesSingleRoute(viewModel: EntriesSingleViewModel = hiltViewModel(), dayId: Long, navigator: Navigator) {
+fun EntriesSingleRoute(viewModel: EntriesViewModel = hiltViewModel(), dayId: Long, navigator: Navigator) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(dayId) { viewModel.load(dayId) }
@@ -45,7 +47,7 @@ fun EntriesSingleRoute(viewModel: EntriesSingleViewModel = hiltViewModel(), dayI
 
 @Composable
 fun EntriesSingleScreen(
-    uiStateProvider: () -> EntriesSingleUiState,
+    uiStateProvider: () -> EntriesUiState,
     onBack: () -> Unit,
     onEdit: (Day?) -> Unit,
     onSave: () -> Unit,

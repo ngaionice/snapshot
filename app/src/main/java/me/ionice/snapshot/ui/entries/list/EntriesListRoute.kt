@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.components.TopAppBar
+import me.ionice.snapshot.ui.entries.EntriesViewModel
 import me.ionice.snapshot.ui.entries.list.components.EntryInsertDialog
 import me.ionice.snapshot.ui.entries.list.components.ThisWeek
 import me.ionice.snapshot.ui.entries.list.components.YearListHeader
@@ -18,7 +19,7 @@ import me.ionice.snapshot.ui.navigation.Navigator
 import me.ionice.snapshot.ui.settings.SettingsHomeDestination
 
 @Composable
-fun EntriesListRoute(viewModel: EntriesListViewModel = hiltViewModel(), navigator: Navigator) {
+fun EntriesListRoute(viewModel: EntriesViewModel = hiltViewModel(), navigator: Navigator) {
     val uiState by viewModel.uiState.collectAsState()
 
     EntriesListScreen(
@@ -26,12 +27,12 @@ fun EntriesListRoute(viewModel: EntriesListViewModel = hiltViewModel(), navigato
         yearEntriesProvider = { uiState.yearUiState },
         yearProvider = { uiState.year },
         onAddEntry = {
-            viewModel.addEntry(it)
+            viewModel.add(it)
             navigator.navigateToEntry(it)
         },
         onSelectEntry = navigator::navigateToEntry,
         onSelectSettings = { navigator.navigateToDestination(SettingsHomeDestination) },
-        onChangeYear = viewModel::changeViewingYear
+        onChangeYear = viewModel::changeListYear
     )
 }
 
