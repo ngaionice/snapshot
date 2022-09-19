@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.data.database.model.Coordinates
@@ -21,7 +22,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class EntriesViewModel @Inject constructor(
     private val dayRepository: DayRepository,
     private val locationRepository: LocationRepository,
@@ -83,7 +84,7 @@ class EntriesViewModel @Inject constructor(
     }
 
     val uiState: StateFlow<EntriesUiState> = combine(
-        entryFlow, listFlow
+        entryFlow, listFlow.debounce(100)
     ) { entryResult, listResult ->
         val (dayId, dayState, locationsState, tagsState, dayCopy) = entryResult
         val (year, weekState, yearState) = listResult
