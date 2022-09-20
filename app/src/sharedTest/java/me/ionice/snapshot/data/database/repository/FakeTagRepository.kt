@@ -7,20 +7,23 @@ import me.ionice.snapshot.data.database.model.TagProperties
 import kotlin.math.min
 
 class FakeTagRepository : TagRepository {
-    private val tag = MutableStateFlow<List<Tag>>(emptyList())
+    private val tag = MutableStateFlow(listOf(Tag(
+        properties = TagProperties(id = FRD.tagId, name ="FakeTag", lastUsedAt = 0),
+        entries = listOf(TagEntry(FRD.dayIds[0], FRD.tagId))
+    )))
     private var lastUsedId = -1L
     override suspend fun get(tagId: Long): Tag? = tag.value.find { it.properties.id == tagId }
 
     override suspend fun add(name: String): Long {
         lastUsedId++
-        tag.update { it + Tag(
+        tag.tryEmit(tag.value + Tag(
             properties = TagProperties(
                 id = lastUsedId,
                 name = name,
                 lastUsedAt = 0
             ),
             entries = emptyList()
-        ) }
+        ))
         return lastUsedId
     }
 
@@ -34,7 +37,8 @@ class FakeTagRepository : TagRepository {
             ),
             entries = entries
         )
-        tag.update { tags -> (tags.filter { it.properties.id != tagId } + toInsert).sortedBy { it.properties.id } }
+        val tags = tag.value
+        tag.tryEmit((tags.filter { it.properties.id != tagId } + toInsert).sortedBy { it.properties.id })
     }
 
     override suspend fun getAllProperties(): List<TagProperties> {

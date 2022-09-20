@@ -3,7 +3,6 @@ package me.ionice.snapshot.data.database.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import me.ionice.snapshot.data.database.model.*
 import java.time.Instant
 import java.time.LocalDate
@@ -11,7 +10,43 @@ import java.time.LocalDate
 class FakeDayRepository : DayRepository {
 
     private val now = LocalDate.now()
-    private val days = MutableStateFlow(listOf<Day>())
+    private val days = MutableStateFlow(
+        listOf(
+            Day(
+                properties = DayProperties(
+                    id = FRD.dayIds[2],
+                    summary = "Fake summary 2",
+                    createdAt = 0,
+                    lastModifiedAt = 0,
+                    date = Date(2022, 8, 1)
+                ),
+                tags = emptyList(),
+                location = null
+            ),
+            Day(
+                properties = DayProperties(
+                    id = FRD.dayIds[1],
+                    summary = "Fake summary 1",
+                    createdAt = 0,
+                    lastModifiedAt = 0,
+                    date = Date(2021, 8, 2)
+                ),
+                tags = emptyList(),
+                location = null
+            ),
+            Day(
+                properties = DayProperties(
+                    id = FRD.dayIds[0],
+                    summary = "Fake summary 0",
+                    createdAt = 0,
+                    lastModifiedAt = 0,
+                    date = Date(2021, 8, 1)
+                ),
+                tags = listOf(TagEntry(FRD.dayIds[0], FRD.tagId)),
+                location = LocationEntry(FRD.dayIds[0], FRD.locationId)
+            )
+        )
+    )
 
     override suspend fun get(dayId: Long): Day? {
         return days.value.find { it.properties.id == dayId }
@@ -20,7 +55,8 @@ class FakeDayRepository : DayRepository {
     override suspend fun create(dayId: Long) {
         if (days.value.any { it.properties.id == dayId }) return
         val date = LocalDate.ofEpochDay(dayId)
-        days.update { days -> (days + Day(
+        val lst = days.value
+        days.tryEmit((lst + Day(
             properties = DayProperties(
                 id = dayId,
                 summary = "",
@@ -30,7 +66,7 @@ class FakeDayRepository : DayRepository {
             ),
             tags = emptyList(),
             location = null
-        )).sortedBy { it.properties.id } }
+        )).sortedByDescending { it.properties.id })
     }
 
     override suspend fun update(
@@ -43,7 +79,8 @@ class FakeDayRepository : DayRepository {
         val toUpdate = days.value.find { it.properties.id == dayId } ?: return
         val toInsert = toUpdate.copy(
             properties = DayProperties(
-                summary = "",
+                id = dayId,
+                summary = summary,
                 createdAt = Instant.now().epochSecond,
                 lastModifiedAt = Instant.now().epochSecond,
                 date = Date(now.year, now.monthValue, now.dayOfMonth)
@@ -51,7 +88,9 @@ class FakeDayRepository : DayRepository {
             tags = tags,
             location = location
         )
-        days.update { lst -> (lst.filter { it.properties.id == dayId } + toInsert).sortedBy { it.properties.id } }
+        val lst = days.value
+        println(lst.filter { it.properties.id != dayId } + toInsert)
+        days.tryEmit((lst.filter { it.properties.id != dayId } + toInsert).sortedByDescending { it.properties.id })
     }
 
     override fun getFlow(dayId: Long): Flow<Day?> =

@@ -11,7 +11,12 @@ import me.ionice.snapshot.data.database.model.LocationProperties
 import java.time.Instant
 
 class FakeLocationRepository : LocationRepository {
-    private val locations = MutableStateFlow<List<Location>>(emptyList())
+    private val locations = MutableStateFlow(listOf(
+        Location(
+            properties = LocationProperties(id = FRD.locationId, coordinates = Coordinates(0.0, 0.0), name = "FakeLocation", lastUsedAt = 0),
+            entries = listOf(LocationEntry(FRD.dayIds[0], FRD.locationId))
+        )
+    ))
     private var lastUsedId = -1L
     override suspend fun get(locationId: Long): Location? =
         locations.value.find { it.properties.id == locationId }
