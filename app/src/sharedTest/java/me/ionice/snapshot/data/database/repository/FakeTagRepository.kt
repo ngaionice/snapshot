@@ -7,16 +7,13 @@ import me.ionice.snapshot.data.database.model.TagProperties
 import kotlin.math.min
 
 class FakeTagRepository : TagRepository {
-    private val tag = MutableStateFlow(listOf(Tag(
-        properties = TagProperties(id = FRD.tagId, name ="FakeTag", lastUsedAt = 0),
-        entries = listOf(TagEntry(FRD.dayIds[0], FRD.tagId))
-    )))
+    private val backingFlow = FRD.tagBackingFlow
     private var lastUsedId = -1L
-    override suspend fun get(tagId: Long): Tag? = tag.value.find { it.properties.id == tagId }
+    override suspend fun get(tagId: Long): Tag? = backingFlow.value.find { it.properties.id == tagId }
 
     override suspend fun add(name: String): Long {
         lastUsedId++
-        tag.tryEmit(tag.value + Tag(
+        backingFlow.tryEmit(backingFlow.value + Tag(
             properties = TagProperties(
                 id = lastUsedId,
                 name = name,
@@ -28,7 +25,7 @@ class FakeTagRepository : TagRepository {
     }
 
     override suspend fun update(tagId: Long, name: String, entries: List<TagEntry>) {
-        val toUpdate = tag.value.find { it.properties.id == tagId } ?: return
+        val toUpdate = backingFlow.value.find { it.properties.id == tagId } ?: return
         val toInsert = toUpdate.copy(
             properties = TagProperties(
                 id = tagId,
@@ -37,19 +34,23 @@ class FakeTagRepository : TagRepository {
             ),
             entries = entries
         )
-        val tags = tag.value
-        tag.tryEmit((tags.filter { it.properties.id != tagId } + toInsert).sortedBy { it.properties.id })
+        val tags = backingFlow.value
+        backingFlow.tryEmit((tags.filter { it.properties.id != tagId } + toInsert).sortedBy { it.properties.id })
     }
 
     override suspend fun getAllProperties(): List<TagProperties> {
-        return tag.value.map { it.properties }
+        return backingFlow.value.map { it.properties }
     }
 
     override fun getAllPropertiesFlow(): Flow<List<TagProperties>> {
-        return tag.map { lst -> lst.map { it.properties } }
+        return backingFlow.map { lst -> lst.map { it.properties } }
     }
 
     override fun getRecentlyUsedFlow(): Flow<List<TagProperties>> {
-        return tag.map { lst -> lst.sortedByDescending { it.properties.lastUsedAt }.subList(0, min(10, lst.size)).map { it.properties } }
+        return backingFlow.map { lst -> lst.sortedByDescending { it.properties.lastUsedAt }.subList(0, min(10, lst.size)).map { it.properties } }
+    }
+
+    fun sendTags(tags: List<Tag>) {
+        backingFlow.tryEmit(tags)
     }
 }

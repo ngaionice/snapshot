@@ -1,7 +1,6 @@
 package me.ionice.snapshot.data.database.repository
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import me.ionice.snapshot.data.database.model.Coordinates
@@ -11,19 +10,14 @@ import me.ionice.snapshot.data.database.model.LocationProperties
 import java.time.Instant
 
 class FakeLocationRepository : LocationRepository {
-    private val locations = MutableStateFlow(listOf(
-        Location(
-            properties = LocationProperties(id = FRD.locationId, coordinates = Coordinates(0.0, 0.0), name = "FakeLocation", lastUsedAt = 0),
-            entries = listOf(LocationEntry(FRD.dayIds[0], FRD.locationId))
-        )
-    ))
+    private val backingFlow = FRD.locationBackingFlow
     private var lastUsedId = -1L
     override suspend fun get(locationId: Long): Location? =
-        locations.value.find { it.properties.id == locationId }
+        backingFlow.value.find { it.properties.id == locationId }
 
     override suspend fun add(coordinates: Coordinates, name: String): Long {
         lastUsedId++
-        locations.update {
+        backingFlow.update {
             it + Location(
                 properties = LocationProperties(
                     id = lastUsedId, coordinates = coordinates, name = name, lastUsedAt = 0
@@ -36,7 +30,7 @@ class FakeLocationRepository : LocationRepository {
     override suspend fun update(
         locationId: Long, coordinates: Coordinates, name: String, entries: List<LocationEntry>
     ) {
-        val toUpdate = locations.value.find { it.properties.id == locationId } ?: return
+        val toUpdate = backingFlow.value.find { it.properties.id == locationId } ?: return
         val toInsert = toUpdate.copy(
             properties = LocationProperties(
                 id = locationId,
@@ -45,16 +39,23 @@ class FakeLocationRepository : LocationRepository {
                 lastUsedAt = Instant.now().epochSecond
             ), entries = entries
         )
-        locations.update { curr ->
+        backingFlow.update { curr ->
             (curr.filter { it.properties.id == locationId } + toInsert).sortedBy { it.properties.id }
         }
     }
 
     override suspend fun getAllProperties(): List<LocationProperties> {
-        return locations.value.map { it.properties }
+        return backingFlow.value.map { it.properties }
     }
 
     override fun getAllPropertiesFlow(): Flow<List<LocationProperties>> {
-        return locations.map { lst -> lst.map { it.properties } }
+        return backingFlow.map { lst -> lst.map { it.properties } }
+    }
+
+    /**
+     * A test-only API for sending data to the backing flow to simulate the flow returning results successfully
+     */
+    fun sendLocations(locations: List<Location>) {
+        backingFlow.tryEmit(locations)
     }
 }

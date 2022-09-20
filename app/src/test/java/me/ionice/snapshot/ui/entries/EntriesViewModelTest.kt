@@ -2,13 +2,13 @@ package me.ionice.snapshot.ui.entries
 
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import me.ionice.snapshot.MainCoroutineRule
-import me.ionice.snapshot.data.database.model.LocationEntry
-import me.ionice.snapshot.data.database.model.TagEntry
+import me.ionice.snapshot.data.database.model.*
 import me.ionice.snapshot.data.database.repository.FRD
 import me.ionice.snapshot.data.database.repository.FakeDayRepository
 import me.ionice.snapshot.data.database.repository.FakeLocationRepository
@@ -20,6 +20,7 @@ import me.ionice.snapshot.ui.common.TagsUiState
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EntriesViewModelTest {
@@ -67,14 +68,115 @@ class EntriesViewModelTest {
     }
 
     @Test
+    fun uiStateYear_whenChangeListYear_updatesUiStateWithNewYearAndNewEntries() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect {} }
+
+        val newYear = 2021
+        val yearEntries = dayRepository.getListFlowByYear(newYear).first()
+
+        viewModel.changeListYear(newYear)
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.year).isEqualTo(newYear)
+        assertThat(viewModel.uiState.value.yearUiState).isEqualTo(DaysUiState.Success(data = yearEntries))
+
+        collectJob.cancel()
+    }
+
+    // more tests to assess UI state success behavior on actions
+    @Test
+    fun uiStateDays_whenWeekFlowSuccessAndYearFlowSuccess_weekUiStateSuccessAndYearUiStateSuccess() =
+        runTest {
+            val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect {} }
+
+            // use current date because EntriesViewModel defaults to using current date as initial value
+            val today = LocalDate.now()
+            val data = Day(
+                properties = DayProperties(
+                    summary = "",
+                    createdAt = 0L,
+                    lastModifiedAt = 0L,
+                    date = Date(
+                        year = today.year,
+                        month = today.monthValue,
+                        dayOfMonth = today.dayOfMonth
+                    )
+                ),
+                tags = emptyList(),
+                location = null
+            )
+            dayRepository.sendDays(listOf(data))
+            advanceUntilIdle()
+
+            assertThat(viewModel.uiState.value.weekUiState).isEqualTo(
+                DaysUiState.Success(
+                    data = listOf(
+                        data
+                    )
+                )
+            )
+            assertThat(viewModel.uiState.value.yearUiState).isEqualTo(
+                DaysUiState.Success(
+                    data = listOf(
+                        data
+                    )
+                )
+            )
+
+            collectJob.cancel()
+        }
+
+    @Test
+    fun uiStateLocation_whenLocationSuccess_locationUiStateSuccess() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect {} }
+
+        val data = Location(
+            properties = LocationProperties(
+                id = 0,
+                coordinates = Coordinates(0.0, 0.0),
+                name = "",
+                lastUsedAt = 0
+            ),
+            entries = emptyList()
+        )
+        locationRepository.sendLocations(listOf(data))
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.locationsUiState).isEqualTo(
+            LocationsUiState.Success(data = listOf(data.properties))
+        )
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun uiStateTags_whenTagsSuccess_tagsUiStateSuccess() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect {} }
+
+        val data = Tag(
+            properties = TagProperties(id = 0, name = "", lastUsedAt = 0),
+            entries = emptyList()
+        )
+        tagRepository.sendTags(listOf(data))
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.tagsUiState).isEqualTo(
+            TagsUiState.Success(data = listOf(data.properties))
+        )
+
+        collectJob.cancel()
+    }
+
+    @Test
     fun entriesViewModel_whenAdd_insertsDayIntoRepo() = runTest {
         viewModel.add(0)
+        advanceUntilIdle()
         assertThat(dayRepository.get(0)).isNotNull()
     }
 
     @Test
     fun entriesViewModel_whenEditAndSave_updatesDayInRepo() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect{} }
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect {} }
 
         val dayToEdit = dayRepository.get(FRD.dayIds[1])!!
         val (properties) = dayToEdit
@@ -109,22 +211,60 @@ class EntriesViewModelTest {
     }
 
     @Test
-    fun entriesViewModel_whenFavorite_updatesDayInRepo() {
-        TODO()
+    fun entriesViewModel_whenLoadAndFavorite_getsDayFromRepoAndUpdatesDayInRepo() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect {} }
+
+        val day = dayRepository.get(FRD.dayIds[0])!!
+
+        viewModel.load(FRD.dayIds[0])
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.dayUiState).isEqualTo(DayUiState.Success(data = day))
+
+        viewModel.favorite(isFavorite = true)
+        advanceUntilIdle()
+
+        val updated = dayRepository.get(FRD.dayIds[0])!!
+        assertThat(updated.properties.isFavorite).isEqualTo(true)
+
+        collectJob.cancel()
     }
 
     @Test
-    fun entriesViewModel_whenAddLocation_insertsLocationIntoRepo() {
-        TODO()
+    fun entriesViewModel_whenAddLocation_insertsLocationIntoRepo() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect {} }
+
+        val existing = locationRepository.getAllPropertiesFlow().first()
+        val location = Pair("EntriesViewModelLocation", Coordinates(180.0, 180.0))
+
+        assertThat(existing.map { it.name }).doesNotContain(location.first)
+
+        viewModel.addLocation(location.first, location.second)
+        advanceUntilIdle()
+
+        val updated = locationRepository.getAllPropertiesFlow().first()
+        val entry = updated.find { it.name == location.first }
+        assertThat(entry).isNotNull()
+        assertThat(entry!!.coordinates).isEqualTo(location.second)
+
+        collectJob.cancel()
     }
 
     @Test
-    fun entriesViewModel_whenAddTag_insertsTagIntoRepo() {
-        TODO()
-    }
+    fun entriesViewModel_whenAddTag_insertsTagIntoRepo() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect {} }
 
-    @Test
-    fun entriesViewModel_whenGet_fetchesDayFromRepo() {
-        TODO()
+        val existing = tagRepository.getAllPropertiesFlow().first()
+        val tag = "EntriesViewModelTag"
+
+        assertThat(existing.map { it.name }).doesNotContain(tag)
+
+        viewModel.addTag(tag)
+        advanceUntilIdle()
+
+        val updated = tagRepository.getAllPropertiesFlow().first()
+        assertThat(updated.find { it.name == tag }).isNotNull()
+
+        collectJob.cancel()
     }
 }
