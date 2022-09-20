@@ -50,7 +50,9 @@ class LibraryViewModel @Inject constructor(
         }
         LibraryUiState(memoriesState, locationState, metricsState)
     }.stateIn(
-        scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = LibraryUiState(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = LibraryUiState(
             DaysUiState.Loading, LocationsUiState.Loading, TagsUiState.Loading
         )
     )

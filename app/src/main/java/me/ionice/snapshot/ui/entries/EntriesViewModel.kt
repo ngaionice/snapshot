@@ -100,7 +100,7 @@ class EntriesViewModel @Inject constructor(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Eagerly,
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = EntriesUiState(
             dayId = dayId.value,
             year = year.value,
@@ -122,11 +122,11 @@ class EntriesViewModel @Inject constructor(
     }
 
     fun load(dayId: Long) {
-        this.dayId.value = dayId
+        this.dayId.update { dayId }
     }
 
     fun edit(day: Day?) {
-        mutableDayCopy.value = day
+        mutableDayCopy.update { day }
     }
 
     fun save() {
