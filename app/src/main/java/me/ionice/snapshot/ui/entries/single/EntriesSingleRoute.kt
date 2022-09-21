@@ -21,7 +21,7 @@ import me.ionice.snapshot.ui.common.TagsUiState
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.ErrorScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
-import me.ionice.snapshot.ui.entries.EntriesUiState
+import me.ionice.snapshot.ui.entries.EntriesSingleUiState
 import me.ionice.snapshot.ui.entries.EntriesViewModel
 import me.ionice.snapshot.ui.entries.single.components.*
 import me.ionice.snapshot.ui.navigation.Navigator
@@ -29,8 +29,12 @@ import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
 @Composable
-fun EntriesSingleRoute(viewModel: EntriesViewModel = hiltViewModel(), dayId: Long, navigator: Navigator) {
-    val uiState by viewModel.uiState.collectAsState()
+fun EntriesSingleRoute(
+    viewModel: EntriesViewModel = hiltViewModel(),
+    dayId: Long,
+    navigator: Navigator
+) {
+    val uiState by viewModel.singleUiState.collectAsState()
 
     LaunchedEffect(dayId) { viewModel.load(dayId) }
 
@@ -47,7 +51,7 @@ fun EntriesSingleRoute(viewModel: EntriesViewModel = hiltViewModel(), dayId: Lon
 
 @Composable
 fun EntriesSingleScreen(
-    uiStateProvider: () -> EntriesUiState,
+    uiStateProvider: () -> EntriesSingleUiState,
     onBack: () -> Unit,
     onEdit: (Day?) -> Unit,
     onSave: () -> Unit,
@@ -106,22 +110,26 @@ fun EntryScreen(
     val (editing, setEditing) = rememberSaveable { mutableStateOf(false) }
     val (selectedSection, setSelectedSection) = rememberSaveable { mutableStateOf(EntrySection.Summary) }
 
+    val onToggleEdit: (Boolean) -> Unit = {
+        setEditing(it)
+        if (it) onEdit(day)
+        else onEdit(null)
+    }
     val backAction: () -> Unit = {
-        if (editing) setEditing(false)
+        if (editing) onToggleEdit(false)
         else onBack()
     }
     val actionButtons: @Composable () -> Unit = {
         if (editing) {
             IconButton(onClick = {
                 onSave()
-                setEditing(false)
+                onToggleEdit(false)
             }) {
                 Icon(imageVector = Icons.Filled.Save, contentDescription = "save")
             }
         } else {
             IconButton(onClick = {
-                onEdit(day)
-                setEditing(true)
+                onToggleEdit(true)
             }) {
                 Icon(imageVector = Icons.Filled.Edit, contentDescription = "edit")
             }
@@ -170,7 +178,7 @@ fun EntryScreen(
         editingCopy?.let { onEdit(it.copy(tags = newTags)) }
     }
 
-    BackHandler(enabled = editing) { setEditing(false) }
+    BackHandler(enabled = editing) { onToggleEdit(false) }
 
     Scaffold(
         topBar = {

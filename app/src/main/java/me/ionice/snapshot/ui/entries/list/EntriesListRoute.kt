@@ -20,7 +20,7 @@ import me.ionice.snapshot.ui.settings.SettingsHomeDestination
 
 @Composable
 fun EntriesListRoute(viewModel: EntriesViewModel = hiltViewModel(), navigator: Navigator) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.listUiState.collectAsState()
 
     EntriesListScreen(
         weekEntriesProvider = { uiState.weekUiState },

@@ -46,7 +46,7 @@ class EntriesViewModel @Inject constructor(
     }
     private val yearFlow = year.flatMapLatest { dayRepository.getListFlowByYear(it).asResult() }
 
-    private val entryFlow: Flow<EntryState> = combine(
+    val singleUiState: StateFlow<EntriesSingleUiState> = combine(
         dayId, dayFlow, locationsFlow, tagsFlow, mutableDayCopy
     ) { dayId, dayResult, locationResult, tagResult, dayCopy ->
         val dayState = when (dayResult) {
@@ -64,11 +64,21 @@ class EntriesViewModel @Inject constructor(
             is Result.Error -> TagsUiState.Error
             is Result.Success -> TagsUiState.Success(tagResult.data)
         }
-        EntryState(dayId, dayState, locationState, tagState, dayCopy)
-    }
+        EntriesSingleUiState(dayId, dayState, locationState, tagState, dayCopy)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = EntriesSingleUiState(
+            dayId = dayId.value,
+            editingCopy = null,
+            dayUiState = DayUiState.Loading,
+            locationsUiState = LocationsUiState.Loading,
+            tagsUiState = TagsUiState.Loading
+        )
+    )
 
-    private val listFlow: Flow<ListState> = combine(
-        year, weekFlow, yearFlow
+    val listUiState: StateFlow<EntriesListUiState> = combine(
+        year, weekFlow, yearFlow.debounce(100)
     ) { year, weekResult, yearResult ->
         val weekEntries = when (weekResult) {
             is Result.Loading -> DaysUiState.Loading
@@ -80,36 +90,14 @@ class EntriesViewModel @Inject constructor(
             is Result.Success -> DaysUiState.Success(yearResult.data)
             is Result.Error -> DaysUiState.Error
         }
-        ListState(year, weekEntries, yearEntries)
-    }
-
-    val uiState: StateFlow<EntriesUiState> = combine(
-        entryFlow, listFlow.debounce(100)
-    ) { entryResult, listResult ->
-        val (dayId, dayState, locationsState, tagsState, dayCopy) = entryResult
-        val (year, weekState, yearState) = listResult
-        EntriesUiState(
-            dayId = dayId,
-            year = year,
-            editingCopy = dayCopy,
-            dayUiState = dayState,
-            weekUiState = weekState,
-            yearUiState = yearState,
-            locationsUiState = locationsState,
-            tagsUiState = tagsState
-        )
+        EntriesListUiState(year, weekEntries, yearEntries)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = EntriesUiState(
-            dayId = dayId.value,
+        initialValue = EntriesListUiState(
             year = year.value,
-            editingCopy = null,
-            dayUiState = DayUiState.Loading,
             weekUiState = DaysUiState.Loading,
             yearUiState = DaysUiState.Loading,
-            locationsUiState = LocationsUiState.Loading,
-            tagsUiState = TagsUiState.Loading
         )
     )
 
@@ -138,7 +126,7 @@ class EntriesViewModel @Inject constructor(
     }
 
     fun favorite(isFavorite: Boolean) {
-        val dayUiState = uiState.value.dayUiState
+        val dayUiState = singleUiState.value.dayUiState
         if (dayUiState is DayUiState.Success && dayUiState.data != null && dayUiState.data.properties.isFavorite != isFavorite) {
             val (properties, tags, location) = dayUiState.data
             val (id, summary) = properties
@@ -155,25 +143,14 @@ class EntriesViewModel @Inject constructor(
     }
 }
 
-private data class ListState(
+data class EntriesListUiState(
     val year: Int, val weekUiState: DaysUiState, val yearUiState: DaysUiState
 )
 
-private data class EntryState(
+data class EntriesSingleUiState(
     val dayId: Long?,
     val dayUiState: DayUiState,
     val locationsUiState: LocationsUiState,
     val tagsUiState: TagsUiState,
     val editingCopy: Day?
-)
-
-data class EntriesUiState(
-    val dayId: Long?,
-    val year: Int,
-    val editingCopy: Day?,
-    val dayUiState: DayUiState,
-    val weekUiState: DaysUiState,
-    val yearUiState: DaysUiState,
-    val locationsUiState: LocationsUiState,
-    val tagsUiState: TagsUiState
 )
