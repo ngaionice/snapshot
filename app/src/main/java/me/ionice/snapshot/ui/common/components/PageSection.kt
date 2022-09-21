@@ -33,12 +33,13 @@ fun PageSection(
 @Composable
 fun PageSectionHeader(
     title: String,
+    modifier: Modifier = Modifier,
     textColor: Color? = null,
     backgroundColor: Color? = null,
     action: @Composable () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .background(color = backgroundColor ?: Color.Transparent)
             .padding(horizontal = 24.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,

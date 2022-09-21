@@ -3,7 +3,10 @@ package me.ionice.snapshot
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,10 +37,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
-    ExperimentalAnimationApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun SnapshotApp() {
 
@@ -50,6 +50,7 @@ fun SnapshotApp() {
         )
 
         val navController = rememberAnimatedNavController()
+        val appState = rememberSnapshotAppState(navController = navController)
         val snapshotTopLevelNavigation =
             remember(navController) { SnapshotTopLevelNavigation(navController) }
         val backstackEntry by navController.currentBackStackEntryAsState()
@@ -59,21 +60,24 @@ fun SnapshotApp() {
             containerColor = Color.Transparent,
             contentColor = MaterialTheme.colorScheme.onBackground,
             bottomBar = {
-                SnapshotNavigationBar(
-                    onNavigateToTopLevelDestination = snapshotTopLevelNavigation::navigateTo,
-                    currentDestination = currentDestination
-                )
+                AnimatedVisibility(
+                    visible = appState.shouldShowBottomBar,
+                    enter = slideInVertically(initialOffsetY = { it }),
+                    exit = slideOutVertically(targetOffsetY = { it })
+                ) {
+                    SnapshotNavigationBar(
+                        onNavigateToTopLevelDestination = snapshotTopLevelNavigation::navigateTo,
+                        currentDestination = currentDestination
+                    )
+                }
             }) { padding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
             ) {
                 SnapshotNavHost(
                     navController = navController,
                     modifier = Modifier
-                        .padding(padding)
-                        .consumedWindowInsets(padding)
                 )
             }
         }

@@ -59,9 +59,6 @@
     <string name="settings_screen_restore_dialog_header">Confirm restore</string>
     <string name="settings_screen_restore_dialog_content">Confirm that you want to restore data from Google Drive.</string>
 
-
-
-
     <string name="settings_auto_backup_freq_never">Never</string>
     <string name="settings_auto_backup_freq_daily">Daily</string>
     <string name="settings_auto_backup_freq_weekly">Weekly</string>
@@ -85,6 +82,11 @@
     <string name="notification_reminder_body">Complete your journal entry for the day!</string>
     <string name="settings_auto_backup_frequency">Backup frequency</string>
     <string name="settings_auto_backup_time">Backup time</string>
+
+    <!--  content descriptions for testing  -->
+    <string name="cd_entries_placeholder_week_item">PlaceholderWeekSectionItem</string>
+    <string name="cd_entries_placeholder_year_item">PlaceholderYearSectionItem</string>
+    <string name="cd_entries_week_add_entry_item">WeekSectionAddEntryItem</string>
 
 
 </resources>

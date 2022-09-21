@@ -14,6 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
@@ -31,7 +34,7 @@ import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 
 @Composable
-fun YearListHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
+fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
     val year = yearProvider()
     PageSectionHeader(
         title = year.toString(),
@@ -56,79 +59,78 @@ fun YearListHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
     }
 }
 
-fun LazyListScope.getYearList(
+fun LazyListScope.getYearSectionContent(
     uiStateProvider: () -> DaysUiState,
     expandedWeek: Int,
     setExpandedWeek: (Int) -> Unit,
     onSelectEntry: (Long) -> Unit
 ) {
-    val uiState = uiStateProvider()
-
-    if (uiState is DaysUiState.Loading) {
-        items(7) {
-            PlaceholderYearListItem()
-        }
-        return
-    }
-
-    if (uiState is DaysUiState.Error) {
-        item {
-            Box(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Failed to load data for the selected year.")
+    when (val uiState = uiStateProvider()) {
+        is DaysUiState.Loading -> {
+            items(count = 10) {
+                PlaceholderYearSectionItem()
             }
         }
-        return
-    }
-
-    val entries = (uiState as DaysUiState.Success).data
-
-    if (entries.isEmpty()) {
-        item {
-            Row(
-                modifier = Modifier.fillParentMaxWidth(), horizontalArrangement = Arrangement.Center
-            ) {
-                Text("No entries found.")
-            }
-        }
-        return
-    }
-
-    val weekFields = WeekFields.of(Utils.locale)
-
-    val map = entries.groupBy { day ->
-        val date = LocalDate.ofEpochDay(day.properties.id)
-        date.get(weekFields.weekOfWeekBasedYear())
-            .let { if (it == 53 && date.dayOfYear < 7) 0 else it }
-    }
-
-    val maxWeek = LocalDate.now().get(weekFields.weekOfWeekBasedYear())
-    (maxWeek downTo 0).forEach { week ->
-        map[week]?.let {
+        is DaysUiState.Error -> {
             item {
-                YearListItem(
-                    days = it,
-                    week = week,
-                    isExpanded = expandedWeek == week,
-                    onSelectWeek = { setExpandedWeek(if (expandedWeek == week) -1 else week) },
-                    onSelectEntry = onSelectEntry
-                )
+                Box(
+                    modifier = Modifier
+                        .padding(24.dp)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Failed to load data for the selected year.")
+                }
             }
         }
-    }
+        is DaysUiState.Success -> {
+            val entries = uiState.data
 
-    // empty spacer for consistency
-    item {
-        PageSectionContent {}
+            if (entries.isEmpty()) {
+                item {
+                    Row(
+                        modifier = Modifier.fillParentMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text("No entries found.")
+                    }
+                }
+                return
+            }
+
+            val weekFields = WeekFields.of(Utils.locale)
+
+            val map = entries.groupBy { day ->
+                val date = LocalDate.ofEpochDay(day.properties.id)
+                date.get(weekFields.weekOfWeekBasedYear())
+                    .let { if (it == 53 && date.dayOfYear < 7) 0 else it }
+            }
+
+            val maxWeek = LocalDate.now().get(weekFields.weekOfWeekBasedYear())
+            (maxWeek downTo 0).forEach { week ->
+                map[week]?.let {
+                    item {
+                        YearSectionItem(
+                            days = it,
+                            week = week,
+                            isExpanded = expandedWeek == week,
+                            onSelectWeek = { setExpandedWeek(if (expandedWeek == week) -1 else week) },
+                            onSelectEntry = onSelectEntry
+                        )
+                    }
+                }
+            }
+
+            // empty spacer for consistency
+            item {
+                PageSectionContent {}
+            }
+        }
     }
 }
 
 @Composable
-private fun YearListItem(
+private fun YearSectionItem(
     days: List<Day>,
     week: Int,
     isExpanded: Boolean,
@@ -160,7 +162,7 @@ private fun YearListItem(
         AnimatedVisibility(visible = isExpanded) {
             Column {
                 days.forEach {
-                    YearListSubItem(dayProvider = { it },
+                    YearSectionSubItem(dayProvider = { it },
                         onViewItem = { onSelectEntry(it.properties.id) })
                 }
             }
@@ -170,7 +172,7 @@ private fun YearListItem(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun YearListSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
+private fun YearSectionSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
     val day = dayProvider()
     Row(modifier = Modifier
         .background(color = MaterialTheme.colorScheme.surface)
@@ -195,13 +197,19 @@ private fun YearListSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
 }
 
 @Composable
-fun PlaceholderYearListItem() {
+fun PlaceholderYearSectionItem() {
+    val cd = stringResource(R.string.cd_entries_placeholder_year_item)
     Card(
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 12.dp)
             .fillMaxWidth()
             .height(40.dp)
-            .placeholder(visible = true, highlight = PlaceholderHighlight.fade())
+            .placeholder(
+                visible = true,
+                highlight = PlaceholderHighlight.fade(),
+                color = MaterialTheme.colorScheme.surfaceVariant
+            )
+            .semantics { contentDescription = cd }
     ) {
 
     }

@@ -1,6 +1,7 @@
 package me.ionice.snapshot.ui.entries.single
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,6 +50,7 @@ fun EntriesSingleRoute(
     )
 }
 
+@VisibleForTesting
 @Composable
 fun EntriesSingleScreen(
     uiStateProvider: () -> EntriesSingleUiState,

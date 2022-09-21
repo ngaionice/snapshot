@@ -1,5 +1,6 @@
 package me.ionice.snapshot.ui.entries.list
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -12,9 +13,9 @@ import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.components.TopAppBar
 import me.ionice.snapshot.ui.entries.EntriesViewModel
 import me.ionice.snapshot.ui.entries.list.components.EntryInsertDialog
-import me.ionice.snapshot.ui.entries.list.components.ThisWeek
-import me.ionice.snapshot.ui.entries.list.components.YearListHeader
-import me.ionice.snapshot.ui.entries.list.components.getYearList
+import me.ionice.snapshot.ui.entries.list.components.WeekSection
+import me.ionice.snapshot.ui.entries.list.components.YearSectionHeader
+import me.ionice.snapshot.ui.entries.list.components.getYearSectionContent
 import me.ionice.snapshot.ui.navigation.Navigator
 import me.ionice.snapshot.ui.settings.SettingsHomeDestination
 
@@ -36,9 +37,10 @@ fun EntriesListRoute(viewModel: EntriesViewModel = hiltViewModel(), navigator: N
     )
 }
 
+@VisibleForTesting
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-private fun EntriesListScreen(
+fun EntriesListScreen(
     weekEntriesProvider: () -> DaysUiState,
     yearEntriesProvider: () -> DaysUiState,
     yearProvider: () -> Int,
@@ -66,7 +68,7 @@ private fun EntriesListScreen(
     ) { padding ->
         LazyColumn(contentPadding = padding) {
             item {
-                ThisWeek(
+                WeekSection(
                     uiStateProvider = weekEntriesProvider,
                     onAddEntry = onAddEntry,
                     onSelectEntry = onSelectEntry
@@ -74,7 +76,7 @@ private fun EntriesListScreen(
             }
 
             stickyHeader {
-                YearListHeader(
+                YearSectionHeader(
                     yearProvider = yearProvider,
                     onChangeYear = {
                         onChangeYear(it)
@@ -82,7 +84,7 @@ private fun EntriesListScreen(
                     })
             }
 
-            getYearList(
+            getYearSectionContent(
                 uiStateProvider = yearEntriesProvider,
                 expandedWeek = expandedWeek,
                 setExpandedWeek = setExpandedWeek,
