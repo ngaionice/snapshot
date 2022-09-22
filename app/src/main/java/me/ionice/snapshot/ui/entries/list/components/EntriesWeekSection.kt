@@ -92,8 +92,9 @@ fun WeekSectionItem(day: Day, onClick: () -> Unit, modifier: Modifier = Modifier
     val containerColor = MaterialTheme.colorScheme.surfaceVariant
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     val date = LocalDate.ofEpochDay(day.properties.id)
+    val cd = stringResource(R.string.cd_entries_week_item)
     Card(
-        modifier = modifier,
+        modifier = modifier.semantics { contentDescription = cd },
         colors = CardDefaults.cardColors(containerColor = containerColor),
         onClick = onClick
     ) {

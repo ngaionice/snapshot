@@ -36,6 +36,8 @@ import java.time.temporal.WeekFields
 @Composable
 fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
     val year = yearProvider()
+    val cdPrev = stringResource(R.string.cd_entries_year_header_prev)
+    val cdNext = stringResource(R.string.cd_entries_year_header_next)
     PageSectionHeader(
         title = year.toString(),
         textColor = MaterialTheme.colorScheme.onSurface,
@@ -45,13 +47,17 @@ fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            IconButton(onClick = { onChangeYear(year - 1) }) {
+            IconButton(
+                onClick = { onChangeYear(year - 1) },
+                modifier = Modifier.semantics { contentDescription = cdPrev }) {
                 Icon(
                     imageVector = Icons.Filled.NavigateBefore, contentDescription = "Previous year"
                 )
             }
             IconButton(
-                onClick = { onChangeYear(year + 1) }, enabled = year < LocalDate.now().year
+                onClick = { onChangeYear(year + 1) },
+                enabled = year < LocalDate.now().year,
+                modifier = Modifier.semantics { contentDescription = cdNext }
             ) {
                 Icon(imageVector = Icons.Filled.NavigateNext, contentDescription = "Next year")
             }
@@ -92,7 +98,7 @@ fun LazyListScope.getYearSectionContent(
                         modifier = Modifier.fillParentMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text("No entries found.")
+                        Text(stringResource(R.string.entries_year_no_results))
                     }
                 }
                 return
@@ -141,12 +147,14 @@ private fun YearSectionItem(
         .with(TemporalAdjusters.previousOrSame(Utils.firstDayOfWeek))
     val endOfWeek = LocalDate.ofEpochDay(days.last().properties.id)
         .with(TemporalAdjusters.nextOrSame(Utils.lastDayOfWeek))
+    val cd = stringResource(R.string.cd_entries_year_item)
 
     Column {
         Row(modifier = Modifier
             .clickable { onSelectWeek() }
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp)) {
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .semantics { contentDescription = cd }) {
             Column {
                 Text(
                     text = "Week $week",
@@ -174,12 +182,15 @@ private fun YearSectionItem(
 @Composable
 private fun YearSectionSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
     val day = dayProvider()
+    val cd = stringResource(R.string.cd_entries_year_subitem)
     Row(modifier = Modifier
         .background(color = MaterialTheme.colorScheme.surface)
         .clickable { onViewItem() }
         .fillMaxWidth()
-        .padding(horizontal = 24.dp, vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        .padding(horizontal = 24.dp, vertical = 16.dp)
+        .semantics { contentDescription = cd },
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         Text(
             text = Utils.shortDateFormatter.format(LocalDate.ofEpochDay(day.properties.id)),
             style = MaterialTheme.typography.titleSmall,

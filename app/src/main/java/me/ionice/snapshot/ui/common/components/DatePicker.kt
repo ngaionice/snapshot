@@ -11,11 +11,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import me.ionice.snapshot.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -30,6 +35,7 @@ fun DatePicker(
     allowFuture: Boolean = true
 ) {
     val (dateString, setDateString) = remember { mutableStateOf(date.format(formatter)) }
+    val errorMessage = stringResource(R.string.common_datepicker_error_range)
     val onValueChange: (String) -> Unit = {
         val cleaned = trimAndClean(it)
         setDateString(cleaned)
@@ -37,7 +43,7 @@ fun DatePicker(
             try {
                 val newDate = LocalDate.parse(cleaned, formatter)
                 if (!allowFuture && newDate.isAfter(LocalDate.now())) {
-                    setErrorMessage("Out of range")
+                    setErrorMessage(errorMessage)
                 } else {
                     onSelectDate(newDate)
                     setErrorMessage("")
@@ -47,9 +53,11 @@ fun DatePicker(
             }
         }
     }
+    val cd = stringResource(R.string.cd_common_datepicker)
 
     Column {
         OutlinedTextField(
+            modifier = Modifier.semantics { contentDescription = cd },
             value = dateString,
             onValueChange = onValueChange,
             label = { Text("Date") },

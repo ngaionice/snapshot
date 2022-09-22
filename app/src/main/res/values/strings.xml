@@ -3,7 +3,6 @@
 
     <!--  day screen  -->
     <string name="day_screen_placeholder_header">Day</string>
-    <string name="day_screen_add_day">Add day entry</string>
     <string name="day_screen_not_found">No entry found.</string>
     <string name="day_screen_edit_day">Edit day entry</string>
     <string name="day_screen_save_day">Save</string>
@@ -20,6 +19,10 @@
         <item quantity="other">%d tags</item>
     </plurals>
 
+    <!--  entries screen  -->
+    <string name="entries_year_no_results">No entries found.</string>
+    <string name="entries_add_entry">Add entry</string>
+
     <!--  common components  -->
     <string name="common_back">Back</string>
     <string name="common_functionality_na_with_reason">Functionality not available as %s.</string>
@@ -29,6 +32,7 @@
     <string name="common_dialog_cancel">Cancel</string>
     <string name="common_dialog_ok">OK</string>
     <string name="common_dialog_confirm">Confirm</string>
+    <string name="common_datepicker_error_range">Out of range</string>
 
     <!--  settings screen  -->
     <string name="settings_screen_header">Settings</string>
@@ -87,6 +91,13 @@
     <string name="cd_entries_placeholder_week_item">PlaceholderWeekSectionItem</string>
     <string name="cd_entries_placeholder_year_item">PlaceholderYearSectionItem</string>
     <string name="cd_entries_week_add_entry_item">WeekSectionAddEntryItem</string>
+    <string name="cd_entries_week_item">WeekSectionItem</string>
+    <string name="cd_entries_year_subitem">YearSectionSubItem</string>
+    <string name="cd_entries_year_item">YearSectionItem</string>
+    <string name="cd_entries_year_header_prev">YearSectionHeaderPrev</string>
+    <string name="cd_entries_year_header_next">YearSectionHeaderNext</string>
+    <string name="cd_common_datepicker">DatePicker</string>
+    <string name="cd_entries_dialog_confirm">EntryInsertDialogConfirm</string>
 
 
 </resources>

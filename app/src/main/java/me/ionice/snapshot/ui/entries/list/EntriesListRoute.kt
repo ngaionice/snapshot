@@ -8,7 +8,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.hilt.navigation.compose.hiltViewModel
+import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.components.TopAppBar
 import me.ionice.snapshot.ui.entries.EntriesViewModel
@@ -52,6 +57,8 @@ fun EntriesListScreen(
     val (expandedWeek, setExpandedWeek) = remember { mutableStateOf(-1) }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
+    val cdAdd = stringResource(R.string.entries_add_entry)
+
     Scaffold(
         topBar = {
             TopAppBar {
@@ -61,8 +68,8 @@ fun EntriesListScreen(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { setShowDialog(true) }) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add entry")
+            FloatingActionButton(onClick = { setShowDialog(true) }, modifier = Modifier.semantics { contentDescription = cdAdd }) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = cdAdd)
             }
         }
     ) { padding ->
