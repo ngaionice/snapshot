@@ -2,6 +2,8 @@ package me.ionice.snapshot.ui.entries.list
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -73,30 +75,32 @@ fun EntriesListScreen(
             }
         }
     ) { padding ->
-        LazyColumn(contentPadding = padding) {
-            item {
-                WeekSection(
-                    uiStateProvider = weekEntriesProvider,
-                    onAddEntry = onAddEntry,
+        Box(Modifier.padding(padding)) {
+            LazyColumn {
+                item {
+                    WeekSection(
+                        uiStateProvider = weekEntriesProvider,
+                        onAddEntry = onAddEntry,
+                        onSelectEntry = onSelectEntry
+                    )
+                }
+
+                stickyHeader {
+                    YearSectionHeader(
+                        yearProvider = yearProvider,
+                        onChangeYear = {
+                            onChangeYear(it)
+                            setExpandedWeek(-1)
+                        })
+                }
+
+                getYearSectionContent(
+                    uiStateProvider = yearEntriesProvider,
+                    expandedWeek = expandedWeek,
+                    setExpandedWeek = setExpandedWeek,
                     onSelectEntry = onSelectEntry
                 )
             }
-
-            stickyHeader {
-                YearSectionHeader(
-                    yearProvider = yearProvider,
-                    onChangeYear = {
-                        onChangeYear(it)
-                        setExpandedWeek(-1)
-                    })
-            }
-
-            getYearSectionContent(
-                uiStateProvider = yearEntriesProvider,
-                expandedWeek = expandedWeek,
-                setExpandedWeek = setExpandedWeek,
-                onSelectEntry = onSelectEntry
-            )
         }
         if (showDialog) {
             EntryInsertDialog(onDismiss = { setShowDialog(false) }, onAddEntry = onAddEntry)
