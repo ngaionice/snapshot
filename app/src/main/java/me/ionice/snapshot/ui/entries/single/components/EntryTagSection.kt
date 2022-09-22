@@ -238,6 +238,7 @@ private fun TagInsertionDialog(
                         expanded = dropdownExpanded, onExpandedChange = setDropdownExpanded
                     ) {
                         OutlinedTextField(
+                            modifier = Modifier.menuAnchor(),
                             readOnly = true,
                             value = selectedTag?.name ?: "",
                             onValueChange = {},

@@ -100,6 +100,7 @@ private fun LocationDropdownSelector(
 
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = setExpanded) {
         OutlinedTextField(
+            modifier = Modifier.menuAnchor(),
             value = selectedLocationProperties?.name ?: "Select a location",
             onValueChange = {},
             readOnly = true,
