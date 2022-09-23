@@ -1,15 +1,16 @@
-package me.ionice.snapshot.data.database.repository
+package me.ionice.snapshot.testtools.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.ionice.snapshot.data.database.model.*
+import me.ionice.snapshot.data.database.repository.DayRepository
 import java.time.Instant
 import java.time.LocalDate
 
 class FakeDayRepository : DayRepository {
 
     private val now = LocalDate.now()
-    private val backingFlow = FRD.dayBackingFlow
+    private val backingFlow = FakeRepositoryData.dayBackingFlow
 
     override suspend fun get(dayId: Long): Day? {
         return backingFlow.value.find { it.properties.id == dayId }
@@ -53,7 +54,6 @@ class FakeDayRepository : DayRepository {
             location = location
         )
         val lst = backingFlow.value
-        println(lst.filter { it.properties.id != dayId } + toInsert)
         backingFlow.tryEmit((lst.filter { it.properties.id != dayId } + toInsert).sortedByDescending { it.properties.id })
 
         // TODO: need to update location + tags

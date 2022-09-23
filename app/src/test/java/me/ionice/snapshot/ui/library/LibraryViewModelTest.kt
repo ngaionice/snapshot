@@ -2,10 +2,10 @@ package me.ionice.snapshot.ui.library
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import me.ionice.snapshot.MainCoroutineRule
-import me.ionice.snapshot.data.database.repository.FakeDayRepository
-import me.ionice.snapshot.data.database.repository.FakeLocationRepository
-import me.ionice.snapshot.data.database.repository.FakeTagRepository
+import me.ionice.snapshot.testtools.MainCoroutineRule
+import me.ionice.snapshot.testtools.repository.FakeDayRepository
+import me.ionice.snapshot.testtools.repository.FakeLocationRepository
+import me.ionice.snapshot.testtools.repository.FakeTagRepository
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

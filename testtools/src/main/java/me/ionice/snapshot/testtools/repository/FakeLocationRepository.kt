@@ -1,4 +1,4 @@
-package me.ionice.snapshot.data.database.repository
+package me.ionice.snapshot.testtools.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -7,10 +7,11 @@ import me.ionice.snapshot.data.database.model.Coordinates
 import me.ionice.snapshot.data.database.model.Location
 import me.ionice.snapshot.data.database.model.LocationEntry
 import me.ionice.snapshot.data.database.model.LocationProperties
+import me.ionice.snapshot.data.database.repository.LocationRepository
 import java.time.Instant
 
 class FakeLocationRepository : LocationRepository {
-    private val backingFlow = FRD.locationBackingFlow
+    private val backingFlow = FakeRepositoryData.locationBackingFlow
     private var lastUsedId = -1L
     override suspend fun get(locationId: Long): Location? =
         backingFlow.value.find { it.properties.id == locationId }

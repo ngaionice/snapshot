@@ -1,13 +1,14 @@
-package me.ionice.snapshot.data.database.repository
+package me.ionice.snapshot.testtools.repository
 
 import kotlinx.coroutines.flow.*
 import me.ionice.snapshot.data.database.model.Tag
 import me.ionice.snapshot.data.database.model.TagEntry
 import me.ionice.snapshot.data.database.model.TagProperties
+import me.ionice.snapshot.data.database.repository.TagRepository
 import kotlin.math.min
 
 class FakeTagRepository : TagRepository {
-    private val backingFlow = FRD.tagBackingFlow
+    private val backingFlow = FakeRepositoryData.tagBackingFlow
     private var lastUsedId = -1L
     override suspend fun get(tagId: Long): Tag? = backingFlow.value.find { it.properties.id == tagId }
 

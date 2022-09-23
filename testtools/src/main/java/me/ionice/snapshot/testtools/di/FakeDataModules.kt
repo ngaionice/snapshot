@@ -1,4 +1,4 @@
-package me.ionice.snapshot.di
+package me.ionice.snapshot.testtools
 
 import android.content.Context
 import androidx.room.Room
@@ -15,6 +15,11 @@ import me.ionice.snapshot.data.database.dao.UtilsDao
 import me.ionice.snapshot.data.database.repository.*
 import me.ionice.snapshot.data.network.NetworkRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
+import me.ionice.snapshot.di.DatabaseModule
+import me.ionice.snapshot.di.RepositoryModule
+import me.ionice.snapshot.testtools.repository.FakeDayRepository
+import me.ionice.snapshot.testtools.repository.FakeLocationRepository
+import me.ionice.snapshot.testtools.repository.FakeTagRepository
 import javax.inject.Singleton
 
 @Module

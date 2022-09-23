@@ -7,12 +7,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import me.ionice.snapshot.MainCoroutineRule
+import me.ionice.snapshot.testtools.MainCoroutineRule
 import me.ionice.snapshot.data.database.model.*
-import me.ionice.snapshot.data.database.repository.FRD
-import me.ionice.snapshot.data.database.repository.FakeDayRepository
-import me.ionice.snapshot.data.database.repository.FakeLocationRepository
-import me.ionice.snapshot.data.database.repository.FakeTagRepository
+import me.ionice.snapshot.testtools.repository.FRD
+import me.ionice.snapshot.testtools.repository.FakeDayRepository
+import me.ionice.snapshot.testtools.repository.FakeLocationRepository
+import me.ionice.snapshot.testtools.repository.FakeTagRepository
 import me.ionice.snapshot.ui.common.DayUiState
 import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.LocationsUiState

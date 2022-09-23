@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.ionice.snapshot
+package me.ionice.snapshot.testtools
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
