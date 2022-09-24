@@ -10,8 +10,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.components.DatePicker
@@ -23,7 +23,7 @@ fun EntryInsertDialog(onDismiss: () -> Unit, onAddEntry: (Long) -> Unit) {
     val (date, setDate) = remember { mutableStateOf(LocalDate.now()) }
     val (errorMessage, setErrorMessage) = remember { mutableStateOf("") }
 
-    val cdConfirm = stringResource(R.string.cd_entries_dialog_confirm)
+    val ttConfirm = stringResource(R.string.tt_entries_dialog_confirm)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -34,7 +34,7 @@ fun EntryInsertDialog(onDismiss: () -> Unit, onAddEntry: (Long) -> Unit) {
             Button(
                 onClick = { onAddEntry(date.toEpochDay()) },
                 enabled = errorMessage.isEmpty(),
-                modifier = Modifier.semantics { contentDescription = cdConfirm }) {
+                modifier = Modifier.semantics { testTag = ttConfirm }) {
                 Text("OK")
             }
         },

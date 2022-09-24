@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
@@ -92,9 +92,9 @@ fun WeekSectionItem(day: Day, onClick: () -> Unit, modifier: Modifier = Modifier
     val containerColor = MaterialTheme.colorScheme.surfaceVariant
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     val date = LocalDate.ofEpochDay(day.properties.id)
-    val cd = stringResource(R.string.cd_entries_week_item)
+    val tt = stringResource(R.string.tt_entries_week_item)
     Card(
-        modifier = modifier.semantics { contentDescription = cd },
+        modifier = modifier.semantics { testTag = tt },
         colors = CardDefaults.cardColors(containerColor = containerColor),
         onClick = onClick
     ) {
@@ -139,9 +139,9 @@ fun WeekSectionAddEntryItem(dayId: Long, onClick: () -> Unit, modifier: Modifier
     val containerColor = MaterialTheme.colorScheme.primaryContainer
     val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
     val date = LocalDate.ofEpochDay(dayId)
-    val cd = stringResource(R.string.cd_entries_week_add_entry_item)
+    val tt = stringResource(R.string.tt_entries_week_add_entry_item)
     Card(
-        modifier = modifier.semantics { contentDescription = cd },
+        modifier = modifier.semantics { testTag = tt },
         colors = CardDefaults.cardColors(containerColor = containerColor),
         onClick = onClick
     ) {
@@ -182,14 +182,15 @@ fun WeekSectionAddEntryItem(dayId: Long, onClick: () -> Unit, modifier: Modifier
 
 @Composable
 fun PlaceholderWeekSectionItem(modifier: Modifier = Modifier) {
-    val cd = stringResource(R.string.cd_entries_placeholder_week_item)
+    val tt = stringResource(R.string.tt_entries_placeholder_week_item)
     Card(
         modifier = modifier
             .placeholder(
                 visible = true,
                 highlight = PlaceholderHighlight.fade(),
                 color = MaterialTheme.colorScheme.surfaceVariant
-            ).semantics { contentDescription = cd },
+            )
+            .semantics { testTag = tt },
     ) {
         Box(
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),

@@ -13,15 +13,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.components.PageSectionContent
 
 @Composable
 fun EntrySummarySection(editing: Boolean, text: String, onTextChange: (String) -> Unit) {
     val focusRequester = remember { FocusRequester() }
     val (textFieldValue, setTextFieldValue) = remember { mutableStateOf(TextFieldValue(text)) }
+
+    val tt = stringResource(R.string.tt_entries_single_summary)
 
     LaunchedEffect(key1 = text) {
         setTextFieldValue(textFieldValue.copy(text = text))
@@ -39,7 +45,8 @@ fun EntrySummarySection(editing: Boolean, text: String, onTextChange: (String) -
                     BasicTextField(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .focusRequester(focusRequester),
+                            .focusRequester(focusRequester)
+                            .semantics { testTag = tt },
                         value = textFieldValue,
                         onValueChange = {
                             // update this text manually first so it doesn't show text that is too long for a split second
@@ -64,7 +71,9 @@ fun EntrySummarySection(editing: Boolean, text: String, onTextChange: (String) -
                     }
                 }
             } else {
-                Text(text = text.ifBlank { "Start writing your summary!" })
+                Text(
+                    text = text.ifBlank { stringResource(R.string.entries_single_summary_placeholder) },
+                    modifier = Modifier.semantics { testTag = tt })
             }
         }
     }

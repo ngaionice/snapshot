@@ -1,6 +1,7 @@
 package me.ionice.snapshot.ui.entries.single
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.database.model.*
 import me.ionice.snapshot.ui.common.DayUiState
 import me.ionice.snapshot.ui.common.LocationsUiState
@@ -69,7 +74,7 @@ fun EntriesSingleScreen(
 
     when (uiState.dayUiState) {
         is DayUiState.Loading -> {
-            LoadingScreen()
+            LoadingScreen(testTag = stringResource(R.string.entries_single_loading))
         }
         is DayUiState.Error -> {
             ErrorScreen()
@@ -107,7 +112,8 @@ fun EntryScreen(
     onSave: () -> Unit,
     onFavorite: (Boolean) -> Unit,
     onAddLocation: (String, Coordinates) -> Unit,
-    onAddTag: (String) -> Unit
+    onAddTag: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val (editing, setEditing) = rememberSaveable { mutableStateOf(false) }
     val (selectedSection, setSelectedSection) = rememberSaveable { mutableStateOf(EntrySection.Summary) }
@@ -127,13 +133,19 @@ fun EntryScreen(
                 onSave()
                 onToggleEdit(false)
             }) {
-                Icon(imageVector = Icons.Filled.Save, contentDescription = "save")
+                Icon(
+                    imageVector = Icons.Filled.Save,
+                    contentDescription = stringResource(R.string.entries_single_save)
+                )
             }
         } else {
             IconButton(onClick = {
                 onToggleEdit(true)
             }) {
-                Icon(imageVector = Icons.Filled.Edit, contentDescription = "edit")
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = stringResource(R.string.entries_single_edit)
+                )
             }
             IconButton(onClick = { onFavorite(!day.properties.isFavorite) }) {
                 Icon(
@@ -142,7 +154,7 @@ fun EntryScreen(
                     } else {
                         Icons.Filled.FavoriteBorder
                     },
-                    contentDescription = "favorite"
+                    contentDescription = stringResource(R.string.entries_single_favorite)
                 )
             }
         }
@@ -182,11 +194,19 @@ fun EntryScreen(
 
     BackHandler(enabled = editing) { onToggleEdit(false) }
 
+    val tt = stringResource(R.string.tt_entries_single_entry)
+
     Scaffold(
+        modifier = modifier.semantics { testTag = tt },
         topBar = {
             TopAppBar(
                 title = {},
-                navigationIcon = { BackButton(backAction) },
+                navigationIcon = {
+                    BackButton(
+                        backAction,
+                        contentDesc = if (editing) stringResource(R.string.entries_single_exit_edit) else null
+                    )
+                },
                 actions = { actionButtons() }
             )
         }
@@ -231,7 +251,9 @@ fun EntryScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotFoundScreen(dayId: Long, onBack: () -> Unit) {
+    val tt = stringResource(R.string.tt_entries_single_not_found)
     Scaffold(
+        modifier = Modifier.semantics { testTag = tt },
         topBar = {
             TopAppBar(title = {}, navigationIcon = { BackButton(onBack = onBack) })
         }
@@ -252,10 +274,26 @@ fun NotFoundScreen(dayId: Long, onBack: () -> Unit) {
     }
 }
 
-enum class EntrySection(val description: String, val icon: ImageVector) {
-    Summary(description = "Summary", icon = Icons.Filled.TextSnippet),
-    Location(description = "Location", icon = Icons.Filled.LocationOn),
-    Tags(description = "Tags", icon = Icons.Filled.Tag)
+enum class EntrySection(
+    val label: String,
+    val icon: ImageVector,
+    @StringRes val descriptionResId: Int
+) {
+    Summary(
+        label = "Summary",
+        icon = Icons.Filled.TextSnippet,
+        descriptionResId = R.string.entries_single_summary_btn
+    ),
+    Location(
+        label = "Location",
+        icon = Icons.Filled.LocationOn,
+        descriptionResId = R.string.entries_single_location_btn
+    ),
+    Tags(
+        label = "Tags",
+        icon = Icons.Filled.Tag,
+        descriptionResId = R.string.entries_single_tags_btn
+    )
 }
 
 

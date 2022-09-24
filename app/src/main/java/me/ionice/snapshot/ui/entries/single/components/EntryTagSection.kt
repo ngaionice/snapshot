@@ -7,15 +7,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.database.model.TagEntry
 import me.ionice.snapshot.data.database.model.TagProperties
 import me.ionice.snapshot.ui.common.TagsUiState
@@ -50,8 +53,7 @@ fun EntryTagSection(
                     val tagsMap = uiState.data.associateBy({ it.id }, { it })
                     if (editing) {
                         val selectedTagIds = selectedTags.map { it.tagId }.toSet()
-                        TagInserter(
-                            tags = uiState.data.filter { !selectedTagIds.contains(it.id) },
+                        TagInserter(tags = uiState.data.filter { !selectedTagIds.contains(it.id) },
                             onAddTag = onAddTag,
                             onSelectTag = {
                                 onSelectedTagsChange(
@@ -87,7 +89,6 @@ fun EntryTagSection(
                     } else {
                         TagsContentDisplay(tagsMap = tagsMap, selectedTags = selectedTags)
                     }
-
                 }
             }
         }
@@ -105,20 +106,16 @@ private fun TagDisplay(
     onClick: (Long) -> Unit
 ) {
     if (selectedTags.isEmpty() && !editing) {
-        Text("Start adding tags!")
+        Text(stringResource(R.string.entries_single_tags_placeholder))
         return
     }
-    FlowRow(mainAxisSpacing = 8.dp, crossAxisSpacing = 8.dp) {
+    val tt = stringResource(R.string.tt_entries_single_tags_display)
+    FlowRow(mainAxisSpacing = 8.dp,
+        crossAxisSpacing = 8.dp,
+        modifier = Modifier.semantics { testTag = tt }) {
         selectedTags.forEach {
             InputChip(selected = displayedTagId == it.tagId && editing,
                 onClick = { onClick(it.tagId) },
-                leadingIcon = if (!it.content.isNullOrEmpty()) {
-                    {
-                        Icon(
-                            imageVector = Icons.Filled.Notes, contentDescription = "has notes"
-                        )
-                    }
-                } else null,
                 label = { Text(tagsMap[it.tagId]!!.name) })
         }
     }
@@ -130,7 +127,10 @@ private fun TagInserter(
 ) {
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { setShowDialog(true) }) {
-        Icon(imageVector = Icons.Filled.Add, contentDescription = "Add tag")
+        Icon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = stringResource(R.string.entries_single_tag_add)
+        )
     }
     if (showDialog) {
         TagInsertionDialog(tags = tags,
@@ -153,19 +153,26 @@ private fun TagEditor(
         onValueChange = onContentChange
     )
     OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onDelete) {
-        Icon(imageVector = Icons.Filled.Delete, contentDescription = "delete tag")
+        Icon(
+            imageVector = Icons.Filled.Delete,
+            contentDescription = stringResource(R.string.entries_single_tag_delete)
+        )
     }
 }
 
 @Composable
 private fun TagsContentDisplay(tagsMap: Map<Long, TagProperties>, selectedTags: List<TagEntry>) {
-    if (selectedTags.isNotEmpty()) {
+    val rendered = selectedTags.filter { !it.content.isNullOrEmpty() }
+    if (rendered.isNotEmpty()) {
         Divider()
-    }
-    selectedTags.filter { !it.content.isNullOrEmpty() }.forEach {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(text = "#${tagsMap[it.tagId]!!.name}", style = MaterialTheme.typography.titleSmall)
-            Text(text = it.content!!)
+        rendered.forEach {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = "#${tagsMap[it.tagId]!!.name}",
+                    style = MaterialTheme.typography.titleSmall
+                )
+                Text(text = it.content!!)
+            }
         }
     }
 }
@@ -214,11 +221,11 @@ private fun TagInsertionDialog(
             onClick = onConfirm,
             enabled = (selectedTag != null || inputValue.isNotEmpty()) && queued == null
         ) {
-            Text("OK")
+            Text(stringResource(R.string.common_dialog_ok))
         }
     }, dismissButton = {
         TextButton(onClick = onClose) {
-            Text("Cancel")
+            Text(stringResource(R.string.common_dialog_cancel))
         }
     }, text = {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -226,17 +233,18 @@ private fun TagInsertionDialog(
                 Tab(selected = tabIndex == 0, onClick = {
                     setTabIndex(0)
                     setSelectedTag(null)
-                }, text = { Text("Select") })
+                }, text = { Text(stringResource(R.string.entries_single_tag_add_select_existing)) })
                 Tab(selected = tabIndex == 1, onClick = {
                     setTabIndex(1)
                     setInputValue("")
-                }, text = { Text("Add new") })
+                }, text = { Text(stringResource(R.string.entries_single_tag_add_create_new)) })
             }
             when (tabIndex) {
                 0 -> {
-                    ExposedDropdownMenuBox(
-                        expanded = dropdownExpanded, onExpandedChange = setDropdownExpanded
-                    ) {
+                    val tt = stringResource(R.string.tt_entries_single_tag_selector)
+                    ExposedDropdownMenuBox(expanded = dropdownExpanded,
+                        onExpandedChange = setDropdownExpanded,
+                        modifier = Modifier.semantics { testTag = tt }) {
                         OutlinedTextField(
                             modifier = Modifier.menuAnchor(),
                             readOnly = true,
@@ -257,8 +265,11 @@ private fun TagInsertionDialog(
                     }
                 }
                 1 -> {
+                    val tt = stringResource(R.string.tt_entries_single_tag_creator)
                     if (queued == null) {
-                        OutlinedTextField(value = inputValue, onValueChange = setInputValue)
+                        OutlinedTextField(value = inputValue,
+                            onValueChange = setInputValue,
+                            modifier = Modifier.semantics { testTag = tt })
                     } else {
                         CircularProgressIndicator()
                     }

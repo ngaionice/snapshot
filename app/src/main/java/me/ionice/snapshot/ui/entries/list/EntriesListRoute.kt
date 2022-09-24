@@ -12,8 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.DaysUiState
@@ -70,7 +70,9 @@ fun EntriesListScreen(
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { setShowDialog(true) }, modifier = Modifier.semantics { contentDescription = cdAdd }) {
+            FloatingActionButton(
+                onClick = { setShowDialog(true) },
+                modifier = Modifier.semantics { testTag = cdAdd }) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = cdAdd)
             }
         }

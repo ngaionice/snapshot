@@ -15,8 +15,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
@@ -36,8 +36,8 @@ import java.time.temporal.WeekFields
 @Composable
 fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
     val year = yearProvider()
-    val cdPrev = stringResource(R.string.cd_entries_year_header_prev)
-    val cdNext = stringResource(R.string.cd_entries_year_header_next)
+    val ttPrev = stringResource(R.string.tt_entries_year_header_prev)
+    val ttNext = stringResource(R.string.tt_entries_year_header_next)
     PageSectionHeader(
         title = year.toString(),
         textColor = MaterialTheme.colorScheme.onSurface,
@@ -49,7 +49,7 @@ fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
         ) {
             IconButton(
                 onClick = { onChangeYear(year - 1) },
-                modifier = Modifier.semantics { contentDescription = cdPrev }) {
+                modifier = Modifier.semantics { testTag = ttPrev }) {
                 Icon(
                     imageVector = Icons.Filled.NavigateBefore, contentDescription = "Previous year"
                 )
@@ -57,7 +57,7 @@ fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
             IconButton(
                 onClick = { onChangeYear(year + 1) },
                 enabled = year < LocalDate.now().year,
-                modifier = Modifier.semantics { contentDescription = cdNext }
+                modifier = Modifier.semantics { testTag = ttNext }
             ) {
                 Icon(imageVector = Icons.Filled.NavigateNext, contentDescription = "Next year")
             }
@@ -147,14 +147,14 @@ private fun YearSectionItem(
         .with(TemporalAdjusters.previousOrSame(Utils.firstDayOfWeek))
     val endOfWeek = LocalDate.ofEpochDay(days.last().properties.id)
         .with(TemporalAdjusters.nextOrSame(Utils.lastDayOfWeek))
-    val cd = stringResource(R.string.cd_entries_year_item)
+    val tt = stringResource(R.string.tt_entries_year_item)
 
     Column {
         Row(modifier = Modifier
             .clickable { onSelectWeek() }
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 16.dp)
-            .semantics { contentDescription = cd }) {
+            .semantics { testTag = tt }) {
             Column {
                 Text(
                     text = "Week $week",
@@ -182,13 +182,13 @@ private fun YearSectionItem(
 @Composable
 private fun YearSectionSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
     val day = dayProvider()
-    val cd = stringResource(R.string.cd_entries_year_subitem)
+    val tt = stringResource(R.string.tt_entries_year_subitem)
     Row(modifier = Modifier
         .background(color = MaterialTheme.colorScheme.surface)
         .clickable { onViewItem() }
         .fillMaxWidth()
         .padding(horizontal = 24.dp, vertical = 16.dp)
-        .semantics { contentDescription = cd },
+        .semantics { testTag = tt },
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
@@ -209,7 +209,7 @@ private fun YearSectionSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
 
 @Composable
 fun PlaceholderYearSectionItem() {
-    val cd = stringResource(R.string.cd_entries_placeholder_year_item)
+    val tt = stringResource(R.string.tt_entries_placeholder_year_item)
     Card(
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 12.dp)
@@ -220,7 +220,7 @@ fun PlaceholderYearSectionItem() {
                 highlight = PlaceholderHighlight.fade(),
                 color = MaterialTheme.colorScheme.surfaceVariant
             )
-            .semantics { contentDescription = cd }
+            .semantics { testTag = tt }
     ) {
 
     }

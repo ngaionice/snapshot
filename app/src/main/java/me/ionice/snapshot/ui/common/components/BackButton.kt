@@ -9,11 +9,11 @@ import androidx.compose.ui.res.stringResource
 import me.ionice.snapshot.R
 
 @Composable
-fun BackButton(onBack: () -> Unit) {
+fun BackButton(onBack: () -> Unit, contentDesc: String? = null) {
     IconButton(onClick = onBack) {
         Icon(
             imageVector = Icons.Filled.ArrowBack,
-            contentDescription = stringResource(R.string.common_back)
+            contentDescription = contentDesc ?: stringResource(R.string.common_back)
         )
     }
 }

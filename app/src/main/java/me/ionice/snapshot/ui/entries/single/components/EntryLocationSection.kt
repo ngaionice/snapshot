@@ -9,7 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.database.model.Coordinates
 import me.ionice.snapshot.data.database.model.LocationEntry
 import me.ionice.snapshot.data.database.model.LocationProperties
@@ -68,19 +72,22 @@ private fun LocationIndicator(
     selectedLocation: LocationEntry?
 ) {
     val locations = locationsProvider()
-    Card(modifier = Modifier.fillMaxWidth()) {
+    val tt = stringResource(R.string.tt_entries_single_location_info_display)
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .semantics { testTag = tt }) {
         Column(modifier = Modifier.padding(16.dp)) {
             selectedLocation?.let { loc ->
-                locations.find { it.id == loc.locationId }.let { properties ->
-                    Text(text = properties?.name ?: "Select a location!")
-                    properties?.let {
+                locations.find { it.id == loc.locationId }?.let { properties ->
+                    Text(text = properties.name)
+                    properties.let {
                         Text(
                             text = "${it.coordinates.lat}, ${it.coordinates.lon}",
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
                 }
-            } ?: Text("Select a location!")
+            } ?: Text(stringResource(R.string.entries_single_location_placeholder))
         }
     }
 }
@@ -94,11 +101,16 @@ private fun LocationDropdownSelector(
 ) {
     val locations = locationsProvider()
     val (expanded, setExpanded) = remember { mutableStateOf(false) }
+    val tt = stringResource(R.string.tt_entries_single_location_selector)
 
     val selectedLocationProperties =
         selectedLocation?.let { loc -> locations.find { it.id == loc.locationId } }
 
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = setExpanded) {
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = setExpanded,
+        modifier = Modifier.semantics { testTag = tt }
+    ) {
         OutlinedTextField(
             modifier = Modifier.menuAnchor(),
             value = selectedLocationProperties?.name ?: "Select a location",

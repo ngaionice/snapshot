@@ -7,12 +7,12 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.database.model.Date
 import me.ionice.snapshot.data.database.model.Day
 import me.ionice.snapshot.data.database.model.DayProperties
 import me.ionice.snapshot.data.database.model.TagEntry
+import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.utils.Utils
 import org.junit.Before
 import org.junit.Rule
@@ -45,18 +45,18 @@ class EntriesListScreenTest {
     @Before
     fun setup() {
         composeTestRule.activity.apply {
-            placeholderWeekItem = getString(R.string.cd_entries_placeholder_week_item)
-            placeholderYearItem = getString(R.string.cd_entries_placeholder_year_item)
-            weekAddEntryItem = getString(R.string.cd_entries_week_add_entry_item)
-            weekItem = getString(R.string.cd_entries_week_item)
+            placeholderWeekItem = getString(R.string.tt_entries_placeholder_week_item)
+            placeholderYearItem = getString(R.string.tt_entries_placeholder_year_item)
+            weekAddEntryItem = getString(R.string.tt_entries_week_add_entry_item)
+            weekItem = getString(R.string.tt_entries_week_item)
             yearNoResults = getString(R.string.entries_year_no_results)
-            yearItem =getString(R.string.cd_entries_year_item)
-            yearSubItem = getString(R.string.cd_entries_year_subitem)
-            yearHeaderPrev = getString(R.string.cd_entries_year_header_prev)
-            yearHeaderNext = getString(R.string.cd_entries_year_header_next)
+            yearItem = getString(R.string.tt_entries_year_item)
+            yearSubItem = getString(R.string.tt_entries_year_subitem)
+            yearHeaderPrev = getString(R.string.tt_entries_year_header_prev)
+            yearHeaderNext = getString(R.string.tt_entries_year_header_next)
             addButton = getString(R.string.entries_add_entry)
-            dialogTextField = getString(R.string.cd_common_datepicker)
-            dialogConfirm = getString(R.string.cd_entries_dialog_confirm)
+            dialogTextField = getString(R.string.tt_common_datepicker)
+            dialogConfirm = getString(R.string.tt_entries_dialog_confirm)
             dialogError = getString(R.string.common_datepicker_error_range)
         }
     }
@@ -75,7 +75,7 @@ class EntriesListScreenTest {
             )
         }
 
-        composeTestRule.onAllNodesWithContentDescription(placeholderWeekItem).onFirst()
+        composeTestRule.onAllNodesWithTag(placeholderWeekItem).onFirst()
             .assertIsDisplayed()
     }
 
@@ -93,7 +93,7 @@ class EntriesListScreenTest {
             )
         }
 
-        composeTestRule.onAllNodesWithContentDescription(placeholderYearItem).onFirst()
+        composeTestRule.onAllNodesWithTag(placeholderYearItem).onFirst()
             .assertIsDisplayed()
     }
 
@@ -111,7 +111,8 @@ class EntriesListScreenTest {
             )
         }
 
-        composeTestRule.onAllNodesWithContentDescription(weekAddEntryItem).onFirst().assertIsDisplayed()
+        composeTestRule.onAllNodesWithTag(weekAddEntryItem).onFirst()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -128,7 +129,8 @@ class EntriesListScreenTest {
             )
         }
 
-        val item = composeTestRule.onAllNodesWithContentDescription(weekItem).assertCountEquals(1).onFirst().assertIsDisplayed()
+        val item = composeTestRule.onAllNodesWithTag(weekItem).assertCountEquals(1)
+            .onFirst().assertIsDisplayed()
         item.assertTextContains("${today.dayOfMonth}")
         item.assertTextContains(
             today.dayOfWeek.getDisplayName(TextStyle.SHORT, Utils.locale)
@@ -169,10 +171,11 @@ class EntriesListScreenTest {
         }
 
         // click on the week containing the entry
-        composeTestRule.onAllNodesWithContentDescription(yearItem).assertCountEquals(1).onFirst().assertIsDisplayed().performClick()
+        composeTestRule.onAllNodesWithTag(yearItem).assertCountEquals(1).onFirst()
+            .assertIsDisplayed().performClick()
 
         // click on the entry
-        composeTestRule.onNodeWithContentDescription(yearSubItem).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(yearSubItem).assertIsDisplayed()
     }
 
     @Test
@@ -187,15 +190,15 @@ class EntriesListScreenTest {
                 onAddEntry = { },
                 onSelectEntry = { },
                 onSelectSettings = { },
-                onChangeYear = { year -> data.update { entries.filter { it.properties.date.year == year  } } }
+                onChangeYear = { year -> data.update { entries.filter { it.properties.date.year == year } } }
             )
         }
 
         // check that there are currently no entries, to prevent false positives
-        composeTestRule.onAllNodesWithContentDescription(yearItem).assertCountEquals(0)
+        composeTestRule.onAllNodesWithTag(yearItem).assertCountEquals(0)
 
-        composeTestRule.onNodeWithContentDescription(yearHeaderNext).performClick()
-        composeTestRule.onAllNodesWithContentDescription(yearItem).assertCountEquals(1)
+        composeTestRule.onNodeWithTag(yearHeaderNext).performClick()
+        composeTestRule.onAllNodesWithTag(yearItem).assertCountEquals(1)
     }
 
     @Test
@@ -212,7 +215,7 @@ class EntriesListScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription(yearHeaderNext).assertIsNotEnabled()
+        composeTestRule.onNodeWithTag(yearHeaderNext).assertIsNotEnabled()
     }
 
     @Test
@@ -230,11 +233,11 @@ class EntriesListScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription(addButton).performClick()
-        val textField = composeTestRule.onNodeWithContentDescription(dialogTextField)
+        composeTestRule.onNodeWithTag(addButton).performClick()
+        val textField = composeTestRule.onNodeWithTag(dialogTextField)
         textField.performTextClearance()
         textField.performTextInput("20220101")
-        composeTestRule.onNodeWithContentDescription(dialogConfirm).performClick()
+        composeTestRule.onNodeWithTag(dialogConfirm).performClick()
 
         assertThat(date).isEqualTo(LocalDate.of(2022, 1, 1).toEpochDay())
     }
@@ -252,12 +255,12 @@ class EntriesListScreenTest {
                 onChangeYear = { }
             )
         }
-        composeTestRule.onNodeWithContentDescription(addButton).performClick()
-        val textField = composeTestRule.onNodeWithContentDescription(dialogTextField)
+        composeTestRule.onNodeWithTag(addButton).performClick()
+        val textField = composeTestRule.onNodeWithTag(dialogTextField)
         textField.performTextClearance()
         textField.performTextInput("99990101")
         composeTestRule.onNodeWithText(dialogError).assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription(dialogConfirm).assertIsNotEnabled()
+        composeTestRule.onNodeWithTag(dialogConfirm).assertIsNotEnabled()
     }
 }
 
@@ -272,14 +275,16 @@ private val entryToday = Day(
     tags = listOf(TagEntry(today.toEpochDay(), 1)),
     location = null
 )
-private val entries = listOf(Day(
-    properties = DayProperties(
-        id = LocalDate.of(2022, 1, 1).toEpochDay(),
-        summary = "EntriesListScreenTestSummary",
-        createdAt = 0,
-        lastModifiedAt = 0,
-        date = Date(today.year, today.monthValue, today.dayOfMonth)
-    ),
-    tags = emptyList(),
-    location = null
-))
+private val entries = listOf(
+    Day(
+        properties = DayProperties(
+            id = LocalDate.of(2022, 1, 1).toEpochDay(),
+            summary = "EntriesListScreenTestSummary",
+            createdAt = 0,
+            lastModifiedAt = 0,
+            date = Date(today.year, today.monthValue, today.dayOfMonth)
+        ),
+        tags = emptyList(),
+        location = null
+    )
+)
