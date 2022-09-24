@@ -102,6 +102,12 @@
     <string name="settings_auto_backup_frequency">Backup frequency</string>
     <string name="settings_auto_backup_time">Backup time</string>
 
+    <!--  snackbar messages  -->
+    <string name="snackbar_backup_success">Backup successful</string>
+    <string name="snackbar_backup_failure">Backup failed</string>
+    <string name="snackbar_restore_success">Restore successful</string>
+    <string name="snackbar_restore_failure">Restore failed</string>
+
     <!--  content descriptions for testing  -->
     <string name="tt_common_datepicker">DatePicker</string>
     <string name="tt_common_loading_screen">LoadingScreen</string>

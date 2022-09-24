@@ -6,8 +6,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import me.ionice.snapshot.R
 import me.ionice.snapshot.data.network.NetworkRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
+import me.ionice.snapshot.ui.snackbar.SnackbarManager
 import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.inject.Inject
@@ -17,6 +19,7 @@ class SettingsViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
+    private val snackbarManager: SnackbarManager = SnackbarManager
 
     private val backupPreferencesState = preferencesRepository.getBackupPreferencesFlow().stateIn(
         viewModelScope,
@@ -65,20 +68,21 @@ class SettingsViewModel @Inject constructor(
      * A call to this function never completes normally, as it calls Flow.collect internally.
      */
     private suspend fun observeBackupStatus() {
-        networkRepository.getBackupStatusFlow().collect {
-            val snackbarMessage = if (it.isInProgress || it.action == null) {
-                null
-            } else {
-                "${it.action} ${if (it.isSuccess == true) "successful" else "failed"}"
+        networkRepository.getBackupStatusFlow().collect { actionState ->
+            if (!actionState.isInProgress && !actionState.action.isNullOrBlank()) {
+                if (actionState.action == "backup") {
+                    snackbarManager.showMessage(if (actionState.isSuccess == true) R.string.snackbar_backup_success else R.string.snackbar_backup_failure)
+                } else {
+                    snackbarManager.showMessage(if (actionState.isSuccess == true) R.string.snackbar_restore_success else R.string.snackbar_restore_failure)
+                }
             }
 
-            viewModelState.update { state ->
-                state.copy(
-                    backupPreferences = state.backupPreferences.copy(
-                        isBackupInProgress = it.isInProgress,
-                        lastBackupTime = if (!it.isInProgress) networkRepository.getLastBackupTime() else state.backupPreferences.lastBackupTime
-                    ),
-                    snackbarMessage = snackbarMessage
+            viewModelState.update {
+                it.copy(
+                    backupPreferences = it.backupPreferences.copy(
+                        isBackupInProgress = actionState.isInProgress,
+                        lastBackupTime = if (!actionState.isInProgress) networkRepository.getLastBackupTime() else it.backupPreferences.lastBackupTime
+                    )
                 )
             }
         }
@@ -153,12 +157,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun clearSnackbarMessage() {
-        viewModelState.update { it.copy(snackbarMessage = null) }
-    }
-
     private suspend fun loadBackupPreferences() {
-        println("Loading backup prefs")
         viewModelState.update {
             if (!networkRepository.isOnline()) {
                 it.copy(
@@ -188,8 +187,7 @@ data class SettingsViewModelState(
     val loading: Boolean,
     val backupPreferences: Backup,
     val notificationsPreferences: Notifications,
-    val themingPreferences: Theming,
-    val snackbarMessage: String? = null
+    val themingPreferences: Theming
 ) {
     fun toUiState(): SettingsUiState {
         if (loading) return SettingsUiState.Loading
@@ -197,8 +195,7 @@ data class SettingsViewModelState(
         return SettingsUiState.Loaded(
             backupPreferences = toBackupPreferencesUiState(),
             notificationsPreferences = toNotificationsPreferencesUiState(),
-            themingPreferences = toThemingPreferencesUiState(),
-            snackbarMessage = snackbarMessage
+            themingPreferences = toThemingPreferencesUiState()
         )
     }
 
@@ -250,8 +247,7 @@ sealed interface SettingsUiState {
     data class Loaded(
         val backupPreferences: Backup,
         val notificationsPreferences: Notifications,
-        val themingPreferences: Theming,
-        val snackbarMessage: String?
+        val themingPreferences: Theming
     ) : SettingsUiState {
         sealed interface Backup {
             data class Available(

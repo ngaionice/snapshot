@@ -64,7 +64,8 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
             HomeRoute(
                 onNavigateToBackup = { navController.navigate("${SettingsBackupDestination.route}/${SettingsBackupDestination.destination}") },
                 onNavigateToNotifications = { navController.navigate("${SettingsNotificationsDestination.route}/${SettingsNotificationsDestination.destination}") },
-                onNavigateToTheming = { navController.navigate("${SettingsThemingDestination.route}/${SettingsThemingDestination.destination}") }
+                onNavigateToTheming = { navController.navigate("${SettingsThemingDestination.route}/${SettingsThemingDestination.destination}") },
+                onBack = navController::popBackStack
             )
         }
         composable(route = "${SettingsBackupDestination.route}/${SettingsBackupDestination.destination}") {

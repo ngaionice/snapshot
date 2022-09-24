@@ -9,6 +9,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import me.ionice.snapshot.R
+import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.BaseScreen
 import me.ionice.snapshot.ui.settings.SettingsRow
 
@@ -17,9 +18,12 @@ import me.ionice.snapshot.ui.settings.SettingsRow
 fun HomeRoute(
     onNavigateToBackup: () -> Unit,
     onNavigateToNotifications: () -> Unit,
-    onNavigateToTheming: () -> Unit
+    onNavigateToTheming: () -> Unit,
+    onBack: () -> Unit
 ) {
-    BaseScreen(headerText = stringResource(R.string.settings_screen_header)) {
+    BaseScreen(headerText = stringResource(R.string.settings_screen_header), navigationIcon = {
+        BackButton(onBack = onBack)
+    }) {
         HomeScreen(
             onNavigateToBackup = onNavigateToBackup,
             onNavigateToNotifications = onNavigateToNotifications,
