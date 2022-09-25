@@ -26,6 +26,7 @@ import me.ionice.snapshot.data.database.SnapshotDatabase
 import me.ionice.snapshot.work.BackupStatusNotifyWorker
 import me.ionice.snapshot.work.OneOffBackupSyncWorker
 import me.ionice.snapshot.work.PeriodicBackupSyncWorker
+import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.time.Instant
@@ -118,11 +119,15 @@ class BackupUtil(private val context: Context) {
             SnapshotDatabase.runCheckpoint()
             val result =
                 if (isRestoring) {
-                    // delete the current database and insert the downloaded one
                     val dbFile = context.getDatabasePath(SnapshotDatabase.DATABASE_NAME)
                     val path = dbFile.absolutePath
 
+                    // delete the current database and insert the downloaded one
                     dbFile.delete()
+                    // the write-ahead log and shared-mem files also need to be deleted, otherwise
+                    // Room reads from them first and disregards the updated database file
+                    File("$path-shm").delete()
+                    File("$path-wal").delete()
                     downloadDatabase(path)
                 } else {
                     uploadDatabase()
