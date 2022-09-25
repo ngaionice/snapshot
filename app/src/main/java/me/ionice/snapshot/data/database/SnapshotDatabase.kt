@@ -42,8 +42,7 @@ abstract class SnapshotDatabase : RoomDatabase() {
             }
         }
 
-        // TODO: fix this so that it becomes async
-        fun runCheckpoint() {
+        suspend fun runCheckpoint() {
             if (INSTANCE == null) {
                 throw IllegalStateException("Database instance is null, failed to run checkpoint.")
             }

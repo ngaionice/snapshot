@@ -54,7 +54,6 @@ class BackupUtil(private val context: Context) {
      * and queues up an expedited WorkManager job to back up the database to Google Drive.
      */
     fun startBackup() {
-        SnapshotDatabase.runCheckpoint()
         enqueueDatabaseWork(OneOffBackupSyncWorker.WORK_TYPE_BACKUP)
     }
 
@@ -63,7 +62,6 @@ class BackupUtil(private val context: Context) {
      * and queues up an expedited WorkManager job to restore the database from Google Drive.
      */
     fun startRestore() {
-        SnapshotDatabase.runCheckpoint()
         enqueueDatabaseWork(OneOffBackupSyncWorker.WORK_TYPE_RESTORE)
     }
 

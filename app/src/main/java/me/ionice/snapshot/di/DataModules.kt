@@ -1,7 +1,6 @@
 package me.ionice.snapshot.di
 
 import android.content.Context
-import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,11 +38,7 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context): SnapshotDatabase {
-        return Room.databaseBuilder(
-            appContext,
-            SnapshotDatabase::class.java,
-            SnapshotDatabase.DATABASE_NAME
-        ).fallbackToDestructiveMigration().build()
+        return SnapshotDatabase.getInstance(appContext)
     }
 }
 

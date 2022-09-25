@@ -12,10 +12,9 @@ class PeriodicBackupSyncWorker(appContext: Context, params: WorkerParameters) :
     override suspend fun doWork(): Result {
         val backupUtil = BackupUtil(applicationContext)
 
-        if (backupUtil.backupDatabase().isFailure) {
-            return Result.retry()
-        }
-        return Result.success()
+        return if (backupUtil.backupDatabase().isFailure) {
+            Result.retry()
+        } else Result.success()
     }
 
     companion object {

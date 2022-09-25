@@ -70,7 +70,7 @@ class SettingsViewModel @Inject constructor(
     private suspend fun observeBackupStatus() {
         networkRepository.getBackupStatusFlow().collect { actionState ->
             if (!actionState.isInProgress && !actionState.action.isNullOrBlank()) {
-                if (actionState.action == "backup") {
+                if (actionState.action == "Backup") {
                     snackbarManager.showMessage(if (actionState.isSuccess == true) R.string.snackbar_backup_success else R.string.snackbar_backup_failure)
                 } else {
                     snackbarManager.showMessage(if (actionState.isSuccess == true) R.string.snackbar_restore_success else R.string.snackbar_restore_failure)

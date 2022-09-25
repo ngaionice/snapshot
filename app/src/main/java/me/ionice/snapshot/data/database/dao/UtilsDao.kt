@@ -8,5 +8,5 @@ import androidx.sqlite.db.SupportSQLiteQuery
 interface UtilsDao {
 
     @RawQuery
-    fun runRawQuery(supportSQLiteQuery: SupportSQLiteQuery): Int
+    suspend fun runRawQuery(supportSQLiteQuery: SupportSQLiteQuery): Int
 }

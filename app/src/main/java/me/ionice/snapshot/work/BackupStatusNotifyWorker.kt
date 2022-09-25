@@ -17,8 +17,8 @@ class BackupStatusNotifyWorker(appContext: Context, params: WorkerParameters) :
         val status = inputData.getBoolean(OneOffBackupSyncWorker.WORK_STATUS, false)
 
         val intent = Intent(BackupStatusReceiver.ACTION)
-        intent.putExtra(OneOffBackupSyncWorker.WORK_TYPE, type)
-        intent.putExtra(OneOffBackupSyncWorker.WORK_STATUS, status)
+            .putExtra(OneOffBackupSyncWorker.WORK_TYPE, type)
+            .putExtra(OneOffBackupSyncWorker.WORK_STATUS, status)
 
         applicationContext.sendBroadcast(intent)
         return Result.success()
