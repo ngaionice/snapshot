@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import me.ionice.snapshot.R
-import me.ionice.snapshot.data.network.AuthResultContract
+import me.ionice.snapshot.data.backup.GAuthResultContract
 import me.ionice.snapshot.ui.common.components.PageSection
 import java.time.LocalTime
 
@@ -178,7 +178,7 @@ fun SignInButton(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
     val failedText = stringResource(R.string.settings_screen_backup_login_failed)
 
     val authResultLauncher =
-        rememberLauncherForActivityResult(contract = AuthResultContract()) { task ->
+        rememberLauncherForActivityResult(contract = GAuthResultContract()) { task ->
             try {
                 val account = task?.getResult(ApiException::class.java)
                 if (account == null) {

@@ -4,15 +4,14 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import me.ionice.snapshot.data.network.BackupUtil
+import me.ionice.snapshot.data.backup.GDriveBackupModule
 
 class PeriodicBackupSyncWorker(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
-        val backupUtil = BackupUtil(applicationContext)
-
-        return if (backupUtil.backupDatabase().isFailure) {
+        val backupModule = GDriveBackupModule(applicationContext)
+        return if (backupModule.backupDatabase(id).isFailure) {
             Result.retry()
         } else Result.success()
     }
@@ -27,11 +26,11 @@ class OneOffBackupSyncWorker(appContext: Context, params: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         val actionType = inputData.getString(WORK_TYPE)
-        val backupUtil = BackupUtil(applicationContext)
+        val backupModule = GDriveBackupModule(applicationContext)
         val isSuccess = if (actionType == WORK_TYPE_BACKUP) {
-            backupUtil.backupDatabase().isSuccess
+            backupModule.backupDatabase(id).isSuccess
         } else {
-            backupUtil.restoreDatabase().isSuccess
+            backupModule.restoreDatabase(id).isSuccess
         }
         return Result.success(workDataOf(WORK_STATUS to isSuccess, WORK_TYPE to actionType))
     }

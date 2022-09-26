@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import me.ionice.snapshot.data.network.BackupStatusReceiver
+import me.ionice.snapshot.data.backup.BackupStatusReceiver
 
 class BackupStatusNotifyWorker(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {

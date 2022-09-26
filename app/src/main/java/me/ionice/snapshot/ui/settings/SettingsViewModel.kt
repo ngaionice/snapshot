@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.R
-import me.ionice.snapshot.data.network.NetworkRepository
+import me.ionice.snapshot.data.backup.BackupRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
 import me.ionice.snapshot.ui.snackbar.SnackbarManager
 import java.time.LocalDateTime
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val networkRepository: NetworkRepository,
+    private val backupRepository: BackupRepository,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
     private val snackbarManager: SnackbarManager = SnackbarManager
@@ -68,12 +68,12 @@ class SettingsViewModel @Inject constructor(
      * A call to this function never completes normally, as it calls Flow.collect internally.
      */
     private suspend fun observeBackupStatus() {
-        networkRepository.getBackupStatusFlow().collect { actionState ->
+        backupRepository.getBackupStatusFlow().collect { actionState ->
             if (!actionState.isInProgress && !actionState.action.isNullOrBlank()) {
                 if (actionState.action == "Backup") {
-                    snackbarManager.showMessage(if (actionState.isSuccess == true) R.string.snackbar_backup_success else R.string.snackbar_backup_failure)
+                    snackbarManager.showMessage(if (actionState.isSuccess) R.string.snackbar_backup_success else R.string.snackbar_backup_failure)
                 } else {
-                    snackbarManager.showMessage(if (actionState.isSuccess == true) R.string.snackbar_restore_success else R.string.snackbar_restore_failure)
+                    snackbarManager.showMessage(if (actionState.isSuccess) R.string.snackbar_restore_success else R.string.snackbar_restore_failure)
                 }
             }
 
@@ -81,7 +81,7 @@ class SettingsViewModel @Inject constructor(
                 it.copy(
                     backupPreferences = it.backupPreferences.copy(
                         isBackupInProgress = actionState.isInProgress,
-                        lastBackupTime = if (!actionState.isInProgress) networkRepository.getLastBackupTime() else it.backupPreferences.lastBackupTime
+                        lastBackupTime = if (!actionState.isInProgress) backupRepository.getLastBackupTime() else it.backupPreferences.lastBackupTime
                     )
                 )
             }
@@ -114,7 +114,7 @@ class SettingsViewModel @Inject constructor(
                 it.copy(
                     backupPreferences = it.backupPreferences.copy(
                         signedInGoogleAccountEmail = account.email,
-                        lastBackupTime = networkRepository.getLastBackupTime()
+                        lastBackupTime = backupRepository.getLastBackupTime()
                     )
                 )
             }
@@ -122,11 +122,11 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun backupDatabase() {
-        networkRepository.startDatabaseBackup()
+        backupRepository.startDatabaseBackup()
     }
 
     fun restoreDatabase() {
-        networkRepository.startDatabaseRestore()
+        backupRepository.startDatabaseRestore()
     }
 
     fun setRemindersEnabled(enable: Boolean) {
@@ -159,7 +159,7 @@ class SettingsViewModel @Inject constructor(
 
     private suspend fun loadBackupPreferences() {
         viewModelState.update {
-            if (!networkRepository.isOnline()) {
+            if (!backupRepository.isOnline()) {
                 it.copy(
                     backupPreferences = SettingsViewModelState.Backup(
                         dataAvailable = false,
@@ -171,9 +171,9 @@ class SettingsViewModel @Inject constructor(
                     backupPreferences = SettingsViewModelState.Backup(
                         dataAvailable = true,
                         backupEnabled = backupPreferencesState.value.isEnabled,
-                        signedInGoogleAccountEmail = networkRepository.getLoggedInAccountEmail(),
-                        lastBackupTime = networkRepository.getLastBackupTime(),
-                        isBackupInProgress = networkRepository.getBackupStatus().isInProgress,
+                        signedInGoogleAccountEmail = backupRepository.getLoggedInAccountEmail(),
+                        lastBackupTime = backupRepository.getLastBackupTime(),
+                        isBackupInProgress = backupRepository.getBackupStatus().isInProgress,
                         autoBackupFrequency = backupPreferencesState.value.autoBackupFrequency,
                         autoBackupTime = backupPreferencesState.value.autoBackupTime
                     )

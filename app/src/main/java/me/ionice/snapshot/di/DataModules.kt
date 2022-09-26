@@ -13,10 +13,10 @@ import me.ionice.snapshot.data.database.dao.LocationDao
 import me.ionice.snapshot.data.database.dao.TagDao
 import me.ionice.snapshot.data.database.dao.UtilsDao
 import me.ionice.snapshot.data.database.repository.*
-import me.ionice.snapshot.data.network.NetworkRepository
-import me.ionice.snapshot.data.network.NetworkRepositoryImpl
+import me.ionice.snapshot.data.backup.BackupRepository
+import me.ionice.snapshot.data.backup.GDriveBackupRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
-import me.ionice.snapshot.data.preferences.PreferencesRepositoryImpl
+import me.ionice.snapshot.data.preferences.OfflinePreferencesRepository
 import javax.inject.Singleton
 
 @Module
@@ -73,11 +73,11 @@ object RepositoryModule {
     @Singleton
     fun provideNetworkRepository(
         @ApplicationContext context: Context
-    ): NetworkRepository = NetworkRepositoryImpl(context)
+    ): BackupRepository = GDriveBackupRepository(context)
 
     @Provides
     @Singleton
     fun providePreferencesRepository(
         @ApplicationContext context: Context
-    ): PreferencesRepository = PreferencesRepositoryImpl(context)
+    ): PreferencesRepository = OfflinePreferencesRepository(context)
 }

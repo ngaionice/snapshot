@@ -1,4 +1,4 @@
-package me.ionice.snapshot.testtools
+package me.ionice.snapshot.testtools.di
 
 import android.content.Context
 import androidx.room.Room
@@ -13,7 +13,7 @@ import me.ionice.snapshot.data.database.dao.LocationDao
 import me.ionice.snapshot.data.database.dao.TagDao
 import me.ionice.snapshot.data.database.dao.UtilsDao
 import me.ionice.snapshot.data.database.repository.*
-import me.ionice.snapshot.data.network.NetworkRepository
+import me.ionice.snapshot.data.backup.BackupRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
 import me.ionice.snapshot.di.DatabaseModule
 import me.ionice.snapshot.di.RepositoryModule
@@ -72,7 +72,7 @@ object RepositoryMockModule {
 
     @Provides
     @Singleton
-    fun provideNetworkRepository(): NetworkRepository = TODO()
+    fun provideNetworkRepository(): BackupRepository = TODO()
 
     @Provides
     @Singleton

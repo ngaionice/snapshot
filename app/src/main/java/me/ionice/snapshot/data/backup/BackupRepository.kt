@@ -1,9 +1,9 @@
-package me.ionice.snapshot.data.network
+package me.ionice.snapshot.data.backup
 
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
-interface NetworkRepository {
+interface BackupRepository {
 
     fun isOnline(): Boolean
 
@@ -19,5 +19,5 @@ interface NetworkRepository {
 
     fun getBackupStatus(): BackupState
 
-    data class BackupState(val isInProgress: Boolean, val action: String?, val isSuccess: Boolean?)
+    data class BackupState(val isInProgress: Boolean, val action: String?, val isSuccess: Boolean)
 }

@@ -1,4 +1,4 @@
-package me.ionice.snapshot.data.network
+package me.ionice.snapshot.data.backup
 
 import android.content.BroadcastReceiver
 import android.content.Context

@@ -3,7 +3,7 @@ package me.ionice.snapshot.data.preferences
 import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.work.WorkManager
+import androidx.work.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -11,22 +11,21 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import me.ionice.snapshot.data.network.BackupUtil
-import me.ionice.snapshot.data.network.autoBackupConstraints
 import me.ionice.snapshot.notifications.cancelAlarm
 import me.ionice.snapshot.notifications.setAlarm
 import me.ionice.snapshot.work.PeriodicBackupSyncWorker
 import java.io.IOException
 import java.time.LocalTime
+import java.util.concurrent.TimeUnit
 
-class PreferencesRepositoryImpl(private val applicationContext: Context) : PreferencesRepository {
+class OfflinePreferencesRepository(private val appContext: Context) :
+    PreferencesRepository {
 
-    private val backupUtil = BackupUtil(applicationContext)
     private val Context.datastore by preferencesDataStore(name = "snapshot_preferences")
-    private val dataStore = applicationContext.datastore
+    private val dataStore = appContext.datastore
 
     init {
-        val manager = WorkManager.getInstance(applicationContext)
+        val manager = WorkManager.getInstance(appContext)
         registerBackgroundActions(manager)
     }
 
@@ -34,11 +33,11 @@ class PreferencesRepositoryImpl(private val applicationContext: Context) : Prefe
         CoroutineScope(Dispatchers.IO).launch {
             val backupPrefs = getInitialBackupPreferences()
             val notificationsPrefs = getInitialNotificationsPreferences()
-            if (backupPrefs.autoBackupFrequency > 0 && manager.getWorkInfosByTag(
+            if (backupPrefs.autoBackupFrequency > 0 && manager.getWorkInfosForUniqueWork(
                     PeriodicBackupSyncWorker.WORK_NAME
                 ).get().isEmpty()
             ) {
-                backupUtil.setRecurringBackups(
+                setRecurringBackups(
                     backupPrefs.autoBackupFrequency,
                     backupPrefs.autoBackupTime,
                     autoBackupConstraints
@@ -48,7 +47,7 @@ class PreferencesRepositoryImpl(private val applicationContext: Context) : Prefe
                 val reminderTime = dataStore.data.first()
                     .toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY]
                 setAlarm(
-                    applicationContext,
+                    appContext,
                     if (reminderTime != null) LocalTime.ofSecondOfDay(reminderTime) else PreferencesRepository.NotificationsPreferences.DEFAULT.reminderTime
                 )
             }
@@ -57,20 +56,14 @@ class PreferencesRepositoryImpl(private val applicationContext: Context) : Prefe
 
     override fun getBackupPreferencesFlow(): Flow<PreferencesRepository.BackupPreferences> =
         dataStore.data.catch { e ->
-            if (e is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw e
-            }
+            if (e is IOException) emit(emptyPreferences())
+            else throw e
         }.map { mapBackupPreferences(it) }
 
     override fun getNotificationsPreferencesFlow(): Flow<PreferencesRepository.NotificationsPreferences> =
         dataStore.data.catch { e ->
-            if (e is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw e
-            }
+            if (e is IOException) emit(emptyPreferences())
+            else throw e
         }.map { mapNotificationsPreferences(it) }
 
     override suspend fun getInitialBackupPreferences(): PreferencesRepository.BackupPreferences =
@@ -95,7 +88,7 @@ class PreferencesRepositoryImpl(private val applicationContext: Context) : Prefe
         val backupTime = dataStore.data.first()
             .toPreferences()[PreferencesKeys.BACKUP_TIME_KEY]?.let { LocalTime.ofSecondOfDay(it) }
             ?: PreferencesRepository.BackupPreferences.DEFAULT.autoBackupTime
-        backupUtil.setRecurringBackups(daysFreq, backupTime, autoBackupConstraints)
+        setRecurringBackups(daysFreq, backupTime, autoBackupConstraints)
     }
 
     override suspend fun setBackupTime(time: LocalTime) {
@@ -106,7 +99,7 @@ class PreferencesRepositoryImpl(private val applicationContext: Context) : Prefe
         val backupEnabled = currPrefs[PreferencesKeys.BACKUP_ENABLED_KEY] ?: false
         val backupFreq = currPrefs[PreferencesKeys.BACKUP_FREQUENCY_KEY] ?: 0
         if (backupEnabled && backupFreq > 0) {
-            backupUtil.setRecurringBackups(backupFreq, time, autoBackupConstraints)
+            setRecurringBackups(backupFreq, time, autoBackupConstraints)
         }
     }
 
@@ -117,7 +110,7 @@ class PreferencesRepositoryImpl(private val applicationContext: Context) : Prefe
         if (dataStore.data.first()
                 .toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_ENABLED_KEY] == true
         ) {
-            setAlarm(applicationContext, time)
+            setAlarm(appContext, time)
         }
     }
 
@@ -129,11 +122,11 @@ class PreferencesRepositoryImpl(private val applicationContext: Context) : Prefe
             val reminderTime = dataStore.data.first()
                 .toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY]
             setAlarm(
-                applicationContext,
+                appContext,
                 if (reminderTime != null) LocalTime.ofSecondOfDay(reminderTime) else PreferencesRepository.NotificationsPreferences.DEFAULT.reminderTime
             )
         } else {
-            cancelAlarm(applicationContext)
+            cancelAlarm(appContext)
         }
     }
 
@@ -166,6 +159,35 @@ class PreferencesRepositoryImpl(private val applicationContext: Context) : Prefe
         )
     }
 
+    private fun setRecurringBackups(
+        backupFreq: Int,
+        backupTime: LocalTime,
+        constraints: Constraints
+    ) {
+        if (backupFreq > 0) {
+            val targetBackupTime = backupTime.toSecondOfDay()
+            val currTime = LocalTime.now().toSecondOfDay()
+
+            val initialDelay =
+                if (currTime > targetBackupTime) (24 * 60 * 60 - (currTime - targetBackupTime)) else (targetBackupTime - currTime)
+            val request = PeriodicWorkRequestBuilder<PeriodicBackupSyncWorker>(
+                backupFreq.toLong(),
+                TimeUnit.DAYS
+            ).setInitialDelay(
+                initialDelay.toLong(), TimeUnit.SECONDS
+            ).setConstraints(constraints)
+                .build() // default retry is set to exponential with initial value of 10s, which is good
+            WorkManager.getInstance(appContext).enqueueUniquePeriodicWork(
+                PeriodicBackupSyncWorker.WORK_NAME,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                request
+            )
+        } else {
+            WorkManager.getInstance(appContext)
+                .cancelUniqueWork(PeriodicBackupSyncWorker.WORK_NAME)
+        }
+    }
+
     private object PreferencesKeys {
         private const val BACKUP_BASE_KEY = "backup"
         val BACKUP_ENABLED_KEY = booleanPreferencesKey("${BACKUP_BASE_KEY}_enabled")
@@ -181,3 +203,7 @@ class PreferencesRepositoryImpl(private val applicationContext: Context) : Prefe
             booleanPreferencesKey("${NOTIFICATIONS_BASE_KEY}_memories_enabled")
     }
 }
+
+// TODO: set up a proper function/method to store constraints and not hardcode it
+val autoBackupConstraints =
+    Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
