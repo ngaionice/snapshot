@@ -17,9 +17,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.components.ConfirmationDialog
-import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.common.components.PageSection
 import me.ionice.snapshot.ui.common.screens.BaseScreen
+import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
 import me.ionice.snapshot.ui.settings.*
 import me.ionice.snapshot.utils.Utils
@@ -35,83 +35,73 @@ fun BackupRoute(viewModel: SettingsViewModel = hiltViewModel(), onBack: () -> Un
         headerText = stringResource(R.string.settings_screen_backup_header),
         navigationIcon = { BackButton(onBack = onBack) })
     {
-        when (uiState) {
-            is SettingsUiState.Loading -> LoadingScreen()
-            is SettingsUiState.Loaded -> {
-                BackupScreen(
-                    uiState = (uiState as SettingsUiState.Loaded).backupPreferences,
-                    onEnableBackup = viewModel::setBackupEnabled,
-                    onSuccessfulLogin = viewModel::loggedInToGoogle,
-                    onStartBackup = viewModel::backupDatabase,
-                    onStartRestore = viewModel::restoreDatabase,
-                    onBackupTimeChange = viewModel::setBackupTime,
-                    onBackupFreqChange = viewModel::setBackupFrequency
-                )
-            }
-        }
+        BackupScreen(
+            uiStateProvider = { uiState.backupUiState },
+            onEnableBackup = viewModel::setBackupEnabled,
+            onSuccessfulLogin = viewModel::loggedInToGoogle,
+            onStartBackup = viewModel::backupDatabase,
+            onStartRestore = viewModel::restoreDatabase,
+            onAutoBackupConfigChange = viewModel::setAutoBackups
+        )
     }
 }
 
 @Composable
 private fun BackupScreen(
-    uiState: SettingsUiState.Loaded.Backup,
+    uiStateProvider: () -> BackupUiState,
     onEnableBackup: (Boolean) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit,
     onStartBackup: () -> Unit,
     onStartRestore: () -> Unit,
-    onBackupFreqChange: (Int) -> Unit,
-    onBackupTimeChange: (LocalTime) -> Unit
+    onAutoBackupConfigChange: (Int, LocalTime) -> Unit
 ) {
-    when (uiState) {
-        is SettingsUiState.Loaded.Backup.Available -> {
+    when (val uiState = uiStateProvider()) {
+        is BackupUiState.Loading -> LoadingScreen()
+        is BackupUiState.Error -> {
+            FunctionalityNotAvailableScreen(message = "Cannot access backups due to an error.")
+        }
+        is BackupUiState.Success -> {
             CanBackupScreen(
                 uiState = uiState,
-                isBackupInProgress = uiState.isBackupInProgress,
                 onEnableBackup = onEnableBackup,
                 onStartBackup = onStartBackup,
                 onStartRestore = onStartRestore,
-                onSuccessfulLogin = onSuccessfulLogin,
-                onBackupFreqChange = onBackupFreqChange,
-                onBackupTimeChange = onBackupTimeChange
+                onAutoBackupConfigChange = onAutoBackupConfigChange,
+                onSuccessfulLogin = onSuccessfulLogin
             )
         }
-        is SettingsUiState.Loaded.Backup.NotAvailable -> CannotBackupScreen()
     }
 }
 
-@Composable
-private fun CannotBackupScreen() {
-    FunctionalityNotAvailableScreen(message = "Cannot access backups as ${stringResource(R.string.settings_screen_backup_na_reason)}.")
-}
 
 @Composable
 private fun CanBackupScreen(
-    uiState: SettingsUiState.Loaded.Backup.Available,
-    isBackupInProgress: Boolean,
+    uiState: BackupUiState.Success,
     onEnableBackup: (Boolean) -> Unit,
     onStartBackup: () -> Unit,
     onStartRestore: () -> Unit,
-    onBackupFreqChange: (Int) -> Unit,
-    onBackupTimeChange: (LocalTime) -> Unit,
+    onAutoBackupConfigChange: (Int, LocalTime) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit
 ) {
     Column {
-        BackupEnabledToggle(isEnabled = uiState.backupEnabled, onIsEnabledChange = onEnableBackup)
+        BackupEnabledToggle(isEnabled = uiState.isEnabled, onIsEnabledChange = onEnableBackup)
         AnimatedVisibility(
-            visible = uiState.backupEnabled, enter = fadeIn(),
+            visible = uiState.isEnabled, enter = fadeIn(),
             exit = fadeOut()
         ) {
             if (uiState.signedInGoogleAccountEmail != null) {
                 BackupFunctionalities(
-                    isBackupInProgress = isBackupInProgress,
+                    isBackupInProgress = uiState.isBackupInProgress,
                     email = uiState.signedInGoogleAccountEmail,
                     lastBackupTime = uiState.lastBackupTime,
                     backupFreq = uiState.autoBackupFrequency,
                     backupTime = uiState.autoBackupTime,
                     onStartBackup = onStartBackup,
                     onStartRestore = onStartRestore,
-                    onBackupFreqChange = onBackupFreqChange,
-                    onBackupTimeChange = onBackupTimeChange
+                    onBackupFreqChange = { onAutoBackupConfigChange(it, uiState.autoBackupTime) },
+                    onBackupTimeChange = {
+                        onAutoBackupConfigChange(uiState.autoBackupFrequency, it)
+                    }
                 )
             } else {
                 SignInButton(onSuccessfulLogin = onSuccessfulLogin)
@@ -255,6 +245,7 @@ private fun BackupFreqPickerDialog(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }) {
                 TextField(
+                    modifier = Modifier.menuAnchor(),
                     readOnly = true,
                     value = current.second,
                     onValueChange = {},

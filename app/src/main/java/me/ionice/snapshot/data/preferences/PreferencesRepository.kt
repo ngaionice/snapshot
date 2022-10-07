@@ -5,46 +5,40 @@ import java.time.LocalTime
 
 interface PreferencesRepository {
 
-    fun getBackupPreferencesFlow(): Flow<BackupPreferences>
+    fun getBackupPrefsFlow(): Flow<BackupPrefs>
 
-    fun getNotificationsPreferencesFlow(): Flow<NotificationsPreferences>
+    fun getNotifsPrefsFlow(): Flow<NotifsPrefs>
 
-    suspend fun getInitialBackupPreferences(): BackupPreferences
-
-    suspend fun getInitialNotificationsPreferences(): NotificationsPreferences
-
-    suspend fun setIsBackupEnabled(enable: Boolean)
+    suspend fun setBackupEnabled(enabled: Boolean)
 
     /**
-     * Sets the automatic backup frequency. Allowed values are 1 and non-negative multiples of 7.
-     *
+     * Allowed frequencies must be one of the values in [PreferencesRepository.BackupPrefs.ALLOWED_FREQS].
      * 0 represents never, and all other values represent the number of days between automatic backups.
      */
-    suspend fun setBackupFrequency(daysFreq: Int)
-
-    suspend fun setBackupTime(time: LocalTime)
+    suspend fun setAutomaticBackups(frequency: Int, time: LocalTime)
 
     /**
      * If set to true, queues up daily reminders.
      */
-    suspend fun setIsDailyReminderEnabled(enable: Boolean)
+    suspend fun setDailyReminderEnabled(enabled: Boolean)
 
     suspend fun setDailyReminderTime(time: LocalTime)
 
-    suspend fun setIsMemoriesEnabled(enable: Boolean)
+    suspend fun setMemoriesEnabled(enabled: Boolean)
 
     /**
      * - `isEnabled`: is backup (manual or automatic) enabled
      * - `autoBackupFrequency`: 0 represents never, and all other values represent the number of days between automatic backups.
      * - `autoBackupTime`: the scheduled time for automatic backups; value is meaningless if autoBackupFrequency = 0
      */
-    data class BackupPreferences(
+    data class BackupPrefs(
         val isEnabled: Boolean,
         val autoBackupFrequency: Int,
         val autoBackupTime: LocalTime
     ) {
         companion object {
-            val DEFAULT = BackupPreferences(false, 0, LocalTime.MIDNIGHT)
+            val DEFAULT = BackupPrefs(false, 0, LocalTime.MIDNIGHT)
+            val ALLOWED_FREQS = listOf(0, 1, 7, 14, 28)
         }
     }
 
@@ -53,13 +47,13 @@ interface PreferencesRepository {
      * - `reminderTime`: the scheduled time for reminder notification; value is meaningless if isReminderEnabled is false
      * - `isMemoriesEnabled`: is memories enabled
      */
-    data class NotificationsPreferences(
+    data class NotifsPrefs(
         val isRemindersEnabled: Boolean,
         val reminderTime: LocalTime,
         val isMemoriesEnabled: Boolean
     ) {
         companion object {
-            val DEFAULT = NotificationsPreferences(false, LocalTime.of(22, 0), false)
+            val DEFAULT = NotifsPrefs(false, LocalTime.of(22, 0), false)
         }
     }
 }

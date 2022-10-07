@@ -15,9 +15,9 @@ interface BackupRepository {
 
     fun startDatabaseRestore()
 
-    fun getBackupStatusFlow(): Flow<BackupState>
+    fun getBackupStatusFlow(): Flow<BackupStatus>
 
-    fun getBackupStatus(): BackupState
+    fun getBackupStatus(): BackupStatus
 
-    data class BackupState(val isInProgress: Boolean, val action: String?, val isSuccess: Boolean)
+    data class BackupStatus(val isInProgress: Boolean, val action: String?, val isSuccess: Boolean)
 }

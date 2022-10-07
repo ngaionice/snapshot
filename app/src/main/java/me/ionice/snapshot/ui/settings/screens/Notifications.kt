@@ -11,10 +11,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.BaseScreen
+import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
-import me.ionice.snapshot.ui.settings.SettingsRow
-import me.ionice.snapshot.ui.settings.SettingsUiState
+import me.ionice.snapshot.ui.settings.NotifsUiState
 import me.ionice.snapshot.ui.settings.SettingSwitch
+import me.ionice.snapshot.ui.settings.SettingsRow
 import me.ionice.snapshot.ui.settings.SettingsViewModel
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalTime
@@ -26,33 +27,42 @@ fun NotificationsRoute(viewModel: SettingsViewModel = hiltViewModel(), onBack: (
 
     BaseScreen(
         headerText = stringResource(R.string.settings_screen_notifs_header),
-        navigationIcon = { BackButton(onBack = onBack) }) {
-        when (uiState) {
-            is SettingsUiState.Loading -> LoadingScreen()
-            is SettingsUiState.Loaded -> {
-                NotificationsScreen(
-                    uiState = (uiState as SettingsUiState.Loaded).notificationsPreferences,
-                    onEnableReminders = viewModel::setRemindersEnabled,
-                    onReminderTimeChange = {},
-                    onEnableMemories = {})
+        navigationIcon = { BackButton(onBack = onBack) }
+    ) {
+        NotificationsScreen(
+            uiStateProvider = { uiState.notifsUiState },
+            onEnableReminders = viewModel::setRemindersEnabled,
+            onReminderTimeChange = {},
+            onEnableMemories = {})
 
-                BackHandler(onBack = onBack)
-            }
-        }
+        BackHandler(onBack = onBack)
     }
 }
 
 @Composable
 private fun NotificationsScreen(
-    uiState: SettingsUiState.Loaded.Notifications,
+    uiStateProvider: () -> NotifsUiState,
     onEnableReminders: (Boolean) -> Unit,
     onReminderTimeChange: (LocalTime) -> Unit,
     onEnableMemories: (Boolean) -> Unit
 ) {
-    Column {
-        SettingSwitch(mainLabel = "Use daily reminders", checked = uiState.isRemindersEnabled, onCheckedChange = {onEnableReminders(it)})
-        if (uiState.isRemindersEnabled) {
-            SettingsRow(mainLabel = "Remind at", secondaryLabel = Utils.timeFormatter.format(uiState.reminderTime))
+    when (val uiState = uiStateProvider()) {
+        is NotifsUiState.Loading -> LoadingScreen()
+        is NotifsUiState.Error -> FunctionalityNotAvailableScreen("Notifications settings not available due to an error.")
+        is NotifsUiState.Success -> {
+            Column {
+                SettingSwitch(
+                    mainLabel = "Use daily reminders",
+                    checked = uiState.isRemindersEnabled,
+                    onCheckedChange = { onEnableReminders(it) })
+                if (uiState.isRemindersEnabled) {
+                    SettingsRow(
+                        mainLabel = "Remind at",
+                        secondaryLabel = Utils.timeFormatter.format(uiState.reminderTime)
+                    )
+                }
+            }
         }
     }
+
 }

@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 class GDriveBackupRepository(private val appContext: Context) : BackupRepository {
 
     private val backupModule = GDriveBackupModule(appContext)
-    private val backupStatus = MutableStateFlow(BackupRepository.BackupState(false, null, false))
+    private val backupStatus = MutableStateFlow(BackupRepository.BackupStatus(false, null, false))
 
     init {
         val callback = { type: String, isSuccess: Boolean ->
@@ -25,7 +25,7 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
                 throw IllegalArgumentException("type must be one of WORK_TYPE_BACKUP or WORK_TYPE_RESTORE")
             }
             backupStatus.update {
-                BackupRepository.BackupState(
+                BackupRepository.BackupStatus(
                     isInProgress = false,
                     action = if (type == OneOffBackupSyncWorker.WORK_TYPE_BACKUP) ACTION_TYPE_BACKUP else ACTION_TYPE_RESTORE,
                     isSuccess = isSuccess
@@ -38,9 +38,9 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
         )
     }
 
-    override fun getBackupStatus(): BackupRepository.BackupState = backupStatus.value
+    override fun getBackupStatus(): BackupRepository.BackupStatus = backupStatus.value
 
-    override fun getBackupStatusFlow(): Flow<BackupRepository.BackupState> = backupStatus
+    override fun getBackupStatusFlow(): Flow<BackupRepository.BackupStatus> = backupStatus
 
     override fun isOnline(): Boolean {
         val cm = ContextCompat.getSystemService(appContext, ConnectivityManager::class.java)

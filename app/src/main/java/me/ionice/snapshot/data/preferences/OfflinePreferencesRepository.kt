@@ -18,8 +18,7 @@ import java.io.IOException
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
-class OfflinePreferencesRepository(private val appContext: Context) :
-    PreferencesRepository {
+class OfflinePreferencesRepository(private val appContext: Context) : PreferencesRepository {
 
     private val Context.datastore by preferencesDataStore(name = "snapshot_preferences")
     private val dataStore = appContext.datastore
@@ -31,8 +30,9 @@ class OfflinePreferencesRepository(private val appContext: Context) :
 
     private fun registerBackgroundActions(manager: WorkManager) {
         CoroutineScope(Dispatchers.IO).launch {
-            val backupPrefs = getInitialBackupPreferences()
-            val notificationsPrefs = getInitialNotificationsPreferences()
+            val preferences = dataStore.data.first().toPreferences()
+            val backupPrefs = mapBackupPreferences(preferences)
+            val notificationsPrefs = mapNotificationsPreferences(preferences)
             if (backupPrefs.autoBackupFrequency > 0 && manager.getWorkInfosForUniqueWork(
                     PeriodicBackupSyncWorker.WORK_NAME
                 ).get().isEmpty()
@@ -44,163 +44,132 @@ class OfflinePreferencesRepository(private val appContext: Context) :
                 )
             }
             if (notificationsPrefs.isRemindersEnabled) {
-                val reminderTime = dataStore.data.first()
-                    .toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY]
+                val reminderTime =
+                    dataStore.data.first().toPreferences()[Keys.NOTIFS_REMINDERS_TIME]
                 setAlarm(
                     appContext,
-                    if (reminderTime != null) LocalTime.ofSecondOfDay(reminderTime) else PreferencesRepository.NotificationsPreferences.DEFAULT.reminderTime
+                    if (reminderTime != null) LocalTime.ofSecondOfDay(reminderTime) else PreferencesRepository.NotifsPrefs.DEFAULT.reminderTime
                 )
             }
         }
     }
 
-    override fun getBackupPreferencesFlow(): Flow<PreferencesRepository.BackupPreferences> =
+    override fun getBackupPrefsFlow(): Flow<PreferencesRepository.BackupPrefs> =
         dataStore.data.catch { e ->
             if (e is IOException) emit(emptyPreferences())
             else throw e
         }.map { mapBackupPreferences(it) }
 
-    override fun getNotificationsPreferencesFlow(): Flow<PreferencesRepository.NotificationsPreferences> =
+    override fun getNotifsPrefsFlow(): Flow<PreferencesRepository.NotifsPrefs> =
         dataStore.data.catch { e ->
             if (e is IOException) emit(emptyPreferences())
             else throw e
         }.map { mapNotificationsPreferences(it) }
 
-    override suspend fun getInitialBackupPreferences(): PreferencesRepository.BackupPreferences =
-        mapBackupPreferences(dataStore.data.first().toPreferences())
-
-    override suspend fun getInitialNotificationsPreferences(): PreferencesRepository.NotificationsPreferences =
-        mapNotificationsPreferences(dataStore.data.first().toPreferences())
-
-    override suspend fun setIsBackupEnabled(enable: Boolean) {
+    override suspend fun setBackupEnabled(enabled: Boolean) {
         dataStore.edit {
-            it[PreferencesKeys.BACKUP_ENABLED_KEY] = enable
+            it[Keys.BACKUP_ENABLED] = enabled
         }
     }
 
-    override suspend fun setBackupFrequency(daysFreq: Int) {
-        if (daysFreq < 0 || (daysFreq.mod(7) != 0 && daysFreq != 1)) {
-            throw IllegalArgumentException("Backup day frequency has to be either 1, or a non-negative multiple of 7.")
-        }
-        dataStore.edit {
-            it[PreferencesKeys.BACKUP_FREQUENCY_KEY] = daysFreq
-        }
-        val backupTime = dataStore.data.first()
-            .toPreferences()[PreferencesKeys.BACKUP_TIME_KEY]?.let { LocalTime.ofSecondOfDay(it) }
-            ?: PreferencesRepository.BackupPreferences.DEFAULT.autoBackupTime
-        setRecurringBackups(daysFreq, backupTime, autoBackupConstraints)
-    }
-
-    override suspend fun setBackupTime(time: LocalTime) {
-        dataStore.edit {
-            it[PreferencesKeys.BACKUP_TIME_KEY] = time.toSecondOfDay() * 1L
-        }
+    override suspend fun setAutomaticBackups(frequency: Int, time: LocalTime) {
         val currPrefs = dataStore.data.first().toPreferences()
-        val backupEnabled = currPrefs[PreferencesKeys.BACKUP_ENABLED_KEY] ?: false
-        val backupFreq = currPrefs[PreferencesKeys.BACKUP_FREQUENCY_KEY] ?: 0
-        if (backupEnabled && backupFreq > 0) {
-            setRecurringBackups(backupFreq, time, autoBackupConstraints)
+        if (!PreferencesRepository.BackupPrefs.ALLOWED_FREQS.contains(frequency)) {
+            throw IllegalArgumentException("Illegal backup frequency value.")
+        }
+        dataStore.edit {
+            it[Keys.BACKUP_FREQUENCY] = frequency
+            it[Keys.BACKUP_TIME] = time.toSecondOfDay() * 1L
+        }
+        if (currPrefs[Keys.BACKUP_ENABLED] == true) {
+            setRecurringBackups(frequency, time, autoBackupConstraints)
         }
     }
 
     override suspend fun setDailyReminderTime(time: LocalTime) {
         dataStore.edit {
-            it[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY] = time.toSecondOfDay() * 1L
+            it[Keys.NOTIFS_REMINDERS_TIME] = time.toSecondOfDay() * 1L
         }
-        if (dataStore.data.first()
-                .toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_ENABLED_KEY] == true
-        ) {
+        if (dataStore.data.first().toPreferences()[Keys.NOTIFS_REMINDERS_ENABLED] == true) {
             setAlarm(appContext, time)
         }
     }
 
-    override suspend fun setIsDailyReminderEnabled(enable: Boolean) {
+    override suspend fun setDailyReminderEnabled(enabled: Boolean) {
         dataStore.edit {
-            it[PreferencesKeys.NOTIFICATIONS_REMINDERS_ENABLED_KEY] = enable
+            it[Keys.NOTIFS_REMINDERS_ENABLED] = enabled
         }
-        if (enable) {
-            val reminderTime = dataStore.data.first()
-                .toPreferences()[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY]
-            setAlarm(
-                appContext,
-                if (reminderTime != null) LocalTime.ofSecondOfDay(reminderTime) else PreferencesRepository.NotificationsPreferences.DEFAULT.reminderTime
-            )
+        if (enabled) {
+            val existingTime = dataStore.data.first().toPreferences()[Keys.NOTIFS_REMINDERS_TIME]
+            val time = if (existingTime != null) {
+                LocalTime.ofSecondOfDay(existingTime)
+            } else {
+                PreferencesRepository.NotifsPrefs.DEFAULT.reminderTime
+            }
+            setAlarm(appContext, time)
         } else {
             cancelAlarm(appContext)
         }
     }
 
-    override suspend fun setIsMemoriesEnabled(enable: Boolean) {
+    override suspend fun setMemoriesEnabled(enabled: Boolean) {
         dataStore.edit {
-            it[PreferencesKeys.NOTIFICATIONS_MEMORIES_ENABLED_KEY] = enable
+            it[Keys.NOTIFS_MEMORIES_ENABLED] = enabled
         }
     }
 
-    private fun mapBackupPreferences(preferences: Preferences): PreferencesRepository.BackupPreferences {
-        val isEnabled = preferences[PreferencesKeys.BACKUP_ENABLED_KEY] ?: false
-        val frequency = preferences[PreferencesKeys.BACKUP_FREQUENCY_KEY] ?: 0
-        val time = preferences[PreferencesKeys.BACKUP_TIME_KEY]?.let { LocalTime.ofSecondOfDay(it) }
-            ?: LocalTime.MIDNIGHT
-        return PreferencesRepository.BackupPreferences(isEnabled, frequency, time)
+    private fun mapBackupPreferences(preferences: Preferences): PreferencesRepository.BackupPrefs {
+        val defaults = PreferencesRepository.BackupPrefs.DEFAULT
+        val isEnabled = preferences[Keys.BACKUP_ENABLED] ?: defaults.isEnabled
+        val frequency = preferences[Keys.BACKUP_FREQUENCY] ?: defaults.autoBackupFrequency
+        val time =
+            preferences[Keys.BACKUP_TIME]?.let { LocalTime.ofSecondOfDay(it) } ?: defaults.autoBackupTime
+        return PreferencesRepository.BackupPrefs(isEnabled, frequency, time)
     }
 
-    private fun mapNotificationsPreferences(preferences: Preferences): PreferencesRepository.NotificationsPreferences {
-        val isRemindersEnabled =
-            preferences[PreferencesKeys.NOTIFICATIONS_REMINDERS_ENABLED_KEY] ?: false
-        val reminderTime = preferences[PreferencesKeys.NOTIFICATIONS_REMINDERS_TIME_KEY]?.let {
+    private fun mapNotificationsPreferences(preferences: Preferences): PreferencesRepository.NotifsPrefs {
+        val defaults = PreferencesRepository.NotifsPrefs.DEFAULT
+        val isRemindersEnabled = preferences[Keys.NOTIFS_REMINDERS_ENABLED] ?: defaults.isRemindersEnabled
+        val reminderTime = preferences[Keys.NOTIFS_REMINDERS_TIME]?.let {
             LocalTime.ofSecondOfDay(it)
-        } ?: LocalTime.of(22, 0)
-        val isMemoriesEnabled =
-            preferences[PreferencesKeys.NOTIFICATIONS_MEMORIES_ENABLED_KEY] ?: false
-        return PreferencesRepository.NotificationsPreferences(
-            isRemindersEnabled,
-            reminderTime,
-            isMemoriesEnabled
+        } ?: defaults.reminderTime
+        val isMemoriesEnabled = preferences[Keys.NOTIFS_MEMORIES_ENABLED] ?: defaults.isMemoriesEnabled
+        return PreferencesRepository.NotifsPrefs(
+            isRemindersEnabled, reminderTime, isMemoriesEnabled
         )
     }
 
-    private fun setRecurringBackups(
-        backupFreq: Int,
-        backupTime: LocalTime,
-        constraints: Constraints
-    ) {
-        if (backupFreq > 0) {
-            val targetBackupTime = backupTime.toSecondOfDay()
+    private fun setRecurringBackups(frequency: Int, time: LocalTime, constraints: Constraints) {
+        if (frequency > 0) {
+            val targetBackupTime = time.toSecondOfDay()
             val currTime = LocalTime.now().toSecondOfDay()
 
             val initialDelay =
                 if (currTime > targetBackupTime) (24 * 60 * 60 - (currTime - targetBackupTime)) else (targetBackupTime - currTime)
             val request = PeriodicWorkRequestBuilder<PeriodicBackupSyncWorker>(
-                backupFreq.toLong(),
-                TimeUnit.DAYS
+                frequency.toLong(), TimeUnit.DAYS
             ).setInitialDelay(
                 initialDelay.toLong(), TimeUnit.SECONDS
             ).setConstraints(constraints)
                 .build() // default retry is set to exponential with initial value of 10s, which is good
             WorkManager.getInstance(appContext).enqueueUniquePeriodicWork(
-                PeriodicBackupSyncWorker.WORK_NAME,
-                ExistingPeriodicWorkPolicy.REPLACE,
-                request
+                PeriodicBackupSyncWorker.WORK_NAME, ExistingPeriodicWorkPolicy.REPLACE, request
             )
         } else {
-            WorkManager.getInstance(appContext)
-                .cancelUniqueWork(PeriodicBackupSyncWorker.WORK_NAME)
+            WorkManager.getInstance(appContext).cancelUniqueWork(PeriodicBackupSyncWorker.WORK_NAME)
         }
     }
 
-    private object PreferencesKeys {
-        private const val BACKUP_BASE_KEY = "backup"
-        val BACKUP_ENABLED_KEY = booleanPreferencesKey("${BACKUP_BASE_KEY}_enabled")
-        val BACKUP_FREQUENCY_KEY = intPreferencesKey("${BACKUP_BASE_KEY}_frequency")
-        val BACKUP_TIME_KEY = longPreferencesKey("${BACKUP_BASE_KEY}_time")
+    private object Keys {
+        private const val BACKUP_BASE = "backup"
+        val BACKUP_ENABLED = booleanPreferencesKey("${BACKUP_BASE}_enabled")
+        val BACKUP_FREQUENCY = intPreferencesKey("${BACKUP_BASE}_frequency")
+        val BACKUP_TIME = longPreferencesKey("${BACKUP_BASE}_time")
 
-        private const val NOTIFICATIONS_BASE_KEY = "notifications"
-        val NOTIFICATIONS_REMINDERS_ENABLED_KEY =
-            booleanPreferencesKey("${NOTIFICATIONS_BASE_KEY}_reminders_enabled")
-        val NOTIFICATIONS_REMINDERS_TIME_KEY =
-            longPreferencesKey("${NOTIFICATIONS_BASE_KEY}_reminders_time")
-        val NOTIFICATIONS_MEMORIES_ENABLED_KEY =
-            booleanPreferencesKey("${NOTIFICATIONS_BASE_KEY}_memories_enabled")
+        private const val NOTIFS_BASE = "notifications"
+        val NOTIFS_REMINDERS_ENABLED = booleanPreferencesKey("${NOTIFS_BASE}_reminders_enabled")
+        val NOTIFS_REMINDERS_TIME = longPreferencesKey("${NOTIFS_BASE}_reminders_time")
+        val NOTIFS_MEMORIES_ENABLED = booleanPreferencesKey("${NOTIFS_BASE}_memories_enabled")
     }
 }
 
