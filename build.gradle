@@ -1,7 +1,7 @@
 buildscript {
     ext {
         androidX_test_version = '1.4.0'
-        androidX_test_ext_kotlin_runner_version = '1.1.4-alpha07'
+        androidX_test_ext_kotlin_runner_version = '1.1.4-beta01'
         accompanist_version = '0.25.1'
         compose_version = '1.2.1'
         coroutines_version = '1.6.3'
