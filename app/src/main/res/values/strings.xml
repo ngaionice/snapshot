@@ -105,7 +105,7 @@
     <!--  snackbar messages  -->
     <string name="snackbar_backup_success">Backup successful</string>
     <string name="snackbar_backup_failure">Backup failed</string>
-    <string name="snackbar_restore_success">Restore successful</string>
+    <string name="snackbar_restore_success">Restore successful, restarting app</string>
     <string name="snackbar_restore_failure">Restore failed</string>
 
     <!--  content descriptions for testing  -->

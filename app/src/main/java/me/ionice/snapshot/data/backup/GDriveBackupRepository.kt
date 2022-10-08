@@ -1,15 +1,20 @@
 package me.ionice.snapshot.data.backup
 
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import me.ionice.snapshot.work.BackupStatusNotifyWorker
 import me.ionice.snapshot.work.OneOffBackupSyncWorker
 import java.time.LocalDateTime
@@ -36,6 +41,13 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
                     action = if (type == OneOffBackupSyncWorker.WORK_TYPE_BACKUP) ACTION_TYPE_BACKUP else ACTION_TYPE_RESTORE,
                     isSuccess = isSuccess
                 )
+            }
+
+            if (type == OneOffBackupSyncWorker.WORK_TYPE_RESTORE && isSuccess) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(3000)
+                    restartApp()
+                }
             }
         }
         appContext.registerReceiver(
@@ -92,6 +104,15 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
                 )
             }
         }
+    }
+
+    private fun restartApp() {
+        val packageManager = appContext.packageManager
+        val intent = packageManager.getLaunchIntentForPackage(appContext.packageName)
+        val componentName = intent!!.component
+        val mainIntent = Intent.makeRestartActivityTask(componentName)
+        appContext.startActivity(mainIntent)
+        Runtime.getRuntime().exit(0)
     }
 
     private fun enqueueBackupWork(actionType: String) {
