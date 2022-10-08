@@ -1,16 +1,23 @@
 package me.ionice.snapshot.work
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import me.ionice.snapshot.data.backup.GDriveBackupModule
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+import me.ionice.snapshot.data.backup.BackupModule
 
-class PeriodicBackupSyncWorker(appContext: Context, params: WorkerParameters) :
+@HiltWorker
+class PeriodicBackupSyncWorker @AssistedInject constructor(
+    @Assisted appContext: Context,
+    @Assisted params: WorkerParameters,
+    private val backupModule: BackupModule
+) :
     CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
-        val backupModule = GDriveBackupModule(applicationContext)
         return if (backupModule.backupDatabase(id).isFailure) {
             Result.retry()
         } else Result.success()
@@ -21,12 +28,16 @@ class PeriodicBackupSyncWorker(appContext: Context, params: WorkerParameters) :
     }
 }
 
-class OneOffBackupSyncWorker(appContext: Context, params: WorkerParameters) :
+@HiltWorker
+class OneOffBackupSyncWorker @AssistedInject constructor(
+    @Assisted appContext: Context,
+    @Assisted params: WorkerParameters,
+    private val backupModule: BackupModule
+) :
     CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
         val actionType = inputData.getString(WORK_TYPE)
-        val backupModule = GDriveBackupModule(applicationContext)
         val isSuccess = if (actionType == WORK_TYPE_BACKUP) {
             backupModule.backupDatabase(id).isSuccess
         } else {

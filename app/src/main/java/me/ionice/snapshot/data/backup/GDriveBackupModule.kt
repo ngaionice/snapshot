@@ -32,9 +32,9 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 
-class GDriveBackupModule(private val context: Context) {
+class GDriveBackupModule(private val context: Context) : BackupModule {
 
-    suspend fun getLastBackupTime(): LocalDateTime? {
+    override suspend fun getLastBackupTime(): LocalDateTime? {
         // if user is not logged in, cannot exist
         val req = getDriveService()?.let { getDriveBackupFileRequest(it) } ?: return null
         return withContext(Dispatchers.IO) {
@@ -52,7 +52,7 @@ class GDriveBackupModule(private val context: Context) {
      * Use with caution: if the Coroutine scope this function is called in gets cancelled,
      * the behavior is unknown: the backup on Google Drive may be corrupted.
      */
-    suspend fun backupDatabase(selfWorkId: UUID): Result<Unit> {
+    override suspend fun backupDatabase(selfWorkId: UUID): Result<Unit> {
         // if user is not logged in, cannot exist
         val service =
             getDriveService() ?: return Result.failure(Exception("User is not logged in."))
@@ -70,7 +70,7 @@ class GDriveBackupModule(private val context: Context) {
      * Use with caution: if the Coroutine scope this function is called in gets cancelled,
      * the behavior is unknown: the local copy may be corrupted.
      */
-    suspend fun restoreDatabase(selfWorkId: UUID): Result<Unit> {
+    override suspend fun restoreDatabase(selfWorkId: UUID): Result<Unit> {
         // if user is not logged in, cannot exist
         val service =
             getDriveService() ?: return Result.failure(Exception("User is not logged in."))
@@ -199,7 +199,7 @@ class GDriveBackupModule(private val context: Context) {
                 .execute().files.filter { it.name == SnapshotDatabase.DATABASE_NAME }
 
             // only 1 copy of database should exist
-            return@withContext if (target.isEmpty() || target.size > 1) null else target[0].id
+            if (target.isEmpty() || target.size > 1) null else target[0].id
         }
     }
 
@@ -208,11 +208,10 @@ class GDriveBackupModule(private val context: Context) {
             GoogleSignIn.getLastSignedInAccount(context)?.let { account ->
                 val c = GoogleAccountCredential.usingOAuth2(context, listOf(DriveScopes.DRIVE_FILE))
                 c.selectedAccount = account.account!!
-                return@withContext Drive.Builder(NetHttpTransport(), GsonFactory(), c)
+                Drive.Builder(NetHttpTransport(), GsonFactory(), c)
                     .setApplicationName(context.getString(R.string.app_name))
                     .build()
             }
-            null
         }
     }
 }

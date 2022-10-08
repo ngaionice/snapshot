@@ -7,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
+import me.ionice.snapshot.data.backup.BackupModule
 import me.ionice.snapshot.data.database.SnapshotDatabase
 import me.ionice.snapshot.data.database.dao.DayDao
 import me.ionice.snapshot.data.database.dao.LocationDao
@@ -14,6 +15,7 @@ import me.ionice.snapshot.data.database.dao.TagDao
 import me.ionice.snapshot.data.database.dao.UtilsDao
 import me.ionice.snapshot.data.database.repository.*
 import me.ionice.snapshot.data.backup.BackupRepository
+import me.ionice.snapshot.data.backup.GDriveBackupModule
 import me.ionice.snapshot.data.backup.GDriveBackupRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
 import me.ionice.snapshot.data.preferences.OfflinePreferencesRepository
@@ -71,7 +73,7 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideNetworkRepository(
+    fun provideBackupRepository(
         @ApplicationContext context: Context
     ): BackupRepository = GDriveBackupRepository(context)
 
@@ -80,4 +82,15 @@ object RepositoryModule {
     fun providePreferencesRepository(
         @ApplicationContext context: Context
     ): PreferencesRepository = OfflinePreferencesRepository(context)
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object ServiceProviderModule {
+
+    @Provides
+    @Singleton
+    fun provideBackupModule(
+        @ApplicationContext context: Context
+    ): BackupModule = GDriveBackupModule(context)
 }
