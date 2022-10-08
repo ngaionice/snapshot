@@ -20,6 +20,7 @@
     </plurals>
 
     <!--  entries screen  -->
+    <string name="entries_list_week_header">This week</string>
     <string name="entries_year_no_results">No entries found.</string>
     <string name="entries_add_entry">Add entry</string>
     <string name="entries_single_loading">Loading entry</string>
@@ -63,6 +64,9 @@
     <string name="settings_screen_backup_general_subsection_header">General</string>
     <string name="settings_screen_backup_manual_actions_subsection_header">Manual Actions</string>
     <string name="settings_screen_backup_auto_backup_subsection_header">Automatic Backups</string>
+
+    <string name="settings_screen_backup_drive_settings">Google Drive Settings</string>
+    <string name="settings_screen_sync_in_progress">Database sync in progress</string>
 
     <string name="settings_screen_backup_login">Login to Google</string>
     <string name="settings_screen_backup_login_failed">Google sign in failed, tap to retry</string>
@@ -112,12 +116,12 @@
     <string name="tt_common_datepicker">DatePicker</string>
     <string name="tt_common_loading_screen">LoadingScreen</string>
 
-    <string name="tt_entries_placeholder_week_item">PlaceholderWeekSectionItem</string>
-    <string name="tt_entries_placeholder_year_item">PlaceholderYearSectionItem</string>
-    <string name="tt_entries_week_add_entry_item">WeekSectionAddEntryItem</string>
     <string name="tt_entries_week_item">WeekSectionItem</string>
-    <string name="tt_entries_year_subitem">YearSectionSubItem</string>
+    <string name="tt_entries_week_item_placeholder">WeekSectionItemPlaceholder</string>
+    <string name="tt_entries_week_add_entry_item">WeekSectionAddEntryItem</string>
     <string name="tt_entries_year_item">YearSectionItem</string>
+    <string name="tt_entries_year_item_placeholder">YearSectionItemPlaceholder</string>
+    <string name="tt_entries_year_subitem">YearSectionSubItem</string>
     <string name="tt_entries_year_header_prev">YearSectionHeaderPrev</string>
     <string name="tt_entries_year_header_next">YearSectionHeaderNext</string>
     <string name="tt_entries_dialog_confirm">EntryInsertDialogConfirm</string>
@@ -129,5 +133,6 @@
     <string name="tt_entries_single_tags_display">EntryTagDisplay</string>
     <string name="tt_entries_single_tag_selector">EntryTagSelector</string>
     <string name="tt_entries_single_tag_creator">EntryTagCreator</string>
+    <string name="tt_settings_row_placeholder">SettingsRowPlaceholder</string>
 
 </resources>

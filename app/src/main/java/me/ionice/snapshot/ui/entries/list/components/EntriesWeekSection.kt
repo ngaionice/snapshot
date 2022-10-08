@@ -5,7 +5,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,35 +35,38 @@ fun WeekSection(
 ) {
     val uiState = uiStateProvider()
 
-    if (uiState is DaysUiState.Loading) {
-        LazyRow(
-            contentPadding = PaddingValues(24.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(count = 5) {
-                PlaceholderWeekSectionItem(modifier = Modifier.fillParentMaxWidth(CARD_WIDTH))
+    PageSection(
+        title = stringResource(R.string.entries_list_week_header),
+        headerTextColor = MaterialTheme.colorScheme.onSurface
+    ) {
+        if (uiState is DaysUiState.Loading) {
+            LazyRow(
+                contentPadding = PaddingValues(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(count = 5) {
+                    WeekSectionItemPlaceholder(modifier = Modifier.fillParentMaxWidth(CARD_WIDTH))
+                }
             }
+            return@PageSection
         }
-        return
-    }
 
-    if (uiState is DaysUiState.Error) {
-        Box(
-            modifier = Modifier
-                .padding(24.dp)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("Failed to load data for the past week.")
+        if (uiState is DaysUiState.Error) {
+            Box(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Failed to load data for the past week.")
+            }
+            return@PageSection
         }
-        return
-    }
 
-    val today = LocalDate.now().toEpochDay()
-    val dateRange = (today downTo today - 6).toList()
-    val entries = (uiState as DaysUiState.Success).data.associateBy { it.properties.id }
+        val today = LocalDate.now().toEpochDay()
+        val dateRange = (today downTo today - 6).toList()
+        val entries = (uiState as DaysUiState.Success).data.associateBy { it.properties.id }
 
-    PageSection(title = "This week", headerTextColor = MaterialTheme.colorScheme.onSurface) {
         LazyRow(
             contentPadding = PaddingValues(24.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -125,7 +128,7 @@ fun WeekSectionItem(day: Day, onClick: () -> Unit, modifier: Modifier = Modifier
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = day.tags.size.toString(), color = contentColor)
-                    Icon(imageVector = Icons.Filled.BarChart, contentDescription = "Metrics")
+                    Icon(imageVector = Icons.Filled.Tag, contentDescription = "Tags")
                 }
             }
         }
@@ -181,8 +184,8 @@ fun WeekSectionAddEntryItem(dayId: Long, onClick: () -> Unit, modifier: Modifier
 }
 
 @Composable
-fun PlaceholderWeekSectionItem(modifier: Modifier = Modifier) {
-    val tt = stringResource(R.string.tt_entries_placeholder_week_item)
+fun WeekSectionItemPlaceholder(modifier: Modifier = Modifier) {
+    val tt = stringResource(R.string.tt_entries_week_item_placeholder)
     Card(
         modifier = modifier
             .placeholder(

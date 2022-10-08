@@ -14,8 +14,8 @@ import me.ionice.snapshot.ui.common.screens.BaseScreen
 import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.common.screens.LoadingScreen
 import me.ionice.snapshot.ui.settings.NotifsUiState
-import me.ionice.snapshot.ui.settings.SettingSwitch
-import me.ionice.snapshot.ui.settings.SettingsRow
+import me.ionice.snapshot.ui.settings.components.SettingSwitch
+import me.ionice.snapshot.ui.settings.components.SettingRow
 import me.ionice.snapshot.ui.settings.SettingsViewModel
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalTime
@@ -56,7 +56,7 @@ private fun NotificationsScreen(
                     checked = uiState.isRemindersEnabled,
                     onCheckedChange = { onEnableReminders(it) })
                 if (uiState.isRemindersEnabled) {
-                    SettingsRow(
+                    SettingRow(
                         mainLabel = "Remind at",
                         secondaryLabel = Utils.timeFormatter.format(uiState.reminderTime)
                     )

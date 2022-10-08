@@ -45,8 +45,8 @@ class EntriesListScreenTest {
     @Before
     fun setup() {
         composeTestRule.activity.apply {
-            placeholderWeekItem = getString(R.string.tt_entries_placeholder_week_item)
-            placeholderYearItem = getString(R.string.tt_entries_placeholder_year_item)
+            placeholderWeekItem = getString(R.string.tt_entries_week_item_placeholder)
+            placeholderYearItem = getString(R.string.tt_entries_year_item_placeholder)
             weekAddEntryItem = getString(R.string.tt_entries_week_add_entry_item)
             weekItem = getString(R.string.tt_entries_week_item)
             yearNoResults = getString(R.string.entries_year_no_results)

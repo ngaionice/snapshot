@@ -1,5 +1,7 @@
 package me.ionice.snapshot.ui.settings.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,14 +16,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
 import me.ionice.snapshot.R
+import me.ionice.snapshot.data.backup.GAuthResultContract
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.components.ConfirmationDialog
 import me.ionice.snapshot.ui.common.components.PageSection
 import me.ionice.snapshot.ui.common.screens.BaseScreen
 import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
-import me.ionice.snapshot.ui.common.screens.LoadingScreen
-import me.ionice.snapshot.ui.settings.*
+import me.ionice.snapshot.ui.settings.BackupUiState
+import me.ionice.snapshot.ui.settings.SettingsViewModel
+import me.ionice.snapshot.ui.settings.components.TimePickerDialog
+import me.ionice.snapshot.ui.settings.components.FilledSettingSwitch
+import me.ionice.snapshot.ui.settings.components.FilledSettingSwitchPlaceholder
+import me.ionice.snapshot.ui.settings.components.SettingRow
+import me.ionice.snapshot.ui.settings.components.SettingRowPlaceholder
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -57,10 +66,9 @@ private fun BackupScreen(
 ) {
     when (val uiState = uiStateProvider()) {
         is BackupUiState.Loading -> LoadingScreen()
-        is BackupUiState.Error -> {
+        is BackupUiState.Error ->
             FunctionalityNotAvailableScreen(message = "Cannot access backups due to an error.")
-        }
-        is BackupUiState.Success -> {
+        is BackupUiState.Success ->
             CanBackupScreen(
                 uiState = uiState,
                 onEnableBackup = onEnableBackup,
@@ -69,6 +77,25 @@ private fun BackupScreen(
                 onAutoBackupConfigChange = onAutoBackupConfigChange,
                 onSuccessfulLogin = onSuccessfulLogin
             )
+    }
+}
+
+@VisibleForTesting
+@Composable
+fun LoadingScreen() {
+    Column {
+        FilledSettingSwitchPlaceholder()
+        PageSection(title = stringResource(R.string.settings_screen_backup_general_subsection_header)) {
+            SettingRowPlaceholder(hasSecondary = true)
+            SettingRowPlaceholder(hasSecondary = true)
+        }
+        PageSection(title = stringResource(R.string.settings_screen_backup_auto_backup_subsection_header)) {
+            SettingRowPlaceholder(hasSecondary = true)
+            SettingRowPlaceholder(hasSecondary = true)
+        }
+        PageSection(title = stringResource(R.string.settings_screen_backup_manual_actions_subsection_header)) {
+            SettingRowPlaceholder()
+            SettingRowPlaceholder()
         }
     }
 }
@@ -104,7 +131,7 @@ private fun CanBackupScreen(
                     }
                 )
             } else {
-                SignInButton(onSuccessfulLogin = onSuccessfulLogin)
+                AccountManagement(onSuccessfulLogin = onSuccessfulLogin)
             }
         }
     }
@@ -142,7 +169,7 @@ private fun BackupFunctionalities(
 
 @Composable
 private fun BackupEnabledToggle(isEnabled: Boolean, onIsEnabledChange: (Boolean) -> Unit) {
-    ProminentSwitchSetting(
+    FilledSettingSwitch(
         mainLabel = stringResource(R.string.settings_screen_backup_main_switch),
         checked = isEnabled,
         onCheckedChange = { onIsEnabledChange(!isEnabled) }
@@ -152,11 +179,11 @@ private fun BackupEnabledToggle(isEnabled: Boolean, onIsEnabledChange: (Boolean)
 @Composable
 private fun BackupInfo(email: String, lastBackupTime: LocalDateTime?) {
     PageSection(title = stringResource(R.string.settings_screen_backup_general_subsection_header)) {
-        SettingsRow(
+        SettingRow(
             mainLabel = stringResource(R.string.settings_screen_backup_selected_account),
             secondaryLabel = email
         )
-        SettingsRow(
+        SettingRow(
             mainLabel = stringResource(R.string.settings_screen_backup_last_backup),
             secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter)
                 ?: stringResource(R.string.settings_screen_backup_last_backup_never)
@@ -192,11 +219,11 @@ private fun AutoBackupOptions(
     }
 
     PageSection(title = stringResource(R.string.settings_screen_backup_auto_backup_subsection_header)) {
-        SettingsRow(
+        SettingRow(
             mainLabel = stringResource(R.string.settings_auto_backup_frequency),
             secondaryLabel = backupFreqText,
             onClick = { showFreqPickerDialog = true })
-        SettingsRow(
+        SettingRow(
             mainLabel = stringResource(R.string.settings_auto_backup_time),
             secondaryLabel = backupTime.format(Utils.timeFormatter),
             onClick = { showTimePickerDialog = true },
@@ -280,10 +307,10 @@ private fun BackupActions(onStartBackup: () -> Unit, onStartRestore: () -> Unit)
     var showRestoreDialog by rememberSaveable { mutableStateOf(false) }
 
     PageSection(title = stringResource(R.string.settings_screen_backup_manual_actions_subsection_header)) {
-        SettingsRow(
+        SettingRow(
             mainLabel = stringResource(R.string.settings_screen_backup_start_backup),
             onClick = { showBackupDialog = true })
-        SettingsRow(
+        SettingRow(
             mainLabel = stringResource(R.string.settings_screen_backup_start_restore),
             onClick = { showRestoreDialog = true })
     }
@@ -318,5 +345,46 @@ private fun BackupInProgress() {
         horizontalArrangement = Arrangement.Center
     ) {
         CircularProgressIndicator()
+        Text(stringResource(R.string.settings_screen_sync_in_progress))
     }
+}
+
+@Composable
+private fun AccountManagement(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
+    PageSection(title = stringResource(R.string.settings_screen_backup_drive_settings)) {
+        SignInButton(onSuccessfulLogin = onSuccessfulLogin)
+    }
+}
+
+@Composable
+private fun SignInButton(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
+    var helperText by remember { mutableStateOf<String?>(null) }
+    val signInRequestCode = 1
+    var enabled by remember { mutableStateOf(true) }
+
+    val failedText = stringResource(R.string.settings_screen_backup_login_failed)
+
+    val authResultLauncher =
+        rememberLauncherForActivityResult(contract = GAuthResultContract()) { task ->
+            try {
+                val account = task?.getResult(ApiException::class.java)
+                if (account == null) {
+                    helperText = failedText
+                } else {
+                    onSuccessfulLogin(account)
+                }
+            } catch (e: ApiException) {
+                helperText = failedText
+            }
+        }
+
+    SettingRow(
+        mainLabel = stringResource(R.string.settings_screen_backup_login),
+        secondaryLabel = helperText,
+        disabled = !enabled,
+        onClick = {
+            enabled = false
+            authResultLauncher.launch(signInRequestCode)
+            enabled = true
+        })
 }

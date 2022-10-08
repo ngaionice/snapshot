@@ -11,7 +11,7 @@ import androidx.compose.ui.res.stringResource
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.screens.BaseScreen
-import me.ionice.snapshot.ui.settings.SettingsRow
+import me.ionice.snapshot.ui.settings.components.SettingRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,19 +39,19 @@ private fun HomeScreen(
     onNavigateToTheming: () -> Unit
 ) {
     Column {
-        SettingsRow(
+        SettingRow(
             mainLabel = stringResource(R.string.settings_screen_backup_header),
             secondaryLabel = stringResource(R.string.settings_screen_backup_subtitle),
             icon = Icons.Outlined.CloudSync,
             onClick = onNavigateToBackup
         )
-        SettingsRow(
+        SettingRow(
             mainLabel = stringResource(R.string.settings_screen_notifs_header),
             secondaryLabel = stringResource(R.string.settings_screen_notifs_subtitle),
             icon = Icons.Outlined.Notifications,
             onClick = onNavigateToNotifications
         )
-        SettingsRow(
+        SettingRow(
             mainLabel = stringResource(R.string.settings_screen_theming_header),
             secondaryLabel = stringResource(R.string.settings_screen_theming_subtitle),
             icon = Icons.Outlined.Palette,

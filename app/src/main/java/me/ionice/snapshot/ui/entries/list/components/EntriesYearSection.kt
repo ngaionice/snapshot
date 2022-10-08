@@ -8,7 +8,10 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material.icons.filled.NavigateNext
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -19,14 +22,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.fade
-import com.google.accompanist.placeholder.material.placeholder
 import me.ionice.snapshot.R
 import me.ionice.snapshot.data.database.model.Day
 import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.components.PageSectionContent
 import me.ionice.snapshot.ui.common.components.PageSectionHeader
+import me.ionice.snapshot.ui.common.components.PlaceholderText
 import me.ionice.snapshot.ui.common.components.VerticalDivider
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDate
@@ -74,7 +75,7 @@ fun LazyListScope.getYearSectionContent(
     when (val uiState = uiStateProvider()) {
         is DaysUiState.Loading -> {
             items(count = 10) {
-                PlaceholderYearSectionItem()
+                YearSectionItemPlaceholder()
             }
         }
         is DaysUiState.Error -> {
@@ -208,20 +209,13 @@ private fun YearSectionSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
 }
 
 @Composable
-fun PlaceholderYearSectionItem() {
-    val tt = stringResource(R.string.tt_entries_placeholder_year_item)
-    Card(
+fun YearSectionItemPlaceholder() {
+    val tt = stringResource(R.string.tt_entries_year_item_placeholder)
+    Column(
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 12.dp)
-            .fillMaxWidth()
-            .height(40.dp)
-            .placeholder(
-                visible = true,
-                highlight = PlaceholderHighlight.fade(),
-                color = MaterialTheme.colorScheme.surfaceVariant
-            )
-            .semantics { testTag = tt }
-    ) {
-
+            .semantics { testTag = tt }) {
+        PlaceholderText(textStyle = MaterialTheme.typography.labelSmall, Modifier.width(50.dp))
+        PlaceholderText(textStyle = MaterialTheme.typography.titleMedium, Modifier.width(150.dp))
     }
 }
