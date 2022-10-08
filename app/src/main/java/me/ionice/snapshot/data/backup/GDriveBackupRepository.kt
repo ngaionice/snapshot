@@ -17,7 +17,13 @@ import java.time.LocalDateTime
 class GDriveBackupRepository(private val appContext: Context) : BackupRepository {
 
     private val backupModule = GDriveBackupModule(appContext)
-    private val backupStatus = MutableStateFlow(BackupRepository.BackupStatus(false, null, false))
+    private val backupStatus = MutableStateFlow(
+        BackupRepository.BackupStatus(
+            isInProgress = backupModule.hasRunningJobs(),
+            action = null,
+            isSuccess = false
+        )
+    )
 
     init {
         val callback = { type: String, isSuccess: Boolean ->

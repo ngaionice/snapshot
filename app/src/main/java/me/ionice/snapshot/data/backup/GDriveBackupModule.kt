@@ -85,6 +85,17 @@ class GDriveBackupModule(private val context: Context) {
         )
     }
 
+    fun hasRunningJobs(ignoredId: UUID? = null): Boolean {
+        val manager = WorkManager.getInstance(context)
+        val has = { name: String ->
+            // exclude the ignored ID if exists, then checks if any are running
+            manager.getWorkInfosForUniqueWork(name).get()
+                .filter { work -> ignoredId?.let { work.id != ignoredId } ?: true }
+                .any { it.state == State.RUNNING }
+        }
+        return has(PeriodicBackupSyncWorker.WORK_NAME) || has(OneOffBackupSyncWorker.WORK_NAME)
+    }
+
     /**
      * Provides a synchronized solution to backup and restore functionality to
      * prevent user from backing up and restoring at the same time,
@@ -95,14 +106,6 @@ class GDriveBackupModule(private val context: Context) {
         driveService: Drive,
         selfWorkId: UUID
     ): Result<Unit> {
-        val hasRunningJobs = {
-            val manager = WorkManager.getInstance(context)
-            val has = { name: String ->
-                manager.getWorkInfosForUniqueWork(name).get()
-                    .any { it.state == State.RUNNING && it.id != selfWorkId }
-            }
-            has(PeriodicBackupSyncWorker.WORK_NAME) || has(OneOffBackupSyncWorker.WORK_NAME)
-        }
         SnapshotDatabase.runCheckpoint()
         return if (isRestoring) {
             val dbFile = context.getDatabasePath(SnapshotDatabase.DATABASE_NAME)
@@ -114,10 +117,10 @@ class GDriveBackupModule(private val context: Context) {
             // Room reads from them first and disregards the updated database file
             File("$path-shm").delete()
             File("$path-wal").delete()
-            if (hasRunningJobs()) return Result.failure(Exception("An backup/restore job is already running."))
+            if (hasRunningJobs(selfWorkId)) return Result.failure(Exception("An backup/restore job is already running."))
             downloadDatabase(downloadPath = path, driveService = driveService)
         } else {
-            if (hasRunningJobs()) return Result.failure(Exception("An backup/restore job is already running."))
+            if (hasRunningJobs(selfWorkId)) return Result.failure(Exception("An backup/restore job is already running."))
             uploadDatabase(driveService)
         }
     }
