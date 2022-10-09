@@ -31,7 +31,7 @@ fun EntryInsertDialog(onDismiss: () -> Unit, onAddEntry: (Long) -> Unit) {
             Text("Select date", style = MaterialTheme.typography.labelSmall)
         },
         confirmButton = {
-            Button(
+            TextButton(
                 onClick = { onAddEntry(date.toEpochDay()) },
                 enabled = errorMessage.isEmpty(),
                 modifier = Modifier.semantics { testTag = ttConfirm }) {

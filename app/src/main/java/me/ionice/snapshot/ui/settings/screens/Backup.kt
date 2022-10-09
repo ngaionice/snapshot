@@ -5,10 +5,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -26,6 +23,7 @@ import me.ionice.snapshot.data.backup.GAuthResultContract
 import me.ionice.snapshot.ui.common.components.BackButton
 import me.ionice.snapshot.ui.common.components.ConfirmationDialog
 import me.ionice.snapshot.ui.common.components.PageSection
+import me.ionice.snapshot.ui.common.components.TimePicker
 import me.ionice.snapshot.ui.common.screens.BaseScreen
 import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.settings.BackupUiState
@@ -273,13 +271,17 @@ private fun AutoBackupOptions(
             onClose = { showFreqPickerDialog = false }
         )
     }
-    TimePickerDialog(isOpen = showTimePickerDialog,
-        initialTime = backupTime,
-        onSelection = {
-            onBackupTimeChange(it)
-            showTimePickerDialog = false
-        },
-        onClose = { showTimePickerDialog = false })
+    if (showTimePickerDialog) {
+        TimePickerDialog(
+            initialTime = backupTime,
+            onSelection = {
+                onBackupTimeChange(it)
+                showTimePickerDialog = false
+            },
+            onClose = { showTimePickerDialog = false }
+        )
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -416,4 +418,38 @@ private fun SignInButton(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
             authResultLauncher.launch(signInRequestCode)
             enabled = true
         })
+}
+
+@Composable
+private fun TimePickerDialog(
+    initialTime: LocalTime = LocalTime.MIDNIGHT,
+    onSelection: (LocalTime) -> Unit,
+    onClose: () -> Unit
+) {
+    var selectedTime by remember { mutableStateOf(initialTime) }
+
+    AlertDialog(
+        onDismissRequest = onClose,
+        title = {
+            Text(text = "Select time", style = MaterialTheme.typography.labelSmall)
+        },
+        text = {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TimePicker(initialTime = selectedTime, onSelectTime = { selectedTime = it })
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onSelection(selectedTime) }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onClose) {
+                Text(text = "Cancel")
+            }
+        }
+    )
 }
