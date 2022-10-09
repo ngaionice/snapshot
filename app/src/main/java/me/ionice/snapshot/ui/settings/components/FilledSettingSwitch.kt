@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.ui.common.components.PlaceholderText
+import me.ionice.snapshot.ui.common.titleMediumLarge
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +30,7 @@ fun FilledSettingSwitch(
         ) {
             Text(
                 text = mainLabel,
-                style = MaterialTheme.typography.titleLarge,
+                style = titleMediumLarge(),
                 modifier = Modifier.weight(1f)
             )
             Switch(checked = checked, onCheckedChange = onCheckedChange)
@@ -46,7 +47,7 @@ fun FilledSettingSwitchPlaceholder() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             PlaceholderText(
-                textStyle = MaterialTheme.typography.titleLarge,
+                textStyle = titleMediumLarge(),
                 modifier = Modifier.weight(1f)
             )
             Switch(checked = false, enabled = false, onCheckedChange = {})

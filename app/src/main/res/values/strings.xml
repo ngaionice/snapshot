@@ -85,8 +85,9 @@
     <string name="settings_auto_backup_freq_never">Never</string>
     <string name="settings_auto_backup_freq_daily">Daily</string>
     <string name="settings_auto_backup_freq_weekly">Weekly</string>
-    <string name="settings_auto_backup_freq_every_two_weeks">Every 2 weeks</string>
-    <string name="settings_auto_backup_freq_every_four_weeks">Every 4 weeks</string>
+    <string name="settings_auto_backup_freq_monthly">Monthly</string>
+
+    <string name="settings_auto_backup_use_cellular">Back up using cellular</string>
 
     <string name="settings_screen_theming_header">Theming</string>
     <string name="settings_screen_theming_subtitle"><![CDATA[Dynamic & custom themes]]></string>

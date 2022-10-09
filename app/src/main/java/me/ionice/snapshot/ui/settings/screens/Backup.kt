@@ -26,11 +26,7 @@ import me.ionice.snapshot.ui.common.screens.BaseScreen
 import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
 import me.ionice.snapshot.ui.settings.BackupUiState
 import me.ionice.snapshot.ui.settings.SettingsViewModel
-import me.ionice.snapshot.ui.settings.components.TimePickerDialog
-import me.ionice.snapshot.ui.settings.components.FilledSettingSwitch
-import me.ionice.snapshot.ui.settings.components.FilledSettingSwitchPlaceholder
-import me.ionice.snapshot.ui.settings.components.SettingRow
-import me.ionice.snapshot.ui.settings.components.SettingRowPlaceholder
+import me.ionice.snapshot.ui.settings.components.*
 import me.ionice.snapshot.utils.Utils
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -62,7 +58,7 @@ private fun BackupScreen(
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit,
     onStartBackup: () -> Unit,
     onStartRestore: () -> Unit,
-    onAutoBackupConfigChange: (Int, LocalTime) -> Unit
+    onAutoBackupConfigChange: (Int, LocalTime, Boolean) -> Unit
 ) {
     when (val uiState = uiStateProvider()) {
         is BackupUiState.Loading -> LoadingScreen()
@@ -92,6 +88,7 @@ fun LoadingScreen() {
         PageSection(title = stringResource(R.string.settings_screen_backup_auto_backup_subsection_header)) {
             SettingRowPlaceholder(hasSecondary = true)
             SettingRowPlaceholder(hasSecondary = true)
+            SettingRowPlaceholder()
         }
         PageSection(title = stringResource(R.string.settings_screen_backup_manual_actions_subsection_header)) {
             SettingRowPlaceholder()
@@ -107,7 +104,7 @@ private fun CanBackupScreen(
     onEnableBackup: (Boolean) -> Unit,
     onStartBackup: () -> Unit,
     onStartRestore: () -> Unit,
-    onAutoBackupConfigChange: (Int, LocalTime) -> Unit,
+    onAutoBackupConfigChange: (Int, LocalTime, Boolean) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit
 ) {
     Column {
@@ -123,11 +120,29 @@ private fun CanBackupScreen(
                     lastBackupTime = uiState.lastBackupTime,
                     backupFreq = uiState.autoBackupFrequency,
                     backupTime = uiState.autoBackupTime,
+                    backupOnCellular = uiState.autoBackupOnCellular,
                     onStartBackup = onStartBackup,
                     onStartRestore = onStartRestore,
-                    onBackupFreqChange = { onAutoBackupConfigChange(it, uiState.autoBackupTime) },
+                    onBackupFreqChange = {
+                        onAutoBackupConfigChange(
+                            it,
+                            uiState.autoBackupTime,
+                            uiState.autoBackupOnCellular
+                        )
+                    },
                     onBackupTimeChange = {
-                        onAutoBackupConfigChange(uiState.autoBackupFrequency, it)
+                        onAutoBackupConfigChange(
+                            uiState.autoBackupFrequency,
+                            it,
+                            uiState.autoBackupOnCellular
+                        )
+                    },
+                    onBackupUseCellularChange = {
+                        onAutoBackupConfigChange(
+                            uiState.autoBackupFrequency,
+                            uiState.autoBackupTime,
+                            it
+                        )
                     }
                 )
             } else {
@@ -144,10 +159,12 @@ private fun BackupFunctionalities(
     lastBackupTime: LocalDateTime?,
     backupFreq: Int,
     backupTime: LocalTime,
+    backupOnCellular: Boolean,
     onStartBackup: () -> Unit,
     onStartRestore: () -> Unit,
     onBackupFreqChange: (Int) -> Unit,
-    onBackupTimeChange: (LocalTime) -> Unit
+    onBackupTimeChange: (LocalTime) -> Unit,
+    onBackupUseCellularChange: (Boolean) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -159,8 +176,10 @@ private fun BackupFunctionalities(
             AutoBackupOptions(
                 onBackupFreqChange = onBackupFreqChange,
                 onBackupTimeChange = onBackupTimeChange,
+                onBackupOnCellularChange = onBackupUseCellularChange,
                 backupFreq = backupFreq,
-                backupTime = backupTime
+                backupTime = backupTime,
+                backupOnCellular = backupOnCellular
             )
             BackupActions(onStartBackup = onStartBackup, onStartRestore = onStartRestore)
         }
@@ -195,8 +214,10 @@ private fun BackupInfo(email: String, lastBackupTime: LocalDateTime?) {
 private fun AutoBackupOptions(
     backupFreq: Int,
     backupTime: LocalTime,
+    backupOnCellular: Boolean,
     onBackupFreqChange: (Int) -> Unit,
-    onBackupTimeChange: (LocalTime) -> Unit
+    onBackupTimeChange: (LocalTime) -> Unit,
+    onBackupOnCellularChange: (Boolean) -> Unit
 ) {
     var showFreqPickerDialog by rememberSaveable { mutableStateOf(false) }
     var showTimePickerDialog by rememberSaveable { mutableStateOf(false) }
@@ -205,17 +226,15 @@ private fun AutoBackupOptions(
         Pair(0, stringResource(R.string.settings_auto_backup_freq_never)),
         Pair(1, stringResource(R.string.settings_auto_backup_freq_daily)),
         Pair(7, stringResource(R.string.settings_auto_backup_freq_weekly)),
-        Pair(14, stringResource(R.string.settings_auto_backup_freq_every_two_weeks)),
-        Pair(28, stringResource(R.string.settings_auto_backup_freq_every_four_weeks))
+        Pair(30, stringResource(R.string.settings_auto_backup_freq_monthly))
     )
 
     val backupFreqText = when (backupFreq) {
         0 -> stringResource(R.string.settings_auto_backup_freq_never)
         1 -> stringResource(R.string.settings_auto_backup_freq_daily)
         7 -> stringResource(R.string.settings_auto_backup_freq_weekly)
-        14 -> stringResource(R.string.settings_auto_backup_freq_every_two_weeks)
-        28 -> stringResource(R.string.settings_auto_backup_freq_every_four_weeks)
-        else -> throw IllegalArgumentException("backupFreq should be one of 0, 1, 7, 14, 28")
+        30 -> stringResource(R.string.settings_auto_backup_freq_monthly)
+        else -> throw IllegalArgumentException("backupFreq should be one of 0, 1, 7, 30")
     }
 
     PageSection(title = stringResource(R.string.settings_screen_backup_auto_backup_subsection_header)) {
@@ -228,6 +247,11 @@ private fun AutoBackupOptions(
             secondaryLabel = backupTime.format(Utils.timeFormatter),
             onClick = { showTimePickerDialog = true },
             disabled = backupFreq <= 0
+        )
+        SettingSwitch(
+            mainLabel = stringResource(R.string.settings_auto_backup_use_cellular),
+            checked = backupOnCellular,
+            onCheckedChange = onBackupOnCellularChange
         )
     }
 

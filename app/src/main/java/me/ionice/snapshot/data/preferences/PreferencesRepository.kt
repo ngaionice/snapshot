@@ -15,7 +15,7 @@ interface PreferencesRepository {
      * Allowed frequencies must be one of the values in [PreferencesRepository.BackupPrefs.ALLOWED_FREQS].
      * 0 represents never, and all other values represent the number of days between automatic backups.
      */
-    suspend fun setAutomaticBackups(frequency: Int, time: LocalTime)
+    suspend fun setAutomaticBackups(frequency: Int, time: LocalTime, useCellular: Boolean)
 
     /**
      * If set to true, queues up daily reminders.
@@ -34,11 +34,12 @@ interface PreferencesRepository {
     data class BackupPrefs(
         val isEnabled: Boolean,
         val autoBackupFrequency: Int,
-        val autoBackupTime: LocalTime
+        val autoBackupTime: LocalTime,
+        val autoBackupOnCellular: Boolean
     ) {
         companion object {
-            val DEFAULT = BackupPrefs(false, 0, LocalTime.MIDNIGHT)
-            val ALLOWED_FREQS = listOf(0, 1, 7, 14, 28)
+            val DEFAULT = BackupPrefs(false, 0, LocalTime.MIDNIGHT, false)
+            val ALLOWED_FREQS = listOf(0, 1, 7, 30)
         }
     }
 

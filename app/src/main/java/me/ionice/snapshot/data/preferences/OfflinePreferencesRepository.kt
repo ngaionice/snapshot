@@ -40,7 +40,7 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
                 setRecurringBackups(
                     backupPrefs.autoBackupFrequency,
                     backupPrefs.autoBackupTime,
-                    autoBackupConstraints
+                    getAutoBackupConstraints(backupPrefs.autoBackupOnCellular)
                 )
             }
             if (notificationsPrefs.isRemindersEnabled) {
@@ -72,7 +72,7 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
         }
     }
 
-    override suspend fun setAutomaticBackups(frequency: Int, time: LocalTime) {
+    override suspend fun setAutomaticBackups(frequency: Int, time: LocalTime, useCellular: Boolean) {
         val currPrefs = dataStore.data.first().toPreferences()
         if (!PreferencesRepository.BackupPrefs.ALLOWED_FREQS.contains(frequency)) {
             throw IllegalArgumentException("Illegal backup frequency value.")
@@ -80,9 +80,10 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
         dataStore.edit {
             it[Keys.BACKUP_FREQUENCY] = frequency
             it[Keys.BACKUP_TIME] = time.toSecondOfDay() * 1L
+            it[Keys.BACKUP_ON_CELLULAR] = useCellular
         }
         if (currPrefs[Keys.BACKUP_ENABLED] == true) {
-            setRecurringBackups(frequency, time, autoBackupConstraints)
+            setRecurringBackups(frequency, time, getAutoBackupConstraints(useCellular))
         }
     }
 
@@ -124,7 +125,8 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
         val frequency = preferences[Keys.BACKUP_FREQUENCY] ?: defaults.autoBackupFrequency
         val time =
             preferences[Keys.BACKUP_TIME]?.let { LocalTime.ofSecondOfDay(it) } ?: defaults.autoBackupTime
-        return PreferencesRepository.BackupPrefs(isEnabled, frequency, time)
+        val useCellular = preferences[Keys.BACKUP_ON_CELLULAR] ?: defaults.autoBackupOnCellular
+        return PreferencesRepository.BackupPrefs(isEnabled, frequency, time, useCellular)
     }
 
     private fun mapNotificationsPreferences(preferences: Preferences): PreferencesRepository.NotifsPrefs {
@@ -160,11 +162,17 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
         }
     }
 
+    private fun getAutoBackupConstraints(useCellular: Boolean): Constraints {
+        val networkType = if (useCellular) NetworkType.CONNECTED else NetworkType.UNMETERED
+        return Constraints.Builder().setRequiredNetworkType(networkType).build()
+    }
+
     private object Keys {
         private const val BACKUP_BASE = "backup"
         val BACKUP_ENABLED = booleanPreferencesKey("${BACKUP_BASE}_enabled")
         val BACKUP_FREQUENCY = intPreferencesKey("${BACKUP_BASE}_frequency")
         val BACKUP_TIME = longPreferencesKey("${BACKUP_BASE}_time")
+        val BACKUP_ON_CELLULAR = booleanPreferencesKey("${BACKUP_BASE}_cellular")
 
         private const val NOTIFS_BASE = "notifications"
         val NOTIFS_REMINDERS_ENABLED = booleanPreferencesKey("${NOTIFS_BASE}_reminders_enabled")
@@ -173,6 +181,3 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
     }
 }
 
-// TODO: set up a proper function/method to store constraints and not hardcode it
-val autoBackupConstraints =
-    Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()

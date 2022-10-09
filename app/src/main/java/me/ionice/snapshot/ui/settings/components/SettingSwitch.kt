@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.ui.common.components.PlaceholderText
+import me.ionice.snapshot.ui.common.titleMediumLarge
 
 @Composable
 fun SettingSwitch(
@@ -30,7 +31,7 @@ fun SettingSwitch(
                 .padding(top = 16.dp, bottom = 16.dp, end = 16.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = mainLabel, style = MaterialTheme.typography.titleLarge)
+            Text(text = mainLabel, style = titleMediumLarge())
             if (secondaryLabel != null) {
                 Text(text = secondaryLabel, style = MaterialTheme.typography.labelMedium)
             }
@@ -50,7 +51,7 @@ fun SettingSwitchPlaceholder(hasSecondary: Boolean = false) {
                 .weight(1f)
                 .padding(top = 16.dp, bottom = 16.dp, end = 16.dp)
         ) {
-            PlaceholderText(MaterialTheme.typography.titleLarge, Modifier.fillMaxWidth())
+            PlaceholderText(titleMediumLarge(), Modifier.fillMaxWidth())
             if (hasSecondary) {
                 PlaceholderText(MaterialTheme.typography.labelMedium, Modifier.width(100.dp))
             }

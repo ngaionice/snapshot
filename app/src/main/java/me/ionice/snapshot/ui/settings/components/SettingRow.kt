@@ -24,6 +24,7 @@ import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.components.PlaceholderText
+import me.ionice.snapshot.ui.common.titleMediumLarge
 
 /**
  * The base entry for each setting. Can be configured to provide button functionality.
@@ -60,7 +61,7 @@ fun SettingRow(
                     if (onClick == null || disabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
                 Text(
                     text = mainLabel,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = titleMediumLarge(),
                     color = textColor
                 )
                 if (secondaryLabel != null) {
@@ -100,7 +101,7 @@ fun SettingRowPlaceholder(hasShape: Boolean = false, hasSecondary: Boolean = fal
             ) {}
         }
         Column(modifier = Modifier.weight(1f)) {
-            PlaceholderText(textStyle = MaterialTheme.typography.titleLarge, modifier = Modifier.fillMaxWidth())
+            PlaceholderText(textStyle = titleMediumLarge(), modifier = Modifier.fillMaxWidth())
             if (hasSecondary) {
                 PlaceholderText(
                     textStyle = MaterialTheme.typography.labelSmall,

@@ -35,14 +35,16 @@ class SettingsViewModel @Inject constructor(
             is Result.Error -> BackupUiState.Error
             is Result.Success -> {
                 if (backupStateResult is BackupInfoState.Success) {
-                    val (isEnabled, autoBackupFrequency, autoBackupTime) = backupPrefsResult.data
+                    val (isEnabled, autoBackupFrequency, autoBackupTime, autoBackupOnCellular) =
+                        backupPrefsResult.data
                     BackupUiState.Success(
                         isEnabled = isEnabled,
                         signedInGoogleAccountEmail = backupStateResult.signedInGoogleAccountEmail,
                         lastBackupTime = backupStateResult.lastBackupTime,
                         isBackupInProgress = backupStateResult.isBackupInProgress,
                         autoBackupFrequency = autoBackupFrequency,
-                        autoBackupTime = autoBackupTime
+                        autoBackupTime = autoBackupTime,
+                        autoBackupOnCellular = autoBackupOnCellular
                     )
                 } else {
                     BackupUiState.Loading
@@ -144,9 +146,13 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setAutoBackups(frequency: Int, time: LocalTime) {
+    fun setAutoBackups(frequency: Int, time: LocalTime, useCellular: Boolean) {
         viewModelScope.launch {
-            preferencesRepository.setAutomaticBackups(frequency = frequency, time = time)
+            preferencesRepository.setAutomaticBackups(
+                frequency = frequency,
+                time = time,
+                useCellular = useCellular
+            )
         }
     }
 }
@@ -170,7 +176,8 @@ sealed interface BackupUiState {
         val lastBackupTime: LocalDateTime?,
         val isBackupInProgress: Boolean,
         val autoBackupFrequency: Int,
-        val autoBackupTime: LocalTime
+        val autoBackupTime: LocalTime,
+        val autoBackupOnCellular: Boolean
     ) : BackupUiState
 }
 
