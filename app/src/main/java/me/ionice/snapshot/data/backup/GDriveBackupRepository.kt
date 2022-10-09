@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.ionice.snapshot.work.BackupStatusNotifyWorker
+import me.ionice.snapshot.work.BackupSyncWorker
 import me.ionice.snapshot.work.OneOffBackupSyncWorker
 import java.time.LocalDateTime
 
@@ -31,19 +31,19 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
     )
 
     init {
-        val callback = { type: String, isSuccess: Boolean ->
-            if (type != OneOffBackupSyncWorker.WORK_TYPE_BACKUP && type != OneOffBackupSyncWorker.WORK_TYPE_RESTORE) {
+        val callback = { isInProgress: Boolean, type: String, isSuccess: Boolean ->
+            if (type != BackupSyncWorker.WORK_TYPE_BACKUP && type != BackupSyncWorker.WORK_TYPE_RESTORE) {
                 throw IllegalArgumentException("type must be one of WORK_TYPE_BACKUP or WORK_TYPE_RESTORE")
             }
             backupStatus.update {
                 BackupRepository.BackupStatus(
-                    isInProgress = false,
-                    action = if (type == OneOffBackupSyncWorker.WORK_TYPE_BACKUP) ACTION_TYPE_BACKUP else ACTION_TYPE_RESTORE,
+                    isInProgress = isInProgress,
+                    action = if (type == BackupSyncWorker.WORK_TYPE_BACKUP) ACTION_TYPE_BACKUP else ACTION_TYPE_RESTORE,
                     isSuccess = isSuccess
                 )
             }
 
-            if (type == OneOffBackupSyncWorker.WORK_TYPE_RESTORE && isSuccess) {
+            if (type == BackupSyncWorker.WORK_TYPE_RESTORE && isSuccess) {
                 CoroutineScope(Dispatchers.Main).launch {
                     delay(3000)
                     restartApp()
@@ -77,9 +77,8 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
     }
 
     override fun startDatabaseBackup() {
-        backupStatus.update { it.copy(isInProgress = true, action = ACTION_TYPE_BACKUP) }
         if (isOnline()) {
-            enqueueBackupWork(actionType = OneOffBackupSyncWorker.WORK_TYPE_BACKUP)
+            enqueueBackupWork(actionType = BackupSyncWorker.WORK_TYPE_BACKUP)
         } else {
             backupStatus.update {
                 it.copy(
@@ -92,9 +91,8 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
     }
 
     override fun startDatabaseRestore() {
-        backupStatus.update { it.copy(isInProgress = true, action = ACTION_TYPE_RESTORE) }
         if (isOnline()) {
-            enqueueBackupWork(actionType = OneOffBackupSyncWorker.WORK_TYPE_RESTORE)
+            enqueueBackupWork(actionType = BackupSyncWorker.WORK_TYPE_RESTORE)
         } else {
             backupStatus.update {
                 it.copy(
@@ -119,20 +117,14 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
         val backupRequest =
             OneTimeWorkRequestBuilder<OneOffBackupSyncWorker>()
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .setInputData(workDataOf(OneOffBackupSyncWorker.WORK_TYPE to actionType))
-                .build()
-        val broadcastRequest =
-            OneTimeWorkRequestBuilder<BackupStatusNotifyWorker>()
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setInputData(workDataOf(BackupSyncWorker.WORK_TYPE to actionType))
                 .build()
         WorkManager.getInstance(appContext)
-            .beginUniqueWork(
+            .enqueueUniqueWork(
                 OneOffBackupSyncWorker.WORK_NAME,
                 ExistingWorkPolicy.KEEP,
                 backupRequest
             )
-            .then(broadcastRequest)
-            .enqueue()
     }
 
     private companion object {

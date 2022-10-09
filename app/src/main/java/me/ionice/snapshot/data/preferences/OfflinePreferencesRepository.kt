@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.ionice.snapshot.notifications.cancelAlarm
 import me.ionice.snapshot.notifications.setAlarm
+import me.ionice.snapshot.work.BackupSyncWorker
 import me.ionice.snapshot.work.PeriodicBackupSyncWorker
 import java.io.IOException
 import java.time.LocalTime
@@ -72,7 +73,11 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
         }
     }
 
-    override suspend fun setAutomaticBackups(frequency: Int, time: LocalTime, useCellular: Boolean) {
+    override suspend fun setAutomaticBackups(
+        frequency: Int,
+        time: LocalTime,
+        useCellular: Boolean
+    ) {
         val currPrefs = dataStore.data.first().toPreferences()
         if (!PreferencesRepository.BackupPrefs.ALLOWED_FREQS.contains(frequency)) {
             throw IllegalArgumentException("Illegal backup frequency value.")
@@ -124,18 +129,21 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
         val isEnabled = preferences[Keys.BACKUP_ENABLED] ?: defaults.isEnabled
         val frequency = preferences[Keys.BACKUP_FREQUENCY] ?: defaults.autoBackupFrequency
         val time =
-            preferences[Keys.BACKUP_TIME]?.let { LocalTime.ofSecondOfDay(it) } ?: defaults.autoBackupTime
+            preferences[Keys.BACKUP_TIME]?.let { LocalTime.ofSecondOfDay(it) }
+                ?: defaults.autoBackupTime
         val useCellular = preferences[Keys.BACKUP_ON_CELLULAR] ?: defaults.autoBackupOnCellular
         return PreferencesRepository.BackupPrefs(isEnabled, frequency, time, useCellular)
     }
 
     private fun mapNotificationsPreferences(preferences: Preferences): PreferencesRepository.NotifsPrefs {
         val defaults = PreferencesRepository.NotifsPrefs.DEFAULT
-        val isRemindersEnabled = preferences[Keys.NOTIFS_REMINDERS_ENABLED] ?: defaults.isRemindersEnabled
+        val isRemindersEnabled =
+            preferences[Keys.NOTIFS_REMINDERS_ENABLED] ?: defaults.isRemindersEnabled
         val reminderTime = preferences[Keys.NOTIFS_REMINDERS_TIME]?.let {
             LocalTime.ofSecondOfDay(it)
         } ?: defaults.reminderTime
-        val isMemoriesEnabled = preferences[Keys.NOTIFS_MEMORIES_ENABLED] ?: defaults.isMemoriesEnabled
+        val isMemoriesEnabled =
+            preferences[Keys.NOTIFS_MEMORIES_ENABLED] ?: defaults.isMemoriesEnabled
         return PreferencesRepository.NotifsPrefs(
             isRemindersEnabled, reminderTime, isMemoriesEnabled
         )
@@ -143,19 +151,25 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
 
     private fun setRecurringBackups(frequency: Int, time: LocalTime, constraints: Constraints) {
         if (frequency > 0) {
-            val targetBackupTime = time.toSecondOfDay()
-            val currTime = LocalTime.now().toSecondOfDay()
+            val timeSinceMidnight = time.toSecondOfDay() * 1000
 
-            val initialDelay =
-                if (currTime > targetBackupTime) (24 * 60 * 60 - (currTime - targetBackupTime)) else (targetBackupTime - currTime)
-            val request = PeriodicWorkRequestBuilder<PeriodicBackupSyncWorker>(
-                frequency.toLong(), TimeUnit.DAYS
-            ).setInitialDelay(
-                initialDelay.toLong(), TimeUnit.SECONDS
-            ).setConstraints(constraints)
+            val request = OneTimeWorkRequestBuilder<PeriodicBackupSyncWorker>()
+                .setInitialDelay(
+                    PeriodicBackupSyncWorker.getInitialDelay(time),
+                    TimeUnit.MILLISECONDS
+                )
+                .setConstraints(constraints)
+                .setInputData(
+                    workDataOf(
+                        BackupSyncWorker.WORK_TYPE to BackupSyncWorker.WORK_TYPE_BACKUP,
+                        BackupSyncWorker.WORK_TIME_MS_PAST_MIDNIGHT to timeSinceMidnight
+                    )
+                )
                 .build() // default retry is set to exponential with initial value of 10s, which is good
-            WorkManager.getInstance(appContext).enqueueUniquePeriodicWork(
-                PeriodicBackupSyncWorker.WORK_NAME, ExistingPeriodicWorkPolicy.REPLACE, request
+            WorkManager.getInstance(appContext).enqueueUniqueWork(
+                PeriodicBackupSyncWorker.WORK_NAME,
+                ExistingWorkPolicy.REPLACE,
+                request
             )
         } else {
             WorkManager.getInstance(appContext).cancelUniqueWork(PeriodicBackupSyncWorker.WORK_NAME)
