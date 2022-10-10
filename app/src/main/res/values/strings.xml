@@ -62,8 +62,8 @@
     <string name="settings_screen_backup_main_switch">Use cloud backups</string>
 
     <string name="settings_screen_backup_general_subsection_header">General</string>
-    <string name="settings_screen_backup_manual_actions_subsection_header">Manual Actions</string>
-    <string name="settings_screen_backup_auto_backup_subsection_header">Automatic Backups</string>
+    <string name="settings_screen_backup_manual_actions_subsection_header">Manual actions</string>
+    <string name="settings_screen_backup_auto_backup_subsection_header">Automatic backups</string>
 
     <string name="settings_screen_backup_drive_settings">Google Drive Settings</string>
     <string name="settings_screen_sync_in_progress">Database sync in progress</string>
@@ -75,10 +75,10 @@
     <string name="settings_screen_backup_last_backup">Last backup</string>
     <string name="settings_screen_backup_last_backup_never">Never</string>
 
-    <string name="settings_screen_backup_start_backup">Backup to Google Drive</string>
+    <string name="settings_screen_backup_start_backup">Back up to Google Drive</string>
     <string name="settings_screen_backup_start_restore">Restore from Google Drive</string>
     <string name="settings_screen_backup_dialog_header">Confirm backup</string>
-    <string name="settings_screen_backup_dialog_content">Confirm that you want to backup data to Google Drive.</string>
+    <string name="settings_screen_backup_dialog_content">Confirm that you want to back up data to Google Drive.</string>
     <string name="settings_screen_restore_dialog_header">Confirm restore</string>
     <string name="settings_screen_restore_dialog_content">Confirm that you want to restore data from Google Drive.</string>
 
@@ -87,7 +87,8 @@
     <string name="settings_auto_backup_freq_weekly">Weekly</string>
     <string name="settings_auto_backup_freq_monthly">Monthly</string>
 
-    <string name="settings_auto_backup_use_cellular">Back up using cellular</string>
+    <string name="settings_auto_backup_use_metered">Back up using metered data</string>
+    <string name="settings_auto_backup_use_metered_secondary">Charges may apply</string>
 
     <string name="settings_screen_theming_header">Theming</string>
     <string name="settings_screen_theming_subtitle"><![CDATA[Dynamic & custom themes]]></string>

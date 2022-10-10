@@ -34,13 +34,13 @@ fun SettingRow(
     mainLabel: String,
     secondaryLabel: String? = null,
     icon: ImageVector? = null,
-    disabled: Boolean = false,
+    enabled: Boolean = true,
     onClick: (() -> Unit)? = null
 ) {
 
     // if a onClick is provided, enable button functionality
     val baseModifier =
-        onClick?.let { Modifier.clickable(enabled = !disabled, onClick = onClick) } ?: Modifier
+        onClick?.let { Modifier.clickable(enabled = enabled, onClick = onClick) } ?: Modifier
 
     Row(
         modifier = baseModifier
@@ -58,7 +58,7 @@ fun SettingRow(
             }
             Column(modifier = Modifier.weight(1f)) {
                 val textColor =
-                    if (onClick == null || disabled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
+                    if (onClick != null && !enabled) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.onSurface
                 Text(
                     text = mainLabel,
                     style = titleMediumLarge(),
@@ -67,8 +67,8 @@ fun SettingRow(
                 if (secondaryLabel != null) {
                     Text(
                         text = secondaryLabel,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style = MaterialTheme.typography.labelMedium,
+                        color = if (onClick != null && !enabled) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -77,7 +77,11 @@ fun SettingRow(
 }
 
 @Composable
-fun SettingRowPlaceholder(hasShape: Boolean = false, hasSecondary: Boolean = false) {
+fun SettingRowPlaceholder(
+    mainLabel: String? = null,
+    hasShape: Boolean = false,
+    hasSecondary: Boolean = false
+) {
     val tt = stringResource(R.string.tt_settings_row_placeholder)
     Row(
         modifier = Modifier
@@ -101,10 +105,18 @@ fun SettingRowPlaceholder(hasShape: Boolean = false, hasSecondary: Boolean = fal
             ) {}
         }
         Column(modifier = Modifier.weight(1f)) {
-            PlaceholderText(textStyle = titleMediumLarge(), modifier = Modifier.fillMaxWidth())
+            if (mainLabel != null) {
+                Text(
+                    text = mainLabel,
+                    style = titleMediumLarge(),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            } else {
+                PlaceholderText(textStyle = titleMediumLarge(), modifier = Modifier.fillMaxWidth())
+            }
             if (hasSecondary) {
                 PlaceholderText(
-                    textStyle = MaterialTheme.typography.labelSmall,
+                    textStyle = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.width(100.dp)
                 )
             }

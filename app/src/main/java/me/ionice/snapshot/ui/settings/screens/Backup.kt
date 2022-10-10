@@ -84,17 +84,35 @@ fun LoadingScreen() {
     Column {
         FilledSettingSwitchPlaceholder()
         PageSection(title = stringResource(R.string.settings_screen_backup_general_subsection_header)) {
-            SettingRowPlaceholder(hasSecondary = true)
-            SettingRowPlaceholder(hasSecondary = true)
+            SettingRowPlaceholder(
+                mainLabel = stringResource(R.string.settings_screen_backup_selected_account),
+                hasSecondary = true
+            )
+            SettingRowPlaceholder(
+                mainLabel = stringResource(R.string.settings_screen_backup_last_backup),
+                hasSecondary = true
+            )
         }
         PageSection(title = stringResource(R.string.settings_screen_backup_auto_backup_subsection_header)) {
-            SettingRowPlaceholder(hasSecondary = true)
-            SettingRowPlaceholder(hasSecondary = true)
-            SettingRowPlaceholder()
+            SettingRowPlaceholder(
+                mainLabel = stringResource(R.string.settings_auto_backup_frequency),
+                hasSecondary = true
+            )
+            SettingRowPlaceholder(
+                mainLabel = stringResource(R.string.settings_auto_backup_time),
+                hasSecondary = true
+            )
+            SettingSwitch(
+                mainLabel = stringResource(R.string.settings_auto_backup_use_metered),
+                secondaryLabel = stringResource(R.string.settings_auto_backup_use_metered_secondary),
+                enabled = false,
+                checked = false,
+                onCheckedChange = {}
+            )
         }
         PageSection(title = stringResource(R.string.settings_screen_backup_manual_actions_subsection_header)) {
-            SettingRowPlaceholder()
-            SettingRowPlaceholder()
+            SettingRowPlaceholder(mainLabel = stringResource(R.string.settings_screen_backup_start_backup))
+            SettingRowPlaceholder(mainLabel = stringResource(R.string.settings_screen_backup_start_restore))
         }
     }
 }
@@ -248,10 +266,11 @@ private fun AutoBackupOptions(
             mainLabel = stringResource(R.string.settings_auto_backup_time),
             secondaryLabel = backupTime.format(Utils.timeFormatter),
             onClick = { showTimePickerDialog = true },
-            disabled = backupFreq <= 0
+            enabled = backupFreq > 0
         )
         SettingSwitch(
-            mainLabel = stringResource(R.string.settings_auto_backup_use_cellular),
+            mainLabel = stringResource(R.string.settings_auto_backup_use_metered),
+            secondaryLabel = stringResource(R.string.settings_auto_backup_use_metered_secondary),
             checked = backupOnCellular,
             onCheckedChange = onBackupOnCellularChange
         )
@@ -412,7 +431,7 @@ private fun SignInButton(onSuccessfulLogin: (GoogleSignInAccount) -> Unit) {
     SettingRow(
         mainLabel = stringResource(R.string.settings_screen_backup_login),
         secondaryLabel = helperText,
-        disabled = !enabled,
+        enabled = enabled,
         onClick = {
             enabled = false
             authResultLauncher.launch(signInRequestCode)

@@ -18,7 +18,8 @@ fun SettingSwitch(
     mainLabel: String,
     secondaryLabel: String? = null,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true
 ) {
     Row(
         modifier = Modifier
@@ -33,15 +34,19 @@ fun SettingSwitch(
         ) {
             Text(text = mainLabel, style = titleMediumLarge())
             if (secondaryLabel != null) {
-                Text(text = secondaryLabel, style = MaterialTheme.typography.labelMedium)
+                Text(
+                    text = secondaryLabel,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(checked = checked, onCheckedChange = onCheckedChange, enabled = enabled)
     }
 }
 
 @Composable
-fun SettingSwitchPlaceholder(hasSecondary: Boolean = false) {
+fun SettingSwitchPlaceholder(mainLabel: String? = null, hasSecondary: Boolean = false) {
     Row(
         modifier = Modifier.padding(horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -51,7 +56,11 @@ fun SettingSwitchPlaceholder(hasSecondary: Boolean = false) {
                 .weight(1f)
                 .padding(top = 16.dp, bottom = 16.dp, end = 16.dp)
         ) {
-            PlaceholderText(titleMediumLarge(), Modifier.fillMaxWidth())
+            if (mainLabel != null) {
+                Text(text = mainLabel, style = titleMediumLarge())
+            } else {
+                PlaceholderText(titleMediumLarge(), Modifier.fillMaxWidth())
+            }
             if (hasSecondary) {
                 PlaceholderText(MaterialTheme.typography.labelMedium, Modifier.width(100.dp))
             }
