@@ -56,8 +56,6 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
         )
     }
 
-    override fun getBackupStatus(): BackupRepository.BackupStatus = backupStatus.value
-
     override fun getBackupStatusFlow(): Flow<BackupRepository.BackupStatus> = backupStatus
 
     override fun isOnline(): Boolean {

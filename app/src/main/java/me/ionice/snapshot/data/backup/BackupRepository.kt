@@ -17,7 +17,5 @@ interface BackupRepository {
 
     fun getBackupStatusFlow(): Flow<BackupStatus>
 
-    fun getBackupStatus(): BackupStatus
-
     data class BackupStatus(val isInProgress: Boolean, val action: String?, val isSuccess: Boolean)
 }
