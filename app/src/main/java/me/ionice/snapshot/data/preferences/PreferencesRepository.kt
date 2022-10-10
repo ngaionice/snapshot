@@ -15,14 +15,11 @@ interface PreferencesRepository {
      * Allowed frequencies must be one of the values in [PreferencesRepository.BackupPrefs.ALLOWED_FREQS].
      * 0 represents never, and all other values represent the number of days between automatic backups.
      */
-    suspend fun setAutomaticBackups(frequency: Int, time: LocalTime, useCellular: Boolean)
+    suspend fun setAutomaticBackups(frequency: Int, time: LocalTime, useMeteredData: Boolean)
 
-    /**
-     * If set to true, queues up daily reminders.
-     */
-    suspend fun setDailyReminderEnabled(enabled: Boolean)
+    suspend fun setNotifsEnabled(enabled: Boolean)
 
-    suspend fun setDailyReminderTime(time: LocalTime)
+    suspend fun setDailyReminders(enabled: Boolean, time: LocalTime)
 
     suspend fun setMemoriesEnabled(enabled: Boolean)
 
@@ -49,12 +46,17 @@ interface PreferencesRepository {
      * - `isMemoriesEnabled`: is memories enabled
      */
     data class NotifsPrefs(
+        val areNotifsEnabled: Boolean,
         val isRemindersEnabled: Boolean,
         val reminderTime: LocalTime,
         val isMemoriesEnabled: Boolean
     ) {
         companion object {
-            val DEFAULT = NotifsPrefs(false, LocalTime.of(22, 0), false)
+            val DEFAULT = NotifsPrefs(areNotifsEnabled = false,
+                isRemindersEnabled = false,
+                reminderTime = LocalTime.of(22, 0),
+                isMemoriesEnabled = false
+            )
         }
     }
 }

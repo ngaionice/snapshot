@@ -55,9 +55,11 @@ class SettingsViewModel @Inject constructor(
             is Result.Loading -> NotifsUiState.Loading
             is Result.Error -> NotifsUiState.Error
             is Result.Success -> {
-                val (isRemindersEnabled, reminderTime) = notifsPrefsResult.data
+                val (areNotifsEnabled, isRemindersEnabled, reminderTime) = notifsPrefsResult.data
                 NotifsUiState.Success(
-                    isRemindersEnabled = isRemindersEnabled, reminderTime = reminderTime
+                    areNotifsEnabled = areNotifsEnabled,
+                    isRemindersEnabled = isRemindersEnabled,
+                    reminderTime = reminderTime
                 )
             }
         }
@@ -112,12 +114,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setBackupEnabled(enable: Boolean) {
-        viewModelScope.launch {
-            preferencesRepository.setBackupEnabled(enable)
-        }
-    }
-
     fun loggedInToGoogle(account: GoogleSignInAccount) {
         viewModelScope.launch {
             backupState.update {
@@ -132,6 +128,22 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setBackupEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.setBackupEnabled(enabled)
+        }
+    }
+
+    fun setAutoBackups(frequency: Int, time: LocalTime, useMeteredData: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.setAutomaticBackups(
+                frequency = frequency,
+                time = time,
+                useMeteredData = useMeteredData
+            )
+        }
+    }
+
     fun backupDatabase() {
         backupRepository.startDatabaseBackup()
     }
@@ -140,19 +152,15 @@ class SettingsViewModel @Inject constructor(
         backupRepository.startDatabaseRestore()
     }
 
-    fun setRemindersEnabled(enable: Boolean) {
+    fun setNotifsEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            preferencesRepository.setDailyReminderEnabled(enable)
+            preferencesRepository.setNotifsEnabled(enabled)
         }
     }
 
-    fun setAutoBackups(frequency: Int, time: LocalTime, useCellular: Boolean) {
+    fun setDailyReminders(enabled: Boolean, time: LocalTime) {
         viewModelScope.launch {
-            preferencesRepository.setAutomaticBackups(
-                frequency = frequency,
-                time = time,
-                useCellular = useCellular
-            )
+            preferencesRepository.setDailyReminders(enabled = enabled, time = time)
         }
     }
 }
@@ -185,7 +193,9 @@ sealed interface NotifsUiState {
     object Loading : NotifsUiState
     object Error : NotifsUiState
     data class Success(
-        val isRemindersEnabled: Boolean, val reminderTime: LocalTime
+        val areNotifsEnabled: Boolean = true,
+        val isRemindersEnabled: Boolean,
+        val reminderTime: LocalTime
     ) : NotifsUiState
 }
 
