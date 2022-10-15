@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import me.ionice.snapshot.data.backup.BackupModule
 import me.ionice.snapshot.data.database.SnapshotDatabase
 import me.ionice.snapshot.data.database.dao.DayDao
 import me.ionice.snapshot.data.database.dao.LocationDao
@@ -17,9 +18,11 @@ import me.ionice.snapshot.data.backup.BackupRepository
 import me.ionice.snapshot.data.preferences.PreferencesRepository
 import me.ionice.snapshot.di.DatabaseModule
 import me.ionice.snapshot.di.RepositoryModule
-import me.ionice.snapshot.testtools.repository.FakeDayRepository
-import me.ionice.snapshot.testtools.repository.FakeLocationRepository
-import me.ionice.snapshot.testtools.repository.FakeTagRepository
+import me.ionice.snapshot.di.ServiceProviderModule
+import me.ionice.snapshot.testtools.data.backup.FakeBackupModule
+import me.ionice.snapshot.testtools.data.database.repository.FakeDayRepository
+import me.ionice.snapshot.testtools.data.database.repository.FakeLocationRepository
+import me.ionice.snapshot.testtools.data.database.repository.FakeTagRepository
 import javax.inject.Singleton
 
 @Module
@@ -77,4 +80,18 @@ object RepositoryMockModule {
     @Provides
     @Singleton
     fun providePreferencesRepository(): PreferencesRepository = TODO()
+}
+
+@Module
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [ServiceProviderModule::class]
+)
+object ServiceProviderMockModule {
+
+    @Provides
+    @Singleton
+    fun provideBackupModule(
+        @ApplicationContext context: Context
+    ): BackupModule = FakeBackupModule
 }

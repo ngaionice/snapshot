@@ -1,4 +1,4 @@
-package me.ionice.snapshot.testtools.repository
+package me.ionice.snapshot.testtools.data.database.repository
 
 import kotlinx.coroutines.flow.*
 import me.ionice.snapshot.data.database.model.Tag

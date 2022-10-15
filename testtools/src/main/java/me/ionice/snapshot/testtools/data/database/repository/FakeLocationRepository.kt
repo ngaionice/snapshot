@@ -1,4 +1,4 @@
-package me.ionice.snapshot.testtools.repository
+package me.ionice.snapshot.testtools.data.database.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

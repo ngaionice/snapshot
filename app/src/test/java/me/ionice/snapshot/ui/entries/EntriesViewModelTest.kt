@@ -9,10 +9,10 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import me.ionice.snapshot.testtools.MainCoroutineRule
 import me.ionice.snapshot.data.database.model.*
-import me.ionice.snapshot.testtools.repository.FRD
-import me.ionice.snapshot.testtools.repository.FakeDayRepository
-import me.ionice.snapshot.testtools.repository.FakeLocationRepository
-import me.ionice.snapshot.testtools.repository.FakeTagRepository
+import me.ionice.snapshot.testtools.data.database.repository.FRD
+import me.ionice.snapshot.testtools.data.database.repository.FakeDayRepository
+import me.ionice.snapshot.testtools.data.database.repository.FakeLocationRepository
+import me.ionice.snapshot.testtools.data.database.repository.FakeTagRepository
 import me.ionice.snapshot.ui.common.DayUiState
 import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.LocationsUiState
@@ -43,33 +43,33 @@ class EntriesViewModelTest {
     }
 
     @Test
-    fun uiStateDay_whenInitialized_showsLoading() = runTest {
+    fun uiStateDay_whenInitialized_thenShowLoading() = runTest {
         assertThat(viewModel.singleUiState.value.dayUiState).isInstanceOf(DayUiState.Loading::class.java)
     }
 
     @Test
-    fun uiStateWeek_whenInitialized_showsLoading() = runTest {
+    fun uiStateWeek_whenInitialized_thenShowLoading() = runTest {
         assertThat(viewModel.listUiState.value.weekUiState).isInstanceOf(DaysUiState.Loading::class.java)
     }
 
     @Test
-    fun uiStateYear_whenInitialized_showsLoading() = runTest {
+    fun uiStateYear_whenInitialized_thenShowLoading() = runTest {
         assertThat(viewModel.listUiState.value.yearUiState).isInstanceOf(DaysUiState.Loading::class.java)
     }
 
     @Test
-    fun uiStateLocations_whenInitialized_showsLoading() = runTest {
+    fun uiStateLocations_whenInitialized_thenShowLoading() = runTest {
         assertThat(viewModel.singleUiState.value.locationsUiState).isInstanceOf(LocationsUiState.Loading::class.java)
     }
 
     @Test
-    fun uiStateTags_whenInitialized_showsLoading() = runTest {
+    fun uiStateTags_whenInitialized_thenShowLoading() = runTest {
         assertThat(viewModel.singleUiState.value.tagsUiState).isInstanceOf(TagsUiState.Loading::class.java)
     }
 
     @Test
-    fun uiStateYear_whenChangeListYear_updatesUiStateWithNewYearAndNewEntries() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.listUiState.collect {} }
+    fun uiStateYear_whenChangingListYear_thenShowNewYearAndNewEntries() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.listUiState.collect { } }
 
         val newYear = 2021
         val yearEntries = dayRepository.getListFlowByYear(newYear).first()
@@ -127,7 +127,7 @@ class EntriesViewModelTest {
         }
 
     @Test
-    fun uiStateLocation_whenLocationSuccess_locationUiStateSuccess() = runTest {
+    fun uiStateLocation_whenLocationSuccess_thenShowSuccess() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.singleUiState.collect {} }
 
         val data = Location(
@@ -150,7 +150,7 @@ class EntriesViewModelTest {
     }
 
     @Test
-    fun uiStateTags_whenTagsSuccess_tagsUiStateSuccess() = runTest {
+    fun uiStateTags_whenTagsSuccess_thenShowSuccess() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.singleUiState.collect {} }
 
         val data = Tag(

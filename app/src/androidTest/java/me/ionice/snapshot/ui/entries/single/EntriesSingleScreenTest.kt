@@ -12,7 +12,7 @@ import me.ionice.snapshot.data.database.model.Day
 import me.ionice.snapshot.data.database.model.LocationEntry
 import me.ionice.snapshot.data.database.model.TagEntry
 import me.ionice.snapshot.data.database.model.TagProperties
-import me.ionice.snapshot.testtools.repository.FRD
+import me.ionice.snapshot.testtools.data.database.repository.FRD
 import me.ionice.snapshot.ui.common.DayUiState
 import me.ionice.snapshot.ui.common.LocationsUiState
 import me.ionice.snapshot.ui.common.TagsUiState
