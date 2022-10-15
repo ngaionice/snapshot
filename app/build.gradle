@@ -142,6 +142,7 @@ dependencies {
     androidTestImplementation 'androidx.arch.core:core-testing:2.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    androidTestImplementation "androidx.work:work-testing:$workmanager_version"
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     androidTestImplementation "com.google.truth:truth:$truth_version"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
