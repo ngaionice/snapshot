@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,8 +56,9 @@ fun BackupRoute(viewModel: SettingsViewModel = hiltViewModel(), onBack: () -> Un
     }
 }
 
+@VisibleForTesting
 @Composable
-private fun BackupScreen(
+fun BackupScreen(
     uiStateProvider: () -> BackupUiState,
     onEnableBackup: (Boolean) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit,
@@ -69,7 +71,7 @@ private fun BackupScreen(
         is BackupUiState.Error ->
             FunctionalityNotAvailableScreen(message = "Cannot access backups due to an error.")
         is BackupUiState.Success ->
-            CanBackupScreen(
+            BackupOptions(
                 uiState = uiState,
                 onEnableBackup = onEnableBackup,
                 onStartBackup = onStartBackup,
@@ -83,7 +85,7 @@ private fun BackupScreen(
 @VisibleForTesting
 @Composable
 fun LoadingScreen() {
-    Column {
+    Column(modifier = Modifier.testTag(stringResource(R.string.tt_settings_backup_loading))) {
         FilledSettingSwitchPlaceholder()
         PageSection(title = stringResource(R.string.settings_screen_backup_general_subsection_header)) {
             SettingRowPlaceholder(
@@ -121,7 +123,7 @@ fun LoadingScreen() {
 
 
 @Composable
-private fun CanBackupScreen(
+private fun BackupOptions(
     uiState: BackupUiState.Success,
     onEnableBackup: (Boolean) -> Unit,
     onStartBackup: () -> Unit,
@@ -136,7 +138,7 @@ private fun CanBackupScreen(
             exit = fadeOut()
         ) {
             if (uiState.signedInGoogleAccountEmail != null) {
-                BackupFunctionalities(
+                BackupFunctions(
                     isBackupInProgress = uiState.isBackupInProgress,
                     email = uiState.signedInGoogleAccountEmail,
                     lastBackupTime = uiState.lastBackupTime,
@@ -175,7 +177,7 @@ private fun CanBackupScreen(
 }
 
 @Composable
-private fun BackupFunctionalities(
+private fun BackupFunctions(
     isBackupInProgress: Boolean,
     email: String,
     lastBackupTime: LocalDateTime?,
@@ -190,10 +192,14 @@ private fun BackupFunctionalities(
 ) {
     val scrollState = rememberScrollState()
 
-    Column(modifier = Modifier.verticalScroll(scrollState)) {
-        BackupInfo(email = email, lastBackupTime = lastBackupTime)
+    Column(
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .testTag(stringResource(R.string.tt_settings_backup_functions))
+    ) {
+        AccountInfo(email = email, lastBackupTime = lastBackupTime)
         if (isBackupInProgress) {
-            BackupInProgress()
+            InProgressIndicator()
         } else {
             AutoBackupOptions(
                 onBackupFreqChange = onBackupFreqChange,
@@ -203,7 +209,7 @@ private fun BackupFunctionalities(
                 backupTime = backupTime,
                 backupOnCellular = backupOnCellular
             )
-            BackupActions(onStartBackup = onStartBackup, onStartRestore = onStartRestore)
+            ManualActions(onStartBackup = onStartBackup, onStartRestore = onStartRestore)
         }
     }
 }
@@ -213,23 +219,9 @@ private fun BackupEnabledToggle(isEnabled: Boolean, onIsEnabledChange: (Boolean)
     FilledSettingSwitch(
         mainLabel = stringResource(R.string.settings_screen_backup_main_switch),
         checked = isEnabled,
-        onCheckedChange = { onIsEnabledChange(!isEnabled) }
+        onCheckedChange = { onIsEnabledChange(!isEnabled) },
+        testTag = stringResource(R.string.tt_settings_backup_main_toggle)
     )
-}
-
-@Composable
-private fun BackupInfo(email: String, lastBackupTime: LocalDateTime?) {
-    PageSection(title = stringResource(R.string.settings_screen_backup_general_subsection_header)) {
-        SettingRow(
-            mainLabel = stringResource(R.string.settings_screen_backup_selected_account),
-            secondaryLabel = email
-        )
-        SettingRow(
-            mainLabel = stringResource(R.string.settings_screen_backup_last_backup),
-            secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter)
-                ?: stringResource(R.string.settings_screen_backup_last_backup_never)
-        )
-    }
 }
 
 @Composable
@@ -274,12 +266,14 @@ private fun AutoBackupOptions(
             mainLabel = stringResource(R.string.settings_auto_backup_use_metered),
             secondaryLabel = stringResource(R.string.settings_auto_backup_use_metered_secondary),
             checked = backupOnCellular,
-            onCheckedChange = onBackupOnCellularChange
+            onCheckedChange = onBackupOnCellularChange,
+            enabled = backupFreq > 0,
+            testTag = stringResource(R.string.tt_settings_backup_metered_toggle)
         )
     }
 
     if (showFreqPickerDialog) {
-        BackupFreqPickerDialog(
+        FrequencyPickerDialog(
             selected = freqOptions.find { (f, _) -> f == backupFreq }
                 ?: throw IllegalArgumentException(
                     "Illegal backupFreq value"
@@ -307,7 +301,7 @@ private fun AutoBackupOptions(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun BackupFreqPickerDialog(
+private fun FrequencyPickerDialog(
     selected: Pair<Int, String>,
     options: List<Pair<Int, String>>,
     onSelection: (Pair<Int, String>) -> Unit,
@@ -323,7 +317,7 @@ private fun BackupFreqPickerDialog(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }) {
                 TextField(
-                    modifier = Modifier.menuAnchor(),
+                    modifier = Modifier.menuAnchor().testTag(stringResource(R.string.tt_settings_backup_freq_selector)),
                     readOnly = true,
                     value = current.second,
                     onValueChange = {},
@@ -353,7 +347,7 @@ private fun BackupFreqPickerDialog(
 }
 
 @Composable
-private fun BackupActions(onStartBackup: () -> Unit, onStartRestore: () -> Unit) {
+private fun ManualActions(onStartBackup: () -> Unit, onStartRestore: () -> Unit) {
     var showBackupDialog by rememberSaveable { mutableStateOf(false) }
     var showRestoreDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -388,7 +382,7 @@ private fun BackupActions(onStartBackup: () -> Unit, onStartRestore: () -> Unit)
 }
 
 @Composable
-private fun BackupInProgress() {
+private fun InProgressIndicator() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -398,6 +392,21 @@ private fun BackupInProgress() {
     ) {
         CircularProgressIndicator()
         Text(stringResource(R.string.settings_screen_sync_in_progress))
+    }
+}
+
+@Composable
+private fun AccountInfo(email: String, lastBackupTime: LocalDateTime?) {
+    PageSection(title = stringResource(R.string.settings_screen_backup_general_subsection_header)) {
+        SettingRow(
+            mainLabel = stringResource(R.string.settings_screen_backup_selected_account),
+            secondaryLabel = email
+        )
+        SettingRow(
+            mainLabel = stringResource(R.string.settings_screen_backup_last_backup),
+            secondaryLabel = lastBackupTime?.format(Utils.dateTimeFormatter)
+                ?: stringResource(R.string.settings_screen_backup_last_backup_never)
+        )
     }
 }
 

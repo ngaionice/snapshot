@@ -143,5 +143,10 @@
     <string name="tt_settings_notifs_reminders_toggle">SettingsNotifsRemindersToggle</string>
     <string name="tt_settings_notifs_reminders_time_btn">SettingsNotifsRemindersTime</string>
     <string name="tt_settings_time_picker_confirm">TimePickerDialogConfirm</string>
+    <string name="tt_settings_backup_loading">SettingsBackupLoadingScreen</string>
+    <string name="tt_settings_backup_main_toggle">SettingsBackupMainToggle</string>
+    <string name="tt_settings_backup_functions">SettingsBackupFunctionalities</string>
+    <string name="tt_settings_backup_metered_toggle">SettingsBackupMeteredToggle</string>
+    <string name="tt_settings_backup_freq_selector">SettingsBackupFreqSelector</string>
 
 </resources>
