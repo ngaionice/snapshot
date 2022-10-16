@@ -115,8 +115,10 @@
     <string name="snackbar_restore_failure">Restore failed</string>
 
     <!--  content descriptions for testing  -->
-    <string name="tt_common_datepicker">DatePicker</string>
+    <string name="tt_common_date_picker">DatePicker</string>
     <string name="tt_common_loading_screen">LoadingScreen</string>
+    <string name="tt_common_time_picker_digit_hr">TimePickerHourDigit</string>
+    <string name="tt_common_time_picker_digit_min">TimePickerMinuteDigit</string>
 
     <string name="tt_entries_week_item">WeekSectionItem</string>
     <string name="tt_entries_week_item_placeholder">WeekSectionItemPlaceholder</string>
@@ -135,6 +137,11 @@
     <string name="tt_entries_single_tags_display">EntryTagDisplay</string>
     <string name="tt_entries_single_tag_selector">EntryTagSelector</string>
     <string name="tt_entries_single_tag_creator">EntryTagCreator</string>
+
     <string name="tt_settings_row_placeholder">SettingsRowPlaceholder</string>
+    <string name="tt_settings_notifs_main_toggle">SettingsNotifsMainToggle</string>
+    <string name="tt_settings_notifs_reminders_toggle">SettingsNotifsRemindersToggle</string>
+    <string name="tt_settings_notifs_reminders_time_btn">SettingsNotifsRemindersTime</string>
+    <string name="tt_settings_time_picker_confirm">TimePickerDialogConfirm</string>
 
 </resources>

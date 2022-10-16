@@ -12,9 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
@@ -53,11 +52,9 @@ fun DatePicker(
             }
         }
     }
-    val tt = stringResource(R.string.tt_common_datepicker)
-
     Column {
         OutlinedTextField(
-            modifier = Modifier.semantics { testTag = tt },
+            modifier = Modifier.testTag(stringResource(R.string.tt_common_date_picker)),
             value = dateString,
             onValueChange = onValueChange,
             label = { Text("Date") },

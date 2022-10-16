@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.ionice.snapshot.ui.common.components.PlaceholderText
@@ -19,7 +20,8 @@ fun SettingSwitch(
     secondaryLabel: String? = null,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    testTag: String? = null
 ) {
     Row(
         modifier = Modifier
@@ -41,7 +43,13 @@ fun SettingSwitch(
                 )
             }
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange, enabled = enabled)
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            enabled = enabled,
+            modifier = Modifier.let {
+                if (!testTag.isNullOrEmpty()) it.testTag(testTag) else it
+            })
     }
 }
 

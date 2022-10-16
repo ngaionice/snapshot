@@ -8,7 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import me.ionice.snapshot.R
 import me.ionice.snapshot.ui.common.components.TimePicker
 import java.time.LocalTime
 
@@ -34,7 +38,10 @@ fun TimePickerDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { onSelection(selectedTime) }) {
+            TextButton(
+                onClick = { onSelection(selectedTime) },
+                modifier = Modifier.testTag(stringResource(R.string.tt_settings_time_picker_confirm))
+            ) {
                 Text("OK")
             }
         },

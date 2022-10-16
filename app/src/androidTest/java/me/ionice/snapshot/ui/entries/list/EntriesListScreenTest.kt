@@ -55,7 +55,7 @@ class EntriesListScreenTest {
             yearHeaderPrev = getString(R.string.tt_entries_year_header_prev)
             yearHeaderNext = getString(R.string.tt_entries_year_header_next)
             addButton = getString(R.string.entries_add_entry)
-            dialogTextField = getString(R.string.tt_common_datepicker)
+            dialogTextField = getString(R.string.tt_common_date_picker)
             dialogConfirm = getString(R.string.tt_entries_dialog_confirm)
             dialogError = getString(R.string.common_datepicker_error_range)
         }

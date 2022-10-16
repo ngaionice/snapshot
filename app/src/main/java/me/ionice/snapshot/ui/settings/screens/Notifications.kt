@@ -1,6 +1,7 @@
 package me.ionice.snapshot.ui.settings.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -42,8 +43,9 @@ fun NotificationsRoute(viewModel: SettingsViewModel = hiltViewModel(), onBack: (
     }
 }
 
+@VisibleForTesting
 @Composable
-private fun NotificationsScreen(
+fun NotificationsScreen(
     uiStateProvider: () -> NotifsUiState,
     onNotifsEnabledChange: (Boolean) -> Unit,
     onRemindersChange: (Boolean, LocalTime) -> Unit
@@ -62,7 +64,7 @@ private fun NotificationsScreen(
 }
 
 @Composable
-fun SuccessScreen(
+private fun SuccessScreen(
     uiState: NotifsUiState.Success,
     onNotifsEnabledChange: (Boolean) -> Unit,
     onRemindersChange: (Boolean, LocalTime) -> Unit
@@ -71,7 +73,8 @@ fun SuccessScreen(
         FilledSettingSwitch(
             mainLabel = "Use notifications",
             checked = uiState.areNotifsEnabled,
-            onCheckedChange = onNotifsEnabledChange
+            onCheckedChange = onNotifsEnabledChange,
+            testTag = stringResource(R.string.tt_settings_notifs_main_toggle)
         )
         AnimatedVisibility(
             visible = uiState.areNotifsEnabled, enter = fadeIn(),
@@ -103,12 +106,15 @@ private fun RemindersSection(
             mainLabel = "Enable reminders",
             secondaryLabel = "Send me daily reminders to write the day's entry",
             checked = isEnabled,
-            onCheckedChange = { onEnabledChange(it) })
+            onCheckedChange = { onEnabledChange(it) },
+            testTag = stringResource(R.string.tt_settings_notifs_reminders_toggle)
+        )
         SettingRow(
             mainLabel = "Notify me at",
             secondaryLabel = Utils.timeFormatter.format(time),
             enabled = isEnabled,
-            onClick = { showTimePicker = true }
+            onClick = { showTimePicker = true },
+            testTag = stringResource(R.string.tt_settings_notifs_reminders_time_btn)
         )
     }
     if (showTimePicker) {

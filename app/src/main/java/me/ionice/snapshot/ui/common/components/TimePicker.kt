@@ -12,12 +12,15 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import me.ionice.snapshot.R
 import java.time.LocalTime
 
 @Composable
@@ -52,7 +55,8 @@ fun TimePicker(initialTime: LocalTime, onSelectTime: (LocalTime) -> Unit) {
             value = displayedDigits.first,
             onValueChange = { displayedDigits = displayedDigits.copy(first = it) },
             supportingText = "Hour",
-            allowedRange = 0..23
+            allowedRange = 0..23,
+            testTag = stringResource(R.string.tt_common_time_picker_digit_hr)
         )
         Card(colors = CardDefaults.cardColors(containerColor = Color.Transparent)) {
             Text(
@@ -65,7 +69,8 @@ fun TimePicker(initialTime: LocalTime, onSelectTime: (LocalTime) -> Unit) {
             value = displayedDigits.second,
             onValueChange = { displayedDigits = displayedDigits.copy(second = it) },
             supportingText = "Minute",
-            allowedRange = 0..59
+            allowedRange = 0..59,
+            testTag = stringResource(R.string.tt_common_time_picker_digit_min)
         )
     }
 }
@@ -89,7 +94,8 @@ private fun NumberInputBox(
     value: String,
     onValueChange: (String) -> Unit,
     allowedRange: IntRange,
-    supportingText: String
+    supportingText: String,
+    testTag: String
 ) {
     var textValue by remember { mutableStateOf(formatValue(value)) }
     val focusRequester = remember { FocusRequester() }
@@ -106,7 +112,7 @@ private fun NumberInputBox(
                         .focusRequester(focusRequester)
                         .onFocusChanged {
                             textValue = if (it.isFocused) "" else formatValue(value)
-                        },
+                        }.testTag(testTag),
                     value = textValue,
                     onValueChange = { onValueChange(filterText(value, it, allowedRange)) },
                     textStyle = MaterialTheme.typography.displayLarge.copy(
