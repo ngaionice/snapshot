@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
+import me.ionice.snapshot.ui.common.ElevationTokens
 import me.ionice.snapshot.ui.navigation.SnapshotNavHost
 import me.ionice.snapshot.ui.navigation.SnapshotNavigationBar
 import me.ionice.snapshot.ui.navigation.SnapshotTopLevelNavigation
@@ -42,8 +43,12 @@ fun SnapshotApp() {
     SnapshotTheme {
         val systemUiController = rememberSystemUiController()
         val isDarkTheme = isSystemInDarkTheme()
-        systemUiController.setSystemBarsColor(
+        systemUiController.setStatusBarColor(
             MaterialTheme.colorScheme.background,
+            darkIcons = !isDarkTheme
+        )
+        systemUiController.setNavigationBarColor(
+            MaterialTheme.colorScheme.surfaceColorAtElevation(ElevationTokens.Level2),
             darkIcons = !isDarkTheme
         )
 
