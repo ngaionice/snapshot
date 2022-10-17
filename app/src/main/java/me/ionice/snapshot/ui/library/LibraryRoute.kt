@@ -15,8 +15,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import me.ionice.snapshot.ui.common.DaysUiState
 import me.ionice.snapshot.ui.common.LocationsUiState
 import me.ionice.snapshot.ui.common.TagsUiState
+import me.ionice.snapshot.ui.common.components.PageSection
 import me.ionice.snapshot.ui.common.components.TopAppBar
 import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
+import me.ionice.snapshot.ui.library.components.QuickAccess
 import me.ionice.snapshot.ui.navigation.Navigator
 import me.ionice.snapshot.ui.settings.SettingsHomeDestination
 
@@ -35,6 +37,7 @@ fun LibraryRoute(
         onSelectTag = { /* TODO */ },
         onSelectAllTags = { /* TODO */ },
         onSelectFavorites = { /* TODO */ },
+        onSelectRandom = { /* TODO */ },
         onSelectSearch = { /* TODO */ },
         onSelectSettings = { navigator.navigateToDestination(SettingsHomeDestination) }
     )
@@ -50,6 +53,7 @@ private fun LibraryScreen(
     onSelectTag: (Long) -> Unit,
     onSelectAllTags: () -> Unit,
     onSelectFavorites: () -> Unit,
+    onSelectRandom: () -> Unit,
     onSelectSearch: () -> Unit,
     onSelectSettings: () -> Unit
 ) {
@@ -77,7 +81,10 @@ private fun LibraryScreen(
                 .padding(padding)
 //                .verticalScroll(scrollState)
         ) {
-            FunctionalityNotAvailableScreen("Coming soon!")
+            QuickAccess(onSelectFavorites = onSelectFavorites, onSelectRandom = onSelectRandom)
+            PageSection(title = "Other features") {
+                FunctionalityNotAvailableScreen("Coming soon!")
+            }
         }
     }
 }
