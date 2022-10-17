@@ -90,4 +90,8 @@ class OfflineDayRepository(
     override fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<Day>> {
         return dayDao.getListFlowByDayOfYear(month, dayOfMonth)
     }
+
+    override fun getListFlowForFavorites(): Flow<List<Day>> {
+        return dayDao.getListFlowForFavorites()
+    }
 }

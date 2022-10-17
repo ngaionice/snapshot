@@ -39,4 +39,8 @@ interface DayDao {
     @Transaction
     @Query("select * from Day where month = :month and dayOfMonth = :dayOfMonth order by id desc")
     fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<Day>>
+
+    @Transaction
+    @Query("select * from Day where isFavorite = 1 order by id desc")
+    fun getListFlowForFavorites(): Flow<List<Day>>
 }

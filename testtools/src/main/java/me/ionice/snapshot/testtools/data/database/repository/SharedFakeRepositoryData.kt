@@ -63,6 +63,7 @@ object FakeRepositoryData {
                 summary = "Fake summary 2",
                 createdAt = 0,
                 lastModifiedAt = 0,
+                isFavorite = true,
                 date = Date(2022, 8, 1)
             ),
             tags = emptyList(),

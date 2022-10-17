@@ -71,6 +71,9 @@ class FakeDayRepository : DayRepository {
     override fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<Day>> =
         backingFlow.map { it.filter { day -> day.properties.date.month == month && day.properties.date.dayOfMonth == dayOfMonth } }
 
+    override fun getListFlowForFavorites(): Flow<List<Day>> =
+        backingFlow.map { it.filter { day -> day.properties.isFavorite } }
+
     /**
      * A test-only API for sending data to the backing flow to simulate the flow returning results successfully
      */

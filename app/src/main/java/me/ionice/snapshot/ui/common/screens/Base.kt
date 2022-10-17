@@ -34,26 +34,14 @@ fun BaseScreen(
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 },
-                navigationIcon = {
-                    if (navigationIcon != null) {
-                        navigationIcon()
-                    }
-                },
-                actions = {
-                    if (actions != null) {
-                        actions()
-                    }
-                },
+                navigationIcon = { navigationIcon?.let { it() } },
+                actions = { actions?.let { it() } },
                 scrollBehavior = scrollBehavior
             )
         },
-        floatingActionButton = {
-            if (floatingActionButton != null) {
-                floatingActionButton()
-            }
-        },
+        floatingActionButton = { floatingActionButton?.let { it() } },
         floatingActionButtonPosition = floatingActionButtonPosition,
-        snackbarHost = { if (snackbarHostState != null) SnackbarHost(snackbarHostState) })
+        snackbarHost = { snackbarHostState?.let { SnackbarHost(hostState = it) } })
     {
         Box(modifier = modifier.padding(it)) {
             content()

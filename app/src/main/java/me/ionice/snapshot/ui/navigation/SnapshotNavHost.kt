@@ -14,6 +14,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import me.ionice.snapshot.ui.common.animationDurationMs
 import me.ionice.snapshot.ui.entries.EntriesListDestination
 import me.ionice.snapshot.ui.entries.entriesGraph
+import me.ionice.snapshot.ui.favorites.favoritesGraph
 import me.ionice.snapshot.ui.library.libraryGraph
 import me.ionice.snapshot.ui.settings.settingsGraph
 
@@ -39,5 +40,7 @@ fun SnapshotNavHost(
         libraryGraph(navController = navController)
 
         settingsGraph(navController = navController)
+
+        favoritesGraph(navController = navController)
     }
 }

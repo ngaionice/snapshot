@@ -18,6 +18,7 @@ import me.ionice.snapshot.ui.common.TagsUiState
 import me.ionice.snapshot.ui.common.components.PageSection
 import me.ionice.snapshot.ui.common.components.TopAppBar
 import me.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
+import me.ionice.snapshot.ui.favorites.FavoritesDestination
 import me.ionice.snapshot.ui.library.components.QuickAccess
 import me.ionice.snapshot.ui.navigation.Navigator
 import me.ionice.snapshot.ui.settings.SettingsHomeDestination
@@ -36,7 +37,7 @@ fun LibraryRoute(
         onSelectEntry = navigator::navigateToEntry,
         onSelectTag = { /* TODO */ },
         onSelectAllTags = { /* TODO */ },
-        onSelectFavorites = { /* TODO */ },
+        onSelectFavorites = { navigator.navigateToDestination(FavoritesDestination) },
         onSelectRandom = { /* TODO */ },
         onSelectSearch = { /* TODO */ },
         onSelectSettings = { navigator.navigateToDestination(SettingsHomeDestination) }
