@@ -41,17 +41,6 @@ class MainActivity : ComponentActivity() {
 fun SnapshotApp() {
 
     SnapshotTheme {
-        val systemUiController = rememberSystemUiController()
-        val isDarkTheme = isSystemInDarkTheme()
-        systemUiController.setStatusBarColor(
-            MaterialTheme.colorScheme.background,
-            darkIcons = !isDarkTheme
-        )
-        systemUiController.setNavigationBarColor(
-            MaterialTheme.colorScheme.surfaceColorAtElevation(ElevationTokens.Level2),
-            darkIcons = !isDarkTheme
-        )
-
         val snackbarHostState = remember { SnackbarHostState() }
         val appState = rememberSnapshotAppState(snackbarHostState)
         val navController = appState.navController
@@ -60,6 +49,21 @@ fun SnapshotApp() {
             remember(navController) { SnapshotTopLevelNavigation(navController) }
         val backstackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = backstackEntry?.destination
+
+        val systemUiController = rememberSystemUiController()
+        val isDarkTheme = isSystemInDarkTheme()
+        val navigationBarColor =
+            if (appState.shouldShowBottomBar) MaterialTheme.colorScheme.surfaceColorAtElevation(
+                ElevationTokens.Level2
+            ) else MaterialTheme.colorScheme.background
+        systemUiController.setStatusBarColor(
+            MaterialTheme.colorScheme.background,
+            darkIcons = !isDarkTheme
+        )
+        systemUiController.setNavigationBarColor(
+            navigationBarColor,
+            darkIcons = !isDarkTheme
+        )
 
         Scaffold(
             containerColor = Color.Transparent,
@@ -86,6 +90,8 @@ fun SnapshotApp() {
                 SnapshotNavHost(navController = navController)
             }
         }
+
+
     }
 }
 
