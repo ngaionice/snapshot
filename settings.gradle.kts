@@ -13,5 +13,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "snapshot"
-include ':app'
-include ':testtools'
+include(":app")
+include(":testtools")
+
