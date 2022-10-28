@@ -8,6 +8,9 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 /app/build
+/build-logic/*/build
+/core/*/build
+/feature/*/build
 /testtools/build
 .DS_Store
 /build

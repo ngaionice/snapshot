@@ -19,10 +19,11 @@ val truth_version = rootProject.extra.get("truth_version") as String
 val workmanager_version = rootProject.extra.get("workmanager_version") as String
 
 android {
+    namespace = "dev.ionice.snapshot"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "me.ionice.snapshot"
+        applicationId = "dev.ionice.snapshot"
         minSdk = 29
         targetSdk = 33
         versionCode = 1
@@ -81,13 +82,13 @@ dependencies {
     // Compose
     implementation("androidx.compose.ui:ui:$compose_version")
     implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
-    implementation("androidx.activity:activity-compose:1.6.0")
-    implementation("androidx.compose.material3:material3:1.0.0-rc01")
+    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.compose.material3:material3:1.0.0")
     implementation("androidx.compose.material:material:$compose_version")
     implementation("androidx.compose.material:material-icons-extended:$compose_version")
 
     // Navigation for Compose
-    implementation("androidx.navigation:navigation-compose:2.5.2")
+    implementation("androidx.navigation:navigation-compose:2.5.3")
 
     // Accompanist for various UI functionality
     implementation ("com.google.accompanist:accompanist-systemuicontroller:$accompanist_version")
@@ -101,13 +102,11 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
 
     // Co-routines
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
     // Room
     implementation ("androidx.room:room-runtime:$room_version")
     implementation ("androidx.room:room-ktx:$room_version")
-    implementation ("androidx.legacy:legacy-support-v4:1.0.0")
     kapt ("androidx.room:room-compiler:$room_version")
 
     // DataStore
@@ -127,7 +126,7 @@ dependencies {
 //    implementation "androidx.savedstate:savedstate-ktx:1.1.0"
 
     // Material 3 theming for launch screens and other misc. places
-    implementation ("com.google.android.material:material:1.6.1")
+    implementation ("com.google.android.material:material:1.7.0")
 
     // Google Services: for access to Google Drive
     implementation ("com.google.android.gms:play-services-auth:20.3.0")
@@ -138,16 +137,13 @@ dependencies {
     // Testing
     implementation ("androidx.test:core:$androidX_test_version")
     testImplementation (project(":testtools"))
-    testImplementation ("androidx.test:core-ktx:$androidX_test_version")
     testImplementation ("androidx.test.ext:junit-ktx:$androidX_test_ext_kotlin_runner_version")
     testImplementation ("androidx.test:rules:$androidX_test_version")
     testImplementation ("com.google.dagger:hilt-android-testing:$hilt_version")
     testImplementation ("com.google.truth:truth:$truth_version")
     testImplementation ("junit:junit:$junit_version")
-    testImplementation ("org.hamcrest:hamcrest-all:$hamcrest_version")
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
-    kaptTest ("com.google.dagger:hilt-compiler:$hilt_version")
 
     // Android testing
     androidTestImplementation (project(":testtools"))
@@ -159,7 +155,6 @@ dependencies {
     androidTestImplementation ("com.google.dagger:hilt-android-testing:$hilt_version")
     androidTestImplementation ("com.google.truth:truth:$truth_version")
     androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
-    kaptAndroidTest ("com.google.dagger:hilt-compiler:$hilt_version")
 
     // Debugging
     debugImplementation ("androidx.compose.ui:ui-tooling:$compose_version")
