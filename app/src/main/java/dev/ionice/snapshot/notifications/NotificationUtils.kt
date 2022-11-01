@@ -9,9 +9,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import dev.ionice.snapshot.MainActivity
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.notifications.receiver.ReminderAlarmReceiver
+import dev.ionice.snapshot.notifications.receivers.ReminderAlarmReceiver
 import java.time.LocalTime
-import java.util.*
 
 const val DAILY_REMINDER_ID = 0
 //private const val memoriesId = 1
@@ -19,7 +18,12 @@ const val DAILY_REMINDER_ID = 0
 fun NotificationManager.sendDailyReminder(appContext: Context) {
 
     val contentIntent = Intent(appContext, MainActivity::class.java)
-    val pendingIntent = PendingIntent.getActivity(appContext, DAILY_REMINDER_ID, contentIntent, PendingIntent.FLAG_IMMUTABLE)
+    val pendingIntent = PendingIntent.getActivity(
+        appContext,
+        DAILY_REMINDER_ID,
+        contentIntent,
+        PendingIntent.FLAG_IMMUTABLE
+    )
 
     val builder = NotificationCompat
         .Builder(appContext, appContext.getString(R.string.notification_reminders_channel_id))

@@ -1,9 +1,9 @@
-package dev.ionice.snapshot.data.backup
+package dev.ionice.snapshot.sync.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import dev.ionice.snapshot.work.BackupSyncWorker
+import dev.ionice.snapshot.sync.work.BackupSyncWorker
 
 class BackupStatusReceiver(val callback: (isStart: Boolean, type: String, status: Boolean) -> Unit) :
     BroadcastReceiver() {

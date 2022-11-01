@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.data.backup
+package dev.ionice.snapshot.sync
 
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime

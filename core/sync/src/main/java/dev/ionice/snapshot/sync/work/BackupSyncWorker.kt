@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.work
+package dev.ionice.snapshot.sync.work
 
 import android.content.Context
 import android.content.Intent
@@ -6,13 +6,13 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dev.ionice.snapshot.data.backup.BackupModule
-import dev.ionice.snapshot.data.backup.BackupStatusReceiver
-import dev.ionice.snapshot.work.BackupSyncWorker.WORK_IN_PROGRESS
-import dev.ionice.snapshot.work.BackupSyncWorker.WORK_TIME_MS_PAST_MIDNIGHT
-import dev.ionice.snapshot.work.BackupSyncWorker.WORK_STATUS
-import dev.ionice.snapshot.work.BackupSyncWorker.WORK_TYPE
-import dev.ionice.snapshot.work.BackupSyncWorker.WORK_TYPE_BACKUP
+import dev.ionice.snapshot.sync.BackupModule
+import dev.ionice.snapshot.sync.receivers.BackupStatusReceiver
+import dev.ionice.snapshot.sync.work.BackupSyncWorker.WORK_IN_PROGRESS
+import dev.ionice.snapshot.sync.work.BackupSyncWorker.WORK_STATUS
+import dev.ionice.snapshot.sync.work.BackupSyncWorker.WORK_TIME_MS_PAST_MIDNIGHT
+import dev.ionice.snapshot.sync.work.BackupSyncWorker.WORK_TYPE
+import dev.ionice.snapshot.sync.work.BackupSyncWorker.WORK_TYPE_BACKUP
 import java.time.LocalTime
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -105,7 +105,8 @@ class OneOffBackupSyncWorker @AssistedInject constructor(
     CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
-        val actionType = inputData.getString(WORK_TYPE) ?: throw IllegalArgumentException("Illegal WORK_TYPE value.")
+        val actionType = inputData.getString(WORK_TYPE)
+            ?: throw IllegalArgumentException("Illegal WORK_TYPE value.")
         sendStartBroadcast(actionType)
         val isSuccess = if (actionType == WORK_TYPE_BACKUP) {
             backupModule.backupDatabase(id).isSuccess

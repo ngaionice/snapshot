@@ -37,6 +37,7 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:database"))
+    implementation(project(":core:sync"))
 
     implementation("androidx.core:core-ktx:1.9.0")
 

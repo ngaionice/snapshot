@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.data.backup
+package dev.ionice.snapshot.sync
 
 import android.content.Context
 import android.content.Intent
@@ -8,6 +8,9 @@ import android.net.NetworkCapabilities
 import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import dev.ionice.snapshot.sync.receivers.BackupStatusReceiver
+import dev.ionice.snapshot.sync.work.BackupSyncWorker
+import dev.ionice.snapshot.sync.work.OneOffBackupSyncWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -15,8 +18,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import dev.ionice.snapshot.work.BackupSyncWorker
-import dev.ionice.snapshot.work.OneOffBackupSyncWorker
 import java.time.LocalDateTime
 
 class GDriveBackupRepository(private val appContext: Context) : BackupRepository {

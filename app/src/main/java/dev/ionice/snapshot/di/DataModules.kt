@@ -9,13 +9,13 @@ import dagger.hilt.components.SingletonComponent
 import dev.ionice.snapshot.core.database.dao.DayDao
 import dev.ionice.snapshot.core.database.dao.LocationDao
 import dev.ionice.snapshot.core.database.dao.TagDao
-import dev.ionice.snapshot.data.backup.BackupModule
-import dev.ionice.snapshot.data.backup.BackupRepository
-import dev.ionice.snapshot.data.backup.GDriveBackupModule
-import dev.ionice.snapshot.data.backup.GDriveBackupRepository
 import dev.ionice.snapshot.data.database.repository.*
 import dev.ionice.snapshot.data.preferences.OfflinePreferencesRepository
 import dev.ionice.snapshot.data.preferences.PreferencesRepository
+import dev.ionice.snapshot.sync.BackupModule
+import dev.ionice.snapshot.sync.BackupRepository
+import dev.ionice.snapshot.sync.GDriveBackupModule
+import dev.ionice.snapshot.sync.GDriveBackupRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 

@@ -7,8 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Result
 import dev.ionice.snapshot.core.common.asResult
-import dev.ionice.snapshot.data.backup.BackupRepository
 import dev.ionice.snapshot.data.preferences.PreferencesRepository
+import dev.ionice.snapshot.sync.BackupRepository
 import dev.ionice.snapshot.ui.snackbar.SnackbarManager
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

@@ -24,7 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.data.backup.GAuthResultContract
+import dev.ionice.snapshot.sync.GAuthResultContract
 import dev.ionice.snapshot.ui.common.components.BackButton
 import dev.ionice.snapshot.ui.common.components.ConfirmationDialog
 import dev.ionice.snapshot.ui.common.components.PageSection

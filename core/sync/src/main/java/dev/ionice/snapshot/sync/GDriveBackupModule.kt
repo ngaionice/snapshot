@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.data.backup
+package dev.ionice.snapshot.sync
 
 import android.app.Activity
 import android.content.Context
@@ -18,12 +18,12 @@ import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
+import dev.ionice.snapshot.core.database.SnapshotDatabase
+import dev.ionice.snapshot.core.sync.R
+import dev.ionice.snapshot.sync.work.OneOffBackupSyncWorker
+import dev.ionice.snapshot.sync.work.PeriodicBackupSyncWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import dev.ionice.snapshot.R
-import dev.ionice.snapshot.core.database.SnapshotDatabase
-import dev.ionice.snapshot.work.OneOffBackupSyncWorker
-import dev.ionice.snapshot.work.PeriodicBackupSyncWorker
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException

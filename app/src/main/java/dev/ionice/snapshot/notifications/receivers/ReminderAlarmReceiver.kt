@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.notifications.receiver
+package dev.ionice.snapshot.notifications.receivers
 
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
@@ -7,10 +7,13 @@ import android.content.Intent
 import androidx.core.content.ContextCompat
 import dev.ionice.snapshot.notifications.sendDailyReminder
 
-class ReminderAlarmReceiver: BroadcastReceiver() {
+class ReminderAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val manager = ContextCompat.getSystemService(context, NotificationManager::class.java) as NotificationManager
+        val manager = ContextCompat.getSystemService(
+            context,
+            NotificationManager::class.java
+        ) as NotificationManager
         manager.sendDailyReminder(context)
     }
 

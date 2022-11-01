@@ -1,8 +1,8 @@
 package dev.ionice.snapshot.testtools.data.backup
 
+import dev.ionice.snapshot.sync.BackupRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import dev.ionice.snapshot.data.backup.BackupRepository
 import java.time.LocalDateTime
 
 class FakeBackupRepository : BackupRepository {
@@ -28,19 +28,21 @@ class FakeBackupRepository : BackupRepository {
     override fun startDatabaseBackup() {
         statusFlow.tryEmit(
             BackupRepository.BackupStatus(
-            isInProgress = true,
-            action = "Backup",
-            isSuccess = false
-        ))
+                isInProgress = true,
+                action = "Backup",
+                isSuccess = false
+            )
+        )
     }
 
     override fun startDatabaseRestore() {
         statusFlow.tryEmit(
             BackupRepository.BackupStatus(
-            isInProgress = true,
-            action = "Restore",
-            isSuccess = false
-        ))
+                isInProgress = true,
+                action = "Restore",
+                isSuccess = false
+            )
+        )
     }
 
     override fun getBackupStatusFlow(): Flow<BackupRepository.BackupStatus> = statusFlow
@@ -51,10 +53,11 @@ class FakeBackupRepository : BackupRepository {
     fun endBackup(isSuccess: Boolean = true) {
         statusFlow.tryEmit(
             BackupRepository.BackupStatus(
-            isInProgress = false,
-            action = "Backup",
-            isSuccess = isSuccess
-        ))
+                isInProgress = false,
+                action = "Backup",
+                isSuccess = isSuccess
+            )
+        )
     }
 
     /**
@@ -63,9 +66,10 @@ class FakeBackupRepository : BackupRepository {
     fun endRestore(isSuccess: Boolean = true) {
         statusFlow.tryEmit(
             BackupRepository.BackupStatus(
-            isInProgress = false,
-            action = "Restore",
-            isSuccess = isSuccess
-        ))
+                isInProgress = false,
+                action = "Restore",
+                isSuccess = isSuccess
+            )
+        )
     }
 }

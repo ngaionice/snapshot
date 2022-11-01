@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.work.*
+import dev.ionice.snapshot.notifications.cancelAlarm
+import dev.ionice.snapshot.notifications.setAlarm
+import dev.ionice.snapshot.sync.work.BackupSyncWorker
+import dev.ionice.snapshot.sync.work.PeriodicBackupSyncWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -11,10 +15,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import dev.ionice.snapshot.notifications.cancelAlarm
-import dev.ionice.snapshot.notifications.setAlarm
-import dev.ionice.snapshot.work.BackupSyncWorker
-import dev.ionice.snapshot.work.PeriodicBackupSyncWorker
 import java.io.IOException
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit

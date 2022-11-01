@@ -1,6 +1,6 @@
 package dev.ionice.snapshot.testtools.data.backup
 
-import dev.ionice.snapshot.data.backup.BackupModule
+import dev.ionice.snapshot.sync.BackupModule
 import java.time.LocalDateTime
 import java.util.*
 

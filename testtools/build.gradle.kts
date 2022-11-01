@@ -17,6 +17,7 @@ android {
 dependencies {
     implementation(project(":app"))
     implementation(project(":core:database"))
+    implementation(project(":core:sync"))
 
     api(libs.junit4)
     api(libs.kotlinx.coroutines.test)
