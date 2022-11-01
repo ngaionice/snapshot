@@ -1,6 +1,6 @@
 package dev.ionice.snapshot.testtools.data.database.repository
 
-import dev.ionice.snapshot.data.database.model.*
+import dev.ionice.snapshot.core.database.model.*
 import kotlinx.coroutines.flow.MutableStateFlow
 
 object FakeRepositoryData {
@@ -79,13 +79,22 @@ object FakeRepositoryData {
                 name = "FakeLocation",
                 lastUsedAt = 0
             ),
-            entries = listOf(LocationEntry(dayIds[0], locationId))
+            entries = listOf(
+                LocationEntry(
+                    dayIds[0],
+                    locationId
+                )
+            )
         )
     )
 
     val tagSourceData = listOf(
         Tag(
-            properties = TagProperties(id = tagId, name = "FakeTag", lastUsedAt = 0),
+            properties = TagProperties(
+                id = tagId,
+                name = "FakeTag",
+                lastUsedAt = 0
+            ),
             entries = listOf(TagEntry(dayIds[0], tagId))
         )
     )

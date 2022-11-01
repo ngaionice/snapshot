@@ -23,16 +23,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import dev.ionice.snapshot.R
+import dev.ionice.snapshot.core.common.Utils
 import dev.ionice.snapshot.data.backup.GAuthResultContract
 import dev.ionice.snapshot.ui.common.components.BackButton
 import dev.ionice.snapshot.ui.common.components.ConfirmationDialog
 import dev.ionice.snapshot.ui.common.components.PageSection
 import dev.ionice.snapshot.ui.common.screens.BaseScreen
 import dev.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
-import dev.ionice.snapshot.ui.settings.components.*
 import dev.ionice.snapshot.ui.settings.BackupUiState
 import dev.ionice.snapshot.ui.settings.SettingsViewModel
-import dev.ionice.snapshot.utils.Utils
+import dev.ionice.snapshot.ui.settings.components.*
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -317,7 +317,9 @@ private fun FrequencyPickerDialog(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }) {
                 TextField(
-                    modifier = Modifier.menuAnchor().testTag(stringResource(R.string.tt_settings_backup_freq_selector)),
+                    modifier = Modifier
+                        .menuAnchor()
+                        .testTag(stringResource(R.string.tt_settings_backup_freq_selector)),
                     readOnly = true,
                     value = current.second,
                     onValueChange = {},

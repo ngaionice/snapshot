@@ -11,6 +11,8 @@
 /build-logic/*/build
 /core/*/build
 /feature/*/build
+/notifications/build
+/sync/build
 /testtools/build
 .DS_Store
 /build

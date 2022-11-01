@@ -17,15 +17,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.ionice.snapshot.data.database.model.Day
-import dev.ionice.snapshot.data.database.model.DayProperties
-import dev.ionice.snapshot.data.database.model.LocationProperties
 import dev.ionice.snapshot.R
+import dev.ionice.snapshot.core.common.Utils
+import dev.ionice.snapshot.core.database.model.Day
+import dev.ionice.snapshot.core.database.model.DayProperties
+import dev.ionice.snapshot.core.database.model.LocationProperties
 import dev.ionice.snapshot.ui.common.components.BackButton
 import dev.ionice.snapshot.ui.common.components.PlaceholderText
 import dev.ionice.snapshot.ui.common.screens.BaseScreen
 import dev.ionice.snapshot.ui.navigation.Navigator
-import dev.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
 @Composable

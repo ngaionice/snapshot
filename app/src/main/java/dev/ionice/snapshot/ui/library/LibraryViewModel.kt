@@ -3,16 +3,16 @@ package dev.ionice.snapshot.ui.library
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import dev.ionice.snapshot.core.common.Result
+import dev.ionice.snapshot.core.common.asResult
 import dev.ionice.snapshot.data.database.repository.DayRepository
 import dev.ionice.snapshot.data.database.repository.LocationRepository
 import dev.ionice.snapshot.data.database.repository.TagRepository
 import dev.ionice.snapshot.ui.common.DaysUiState
 import dev.ionice.snapshot.ui.common.LocationsUiState
 import dev.ionice.snapshot.ui.common.TagsUiState
-import dev.ionice.snapshot.utils.Result
-import dev.ionice.snapshot.utils.asResult
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import java.time.LocalDate
 import javax.inject.Inject
 

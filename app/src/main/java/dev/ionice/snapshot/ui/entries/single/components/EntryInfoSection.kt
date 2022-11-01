@@ -9,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.ionice.snapshot.utils.RelativeTime
+import dev.ionice.snapshot.core.common.RelativeTime
 
 @Composable
 fun EntryInfoSection(lastModifiedAt: Long) {
@@ -20,6 +20,9 @@ fun EntryInfoSection(lastModifiedAt: Long) {
         horizontalArrangement = Arrangement.Center
     ) {
         val relativeTimeString = RelativeTime.getPastDuration(lastModifiedAt)
-        Text(text = "Last modified $relativeTimeString", style = MaterialTheme.typography.labelLarge)
+        Text(
+            text = "Last modified $relativeTimeString",
+            style = MaterialTheme.typography.labelLarge
+        )
     }
 }

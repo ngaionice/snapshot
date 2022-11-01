@@ -1,13 +1,13 @@
 package dev.ionice.snapshot.data.database.repository
 
+import dev.ionice.snapshot.core.database.dao.LocationDao
+import dev.ionice.snapshot.core.database.model.Coordinates
+import dev.ionice.snapshot.core.database.model.Location
+import dev.ionice.snapshot.core.database.model.LocationEntry
+import dev.ionice.snapshot.core.database.model.LocationProperties
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import dev.ionice.snapshot.data.database.dao.LocationDao
-import dev.ionice.snapshot.data.database.model.Coordinates
-import dev.ionice.snapshot.data.database.model.Location
-import dev.ionice.snapshot.data.database.model.LocationEntry
-import dev.ionice.snapshot.data.database.model.LocationProperties
 import java.time.Instant
 
 class OfflineLocationRepository(

@@ -1,44 +1,21 @@
 plugins {
-    id ("com.android.application")
-    id ("org.jetbrains.kotlin.android")
-    id ("kotlin-kapt")
-    id ("dagger.hilt.android.plugin")
+    id("snapshot.android.application")
+    id("snapshot.android.application.compose")
+    id("snapshot.android.hilt")
 }
-
-val androidX_test_version = rootProject.extra.get("androidX_test_version") as String
-val androidX_test_ext_kotlin_runner_version = rootProject.extra.get("androidX_test_ext_kotlin_runner_version") as String
-val accompanist_version = rootProject.extra.get("accompanist_version") as String
-val compose_version = rootProject.extra.get("compose_version") as String
-val coroutines_version = rootProject.extra.get("coroutines_version") as String
-val hamcrest_version = rootProject.extra.get("hamcrest_version") as String
-val junit_version = rootProject.extra.get("junit_version") as String
-val hilt_version = rootProject.extra.get("hilt_version") as String
-val hilt_androidX_version = rootProject.extra.get("hilt_androidX_version") as String
-val room_version = rootProject.extra.get("room_version") as String
-val truth_version = rootProject.extra.get("truth_version") as String
-val workmanager_version = rootProject.extra.get("workmanager_version") as String
 
 android {
     namespace = "dev.ionice.snapshot"
-    compileSdk = 33
 
     defaultConfig {
         applicationId = "dev.ionice.snapshot"
-        minSdk = 29
-        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
 
         kapt {
             correctErrorTypes = true
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
         }
     }
 
@@ -47,24 +24,6 @@ android {
             isMinifyEnabled = false
             proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-    }
-
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.1"
     }
 
     packagingOptions {
@@ -76,87 +35,69 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
+    implementation(project(":core:database"))
 
     implementation("androidx.core:core-ktx:1.9.0")
 
     // Compose
-    implementation("androidx.compose.ui:ui:$compose_version")
-    implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
-    implementation("androidx.activity:activity-compose:1.6.1")
-    implementation("androidx.compose.material3:material3:1.0.0")
-    implementation("androidx.compose.material:material:$compose_version")
-    implementation("androidx.compose.material:material-icons-extended:$compose_version")
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.iconsExtended)
+    implementation(libs.androidx.compose.material3)
 
     // Navigation for Compose
-    implementation("androidx.navigation:navigation-compose:2.5.3")
+    implementation(libs.androidx.navigation.compose)
 
     // Accompanist for various UI functionality
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:$accompanist_version")
-    implementation ("com.google.accompanist:accompanist-placeholder-material:$accompanist_version")
-    implementation ("com.google.accompanist:accompanist-navigation-animation:$accompanist_version")
-    implementation ("com.google.accompanist:accompanist-flowlayout:$accompanist_version")
-    implementation ("com.google.accompanist:accompanist-pager:$accompanist_version")
+    implementation(libs.accompanist.flowlayout)
+    implementation(libs.accompanist.navigationAnimation)
+    implementation(libs.accompanist.pager)
+    implementation(libs.accompanist.placeholderMaterial)
+    implementation(libs.accompanist.systemuicontroller)
 
     // Lifecycles
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation(libs.androidx.lifecycle.runtimeKtx)
+    implementation(libs.androidx.lifecycle.viewmodelCompose)
 
     // Co-routines
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
-
-    // Room
-    implementation ("androidx.room:room-runtime:$room_version")
-    implementation ("androidx.room:room-ktx:$room_version")
-    kapt ("androidx.room:room-compiler:$room_version")
+    implementation(libs.kotlinx.coroutines.android)
 
     // DataStore
-    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.androidx.datastore.preferences)
 
     // WorkManager
-    implementation ("androidx.work:work-runtime-ktx:$workmanager_version")
+    implementation(libs.androidx.work.ktx)
 
     // Hilt for DI
-    implementation ("com.google.dagger:hilt-android:$hilt_version")
-    implementation ("androidx.hilt:hilt-work:1.0.0")
-    implementation ("androidx.hilt:hilt-navigation-compose:$hilt_androidX_version")
-    kapt ("com.google.dagger:hilt-android-compiler:$hilt_version")
-    kapt ("androidx.hilt:hilt-compiler:1.0.0")
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.ext.work)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.compiler)
+    kapt(libs.hilt.ext.compiler)
 
     // Saved state for ViewModel
 //    implementation "androidx.savedstate:savedstate-ktx:1.1.0"
 
     // Material 3 theming for launch screens and other misc. places
-    implementation ("com.google.android.material:material:1.7.0")
+    implementation(libs.material)
 
     // Google Services: for access to Google Drive
-    implementation ("com.google.android.gms:play-services-auth:20.3.0")
-    implementation ("com.google.http-client:google-http-client-gson:1.41.8")
-    implementation ("com.google.api-client:google-api-client-android:1.34.1")
-    implementation ("com.google.apis:google-api-services-drive:v3-rev20220508-1.32.1")
+    implementation(libs.android.gms.playServicesAuth)
+    implementation(libs.google.api.client)
+    implementation(libs.google.api.services.drive)
+    implementation(libs.google.http.client.gson)
 
     // Testing
-    implementation ("androidx.test:core:$androidX_test_version")
-    testImplementation (project(":testtools"))
-    testImplementation ("androidx.test.ext:junit-ktx:$androidX_test_ext_kotlin_runner_version")
-    testImplementation ("androidx.test:rules:$androidX_test_version")
-    testImplementation ("com.google.dagger:hilt-android-testing:$hilt_version")
-    testImplementation ("com.google.truth:truth:$truth_version")
-    testImplementation ("junit:junit:$junit_version")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+    testImplementation(project(":testtools"))
+    testImplementation(project(":core:testing"))
 
     // Android testing
-    androidTestImplementation (project(":testtools"))
-    androidTestImplementation ("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation ("androidx.arch.core:core-testing:2.1.0")
-    androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
-    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:$compose_version")
-    androidTestImplementation ("androidx.work:work-testing:$workmanager_version")
-    androidTestImplementation ("com.google.dagger:hilt-android-testing:$hilt_version")
-    androidTestImplementation ("com.google.truth:truth:$truth_version")
-    androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
+    androidTestImplementation(project(":testtools"))
+    androidTestImplementation(project(":core:testing"))
 
     // Debugging
-    debugImplementation ("androidx.compose.ui:ui-tooling:$compose_version")
-    debugImplementation ("androidx.compose.ui:ui-test-manifest:$compose_version")
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.testManifest)
 }

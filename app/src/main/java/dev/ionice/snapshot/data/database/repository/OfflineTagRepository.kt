@@ -1,12 +1,12 @@
 package dev.ionice.snapshot.data.database.repository
 
+import dev.ionice.snapshot.core.database.dao.TagDao
+import dev.ionice.snapshot.core.database.model.Tag
+import dev.ionice.snapshot.core.database.model.TagEntry
+import dev.ionice.snapshot.core.database.model.TagProperties
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import dev.ionice.snapshot.data.database.dao.TagDao
-import dev.ionice.snapshot.data.database.model.Tag
-import dev.ionice.snapshot.data.database.model.TagEntry
-import dev.ionice.snapshot.data.database.model.TagProperties
 import java.time.Instant
 
 class OfflineTagRepository(

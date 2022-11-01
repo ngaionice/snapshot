@@ -1,9 +1,9 @@
 package dev.ionice.snapshot.testtools.data.database.repository
 
-import dev.ionice.snapshot.data.database.model.*
+import dev.ionice.snapshot.core.database.model.*
+import dev.ionice.snapshot.data.database.repository.DayRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import dev.ionice.snapshot.data.database.repository.DayRepository
 import java.time.Instant
 import java.time.LocalDate
 
@@ -26,7 +26,11 @@ class FakeDayRepository : DayRepository {
                 summary = "",
                 createdAt = Instant.now().epochSecond,
                 lastModifiedAt = Instant.now().epochSecond,
-                date = Date(date.year, date.monthValue, date.dayOfMonth)
+                date = Date(
+                    date.year,
+                    date.monthValue,
+                    date.dayOfMonth
+                )
             ),
             tags = emptyList(),
             location = null
@@ -48,7 +52,11 @@ class FakeDayRepository : DayRepository {
                 isFavorite = isFavorite,
                 createdAt = Instant.now().epochSecond,
                 lastModifiedAt = Instant.now().epochSecond,
-                date = Date(now.year, now.monthValue, now.dayOfMonth)
+                date = Date(
+                    now.year,
+                    now.monthValue,
+                    now.dayOfMonth
+                )
             ),
             tags = tags,
             location = location

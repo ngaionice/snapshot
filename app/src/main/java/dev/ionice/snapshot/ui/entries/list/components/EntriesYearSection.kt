@@ -22,14 +22,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.ionice.snapshot.data.database.model.Day
 import dev.ionice.snapshot.R
+import dev.ionice.snapshot.core.common.Utils
+import dev.ionice.snapshot.core.database.model.Day
 import dev.ionice.snapshot.ui.common.DaysUiState
 import dev.ionice.snapshot.ui.common.components.PageSectionContent
 import dev.ionice.snapshot.ui.common.components.PageSectionHeader
 import dev.ionice.snapshot.ui.common.components.PlaceholderText
 import dev.ionice.snapshot.ui.common.components.VerticalDivider
-import dev.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields

@@ -19,19 +19,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.ionice.snapshot.data.database.model.*
 import dev.ionice.snapshot.R
+import dev.ionice.snapshot.core.common.Utils
+import dev.ionice.snapshot.core.database.model.*
 import dev.ionice.snapshot.ui.common.DayUiState
 import dev.ionice.snapshot.ui.common.LocationsUiState
 import dev.ionice.snapshot.ui.common.TagsUiState
 import dev.ionice.snapshot.ui.common.components.BackButton
-import dev.ionice.snapshot.ui.entries.single.components.*
 import dev.ionice.snapshot.ui.common.screens.ErrorScreen
 import dev.ionice.snapshot.ui.common.screens.LoadingScreen
 import dev.ionice.snapshot.ui.entries.EntriesSingleUiState
 import dev.ionice.snapshot.ui.entries.EntriesViewModel
+import dev.ionice.snapshot.ui.entries.single.components.*
 import dev.ionice.snapshot.ui.navigation.Navigator
-import dev.ionice.snapshot.utils.Utils
 import java.time.LocalDate
 
 @Composable

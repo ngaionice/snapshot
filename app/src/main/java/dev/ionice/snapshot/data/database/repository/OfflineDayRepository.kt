@@ -1,12 +1,12 @@
 package dev.ionice.snapshot.data.database.repository
 
+import dev.ionice.snapshot.core.database.dao.DayDao
+import dev.ionice.snapshot.core.database.dao.LocationDao
+import dev.ionice.snapshot.core.database.dao.TagDao
+import dev.ionice.snapshot.core.database.model.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import dev.ionice.snapshot.data.database.dao.DayDao
-import dev.ionice.snapshot.data.database.dao.LocationDao
-import dev.ionice.snapshot.data.database.model.*
-import dev.ionice.snapshot.data.database.dao.TagDao
 import java.time.Instant
 import java.time.LocalDate
 

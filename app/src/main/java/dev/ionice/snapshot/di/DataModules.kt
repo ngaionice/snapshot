@@ -6,43 +6,18 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
+import dev.ionice.snapshot.core.database.dao.DayDao
+import dev.ionice.snapshot.core.database.dao.LocationDao
+import dev.ionice.snapshot.core.database.dao.TagDao
 import dev.ionice.snapshot.data.backup.BackupModule
-import dev.ionice.snapshot.data.database.SnapshotDatabase
-import dev.ionice.snapshot.data.database.dao.DayDao
-import dev.ionice.snapshot.data.database.dao.LocationDao
-import dev.ionice.snapshot.data.database.dao.TagDao
-import dev.ionice.snapshot.data.database.dao.UtilsDao
-import dev.ionice.snapshot.data.database.repository.*
 import dev.ionice.snapshot.data.backup.BackupRepository
 import dev.ionice.snapshot.data.backup.GDriveBackupModule
 import dev.ionice.snapshot.data.backup.GDriveBackupRepository
-import dev.ionice.snapshot.data.preferences.PreferencesRepository
+import dev.ionice.snapshot.data.database.repository.*
 import dev.ionice.snapshot.data.preferences.OfflinePreferencesRepository
+import dev.ionice.snapshot.data.preferences.PreferencesRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
-
-@Module
-@InstallIn(SingletonComponent::class)
-object DatabaseModule {
-
-    @Provides
-    fun provideDayDao(database: SnapshotDatabase): DayDao = database.dayDao
-
-    @Provides
-    fun provideLocationDao(database: SnapshotDatabase): LocationDao = database.locationDao
-
-    @Provides
-    fun provideTagDao(database: SnapshotDatabase): TagDao = database.tagDao
-
-    @Provides
-    fun provideUtilsDao(database: SnapshotDatabase): UtilsDao = database.utilsDao
-
-    @Provides
-    @Singleton
-    fun provideDatabase(@ApplicationContext appContext: Context): SnapshotDatabase {
-        return SnapshotDatabase.getInstance(appContext)
-    }
-}
 
 @Module
 @InstallIn(SingletonComponent::class)

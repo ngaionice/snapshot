@@ -1,13 +1,7 @@
 package dev.ionice.snapshot.ui.entries
 
 import com.google.common.truth.Truth.assertThat
-import dev.ionice.snapshot.data.database.model.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
+import dev.ionice.snapshot.core.database.model.*
 import dev.ionice.snapshot.testtools.MainCoroutineRule
 import dev.ionice.snapshot.testtools.data.database.repository.FRD
 import dev.ionice.snapshot.testtools.data.database.repository.FakeDayRepository
@@ -17,6 +11,12 @@ import dev.ionice.snapshot.ui.common.DayUiState
 import dev.ionice.snapshot.ui.common.DaysUiState
 import dev.ionice.snapshot.ui.common.LocationsUiState
 import dev.ionice.snapshot.ui.common.TagsUiState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

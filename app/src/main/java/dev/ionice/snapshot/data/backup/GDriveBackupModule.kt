@@ -21,7 +21,7 @@ import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.data.database.SnapshotDatabase
+import dev.ionice.snapshot.core.database.SnapshotDatabase
 import dev.ionice.snapshot.work.OneOffBackupSyncWorker
 import dev.ionice.snapshot.work.PeriodicBackupSyncWorker
 import java.io.File

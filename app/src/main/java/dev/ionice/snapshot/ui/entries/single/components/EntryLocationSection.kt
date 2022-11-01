@@ -14,9 +14,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.data.database.model.Coordinates
-import dev.ionice.snapshot.data.database.model.LocationEntry
-import dev.ionice.snapshot.data.database.model.LocationProperties
+import dev.ionice.snapshot.core.database.model.Coordinates
+import dev.ionice.snapshot.core.database.model.LocationEntry
+import dev.ionice.snapshot.core.database.model.LocationProperties
 import dev.ionice.snapshot.ui.common.LocationsUiState
 import dev.ionice.snapshot.ui.common.components.PageSectionContent
 import dev.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen

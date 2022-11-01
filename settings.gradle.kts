@@ -1,9 +1,9 @@
 pluginManagement {
     includeBuild("build-logic")
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 dependencyResolutionManagement {
@@ -18,5 +18,16 @@ enableFeaturePreview("VERSION_CATALOGS")
 include(":app")
 include(":testtools")
 
-include(":feature:library")
+include(":core:common")
+include(":core:data")
 include(":core:database")
+include(":core:model")
+include(":core:testing")
+include(":core:ui")
+
+include(":feature:entries")
+include(":feature:library")
+include(":feature:settings")
+
+include(":notifications")
+include(":sync")

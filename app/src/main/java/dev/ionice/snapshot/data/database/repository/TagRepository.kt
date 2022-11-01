@@ -1,9 +1,9 @@
 package dev.ionice.snapshot.data.database.repository
 
 import kotlinx.coroutines.flow.Flow
-import dev.ionice.snapshot.data.database.model.Tag
-import dev.ionice.snapshot.data.database.model.TagEntry
-import dev.ionice.snapshot.data.database.model.TagProperties
+import dev.ionice.snapshot.core.database.model.Tag
+import dev.ionice.snapshot.core.database.model.TagEntry
+import dev.ionice.snapshot.core.database.model.TagProperties
 
 interface TagRepository {
 

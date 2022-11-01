@@ -1,9 +1,9 @@
 package dev.ionice.snapshot.data.database.repository
 
+import dev.ionice.snapshot.core.database.model.Day
+import dev.ionice.snapshot.core.database.model.LocationEntry
+import dev.ionice.snapshot.core.database.model.TagEntry
 import kotlinx.coroutines.flow.Flow
-import dev.ionice.snapshot.data.database.model.Day
-import dev.ionice.snapshot.data.database.model.LocationEntry
-import dev.ionice.snapshot.data.database.model.TagEntry
 
 interface DayRepository {
 

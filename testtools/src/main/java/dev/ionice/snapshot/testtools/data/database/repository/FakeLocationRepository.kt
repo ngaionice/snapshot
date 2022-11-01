@@ -1,13 +1,13 @@
 package dev.ionice.snapshot.testtools.data.database.repository
 
+import dev.ionice.snapshot.core.database.model.Coordinates
+import dev.ionice.snapshot.core.database.model.Location
+import dev.ionice.snapshot.core.database.model.LocationEntry
+import dev.ionice.snapshot.core.database.model.LocationProperties
+import dev.ionice.snapshot.data.database.repository.LocationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import dev.ionice.snapshot.data.database.model.Coordinates
-import dev.ionice.snapshot.data.database.model.Location
-import dev.ionice.snapshot.data.database.model.LocationEntry
-import dev.ionice.snapshot.data.database.model.LocationProperties
-import dev.ionice.snapshot.data.database.repository.LocationRepository
 import java.time.Instant
 
 class FakeLocationRepository : LocationRepository {

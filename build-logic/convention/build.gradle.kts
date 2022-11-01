@@ -2,7 +2,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "me.ionice.snapshot.buildlogic"
+group = "dev.ionice.snapshot.buildlogic"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8

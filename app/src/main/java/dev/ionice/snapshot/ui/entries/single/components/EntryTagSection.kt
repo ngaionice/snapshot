@@ -18,9 +18,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
-import dev.ionice.snapshot.data.database.model.TagEntry
-import dev.ionice.snapshot.data.database.model.TagProperties
 import dev.ionice.snapshot.R
+import dev.ionice.snapshot.core.database.model.TagEntry
+import dev.ionice.snapshot.core.database.model.TagProperties
 import dev.ionice.snapshot.ui.common.TagsUiState
 import dev.ionice.snapshot.ui.common.components.PageSectionContent
 import dev.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen

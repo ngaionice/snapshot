@@ -1,8 +1,8 @@
 package dev.ionice.snapshot.ui.common
 
-import dev.ionice.snapshot.data.database.model.Day
-import dev.ionice.snapshot.data.database.model.LocationProperties
-import dev.ionice.snapshot.data.database.model.TagProperties
+import dev.ionice.snapshot.core.database.model.Day
+import dev.ionice.snapshot.core.database.model.LocationProperties
+import dev.ionice.snapshot.core.database.model.TagProperties
 
 sealed interface DayUiState {
     object Loading : DayUiState

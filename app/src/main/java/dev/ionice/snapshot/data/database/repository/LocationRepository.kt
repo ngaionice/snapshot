@@ -1,10 +1,10 @@
 package dev.ionice.snapshot.data.database.repository
 
+import dev.ionice.snapshot.core.database.model.Coordinates
+import dev.ionice.snapshot.core.database.model.Location
+import dev.ionice.snapshot.core.database.model.LocationEntry
+import dev.ionice.snapshot.core.database.model.LocationProperties
 import kotlinx.coroutines.flow.Flow
-import dev.ionice.snapshot.data.database.model.Coordinates
-import dev.ionice.snapshot.data.database.model.Location
-import dev.ionice.snapshot.data.database.model.LocationEntry
-import dev.ionice.snapshot.data.database.model.LocationProperties
 
 interface LocationRepository {
 

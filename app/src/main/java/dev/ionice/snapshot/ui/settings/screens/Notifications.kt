@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.ionice.snapshot.R
+import dev.ionice.snapshot.core.common.Utils
 import dev.ionice.snapshot.ui.common.components.BackButton
 import dev.ionice.snapshot.ui.common.components.PageSection
 import dev.ionice.snapshot.ui.common.screens.BaseScreen
@@ -22,7 +23,6 @@ import dev.ionice.snapshot.ui.settings.components.FilledSettingSwitch
 import dev.ionice.snapshot.ui.settings.components.SettingRow
 import dev.ionice.snapshot.ui.settings.components.SettingSwitch
 import dev.ionice.snapshot.ui.settings.components.TimePickerDialog
-import dev.ionice.snapshot.utils.Utils
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
