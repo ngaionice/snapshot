@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.favorites
+package dev.ionice.snapshot.feature.favorites
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -9,9 +9,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
+import dev.ionice.snapshot.core.navigation.NavigationDestination
+import dev.ionice.snapshot.core.navigation.NavigatorImpl
 import dev.ionice.snapshot.core.ui.animationDurationMs
-import dev.ionice.snapshot.ui.navigation.NavigationDestination
-import dev.ionice.snapshot.ui.navigation.NavigatorImpl
 
 object FavoritesDestination : NavigationDestination {
     override val route = "favorites"

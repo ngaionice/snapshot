@@ -25,13 +25,6 @@ android {
             proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
-
-    packagingOptions {
-        resources {
-            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
-            excludes.add("/META-INF/DEPENDENCIES")
-        }
-    }
 }
 
 dependencies {
@@ -40,8 +33,11 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:model"))
     implementation(project(":core:notifications"))
+    implementation(project(":core:navigation"))
     implementation(project(":core:sync"))
     implementation(project(":core:ui"))
+
+    implementation(project(":feature:favorites"))
 
     implementation("androidx.core:core-ktx:1.9.0")
 

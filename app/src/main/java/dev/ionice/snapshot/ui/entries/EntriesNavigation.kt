@@ -11,30 +11,18 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
+import dev.ionice.snapshot.core.navigation.ENTRIES_ROUTE
+import dev.ionice.snapshot.core.navigation.EntriesListDestination
+import dev.ionice.snapshot.core.navigation.EntriesSingleDestination
 import dev.ionice.snapshot.core.ui.animationDurationMs
 import dev.ionice.snapshot.ui.entries.list.EntriesListRoute
 import dev.ionice.snapshot.ui.entries.single.EntriesSingleRoute
-import dev.ionice.snapshot.ui.navigation.NavigationDestination
-import dev.ionice.snapshot.ui.navigation.NavigatorImpl
-
-const val ENTRIES_ROUTE = "entries"
-
-object EntriesListDestination : NavigationDestination {
-    override val route = ENTRIES_ROUTE
-    override val destination = "list"
-}
-
-object EntriesSingleDestination : NavigationDestination {
-    override val route = ENTRIES_ROUTE
-    override val destination = "single"
-    const val dayIdArg = "dayId"
-}
-
+import dev.ionice.snapshot.core.navigation.NavigatorImpl
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.entriesGraph(navController: NavHostController) {
     navigation(
-        route = EntriesListDestination.route,
+        route = ENTRIES_ROUTE,
         startDestination = "${EntriesListDestination.route}/${EntriesListDestination.destination}",
         enterTransition = {
             slideIntoContainer(

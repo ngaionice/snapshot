@@ -23,8 +23,8 @@ import dev.ionice.snapshot.ui.entries.list.components.EntryInsertDialog
 import dev.ionice.snapshot.ui.entries.list.components.WeekSection
 import dev.ionice.snapshot.ui.entries.list.components.YearSectionHeader
 import dev.ionice.snapshot.ui.entries.list.components.getYearSectionContent
-import dev.ionice.snapshot.ui.navigation.Navigator
-import dev.ionice.snapshot.ui.settings.SettingsHomeDestination
+import dev.ionice.snapshot.core.navigation.Navigator
+import dev.ionice.snapshot.core.navigation.SettingsHomeDestination
 
 @Composable
 fun EntriesListRoute(viewModel: EntriesViewModel = hiltViewModel(), navigator: Navigator) {

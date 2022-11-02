@@ -90,8 +90,6 @@
     <string name="settings_auto_backup_frequency">Backup frequency</string>
     <string name="settings_auto_backup_time">Backup time</string>
 
-    <string name="favorites_load_error_message">FavoritesError</string>
-
     <!--  snackbar messages  -->
     <string name="snackbar_backup_success">Backup successful</string>
     <string name="snackbar_backup_failure">Backup failed</string>
@@ -132,10 +130,4 @@
     <string name="tt_settings_backup_functions">SettingsBackupFunctionalities</string>
     <string name="tt_settings_backup_metered_toggle">SettingsBackupMeteredToggle</string>
     <string name="tt_settings_backup_freq_selector">SettingsBackupFreqSelector</string>
-
-    <string name="tt_favorites_entry">FavoritesScreenEntry</string>
-    <string name="tt_favorites_list">FavoritesList</string>
-    <string name="tt_favorites_loading">FavoritesLoading</string>
-    <string name="tt_favorites_none">No favorites found; press the heart button on the top-right corner of an entry to favorite it!</string>
-
 </resources>

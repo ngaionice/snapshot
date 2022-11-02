@@ -9,34 +9,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
+import dev.ionice.snapshot.core.navigation.*
 import dev.ionice.snapshot.core.ui.animationDurationMs
-import dev.ionice.snapshot.ui.navigation.NavigationDestination
 import dev.ionice.snapshot.ui.settings.screens.BackupRoute
 import dev.ionice.snapshot.ui.settings.screens.HomeRoute
 import dev.ionice.snapshot.ui.settings.screens.NotificationsRoute
 import dev.ionice.snapshot.ui.settings.screens.ThemingRoute
-
-const val SETTINGS_ROUTE = "settings"
-
-object SettingsHomeDestination : NavigationDestination {
-    override val route = SETTINGS_ROUTE
-    override val destination = "home"
-}
-
-object SettingsBackupDestination : NavigationDestination {
-    override val route = SETTINGS_ROUTE
-    override val destination = "backup"
-}
-
-object SettingsNotificationsDestination : NavigationDestination {
-    override val route = SETTINGS_ROUTE
-    override val destination = "notifications"
-}
-
-object SettingsThemingDestination : NavigationDestination {
-    override val route = SETTINGS_ROUTE
-    override val destination = "theming"
-}
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.settingsGraph(navController: NavController) {

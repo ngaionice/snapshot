@@ -1,7 +1,6 @@
-package dev.ionice.snapshot.ui.navigation
+package dev.ionice.snapshot.core.navigation
 
 import androidx.navigation.NavHostController
-import dev.ionice.snapshot.ui.entries.EntriesSingleDestination
 
 interface Navigator {
     fun navigateBack()

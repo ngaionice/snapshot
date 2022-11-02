@@ -1,0 +1,8 @@
+<resources>
+    <string name="favorites_load_error_message">FavoritesError</string>
+
+    <string name="tt_favorites_entry">FavoritesScreenEntry</string>
+    <string name="tt_favorites_list">FavoritesList</string>
+    <string name="tt_favorites_loading">FavoritesLoading</string>
+    <string name="tt_favorites_none">No favorites found; press the heart button on the top-right corner of an entry to favorite it!</string>
+</resources>

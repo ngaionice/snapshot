@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.favorites
+package dev.ionice.snapshot.feature.favorites
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.clickable
@@ -17,15 +17,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
 import dev.ionice.snapshot.core.database.model.DayEntity
-import dev.ionice.snapshot.core.database.model. DayProperties
+import dev.ionice.snapshot.core.database.model.DayProperties
 import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
+import dev.ionice.snapshot.core.navigation.Navigator
 import dev.ionice.snapshot.core.ui.components.BackButton
 import dev.ionice.snapshot.core.ui.components.PlaceholderText
 import dev.ionice.snapshot.core.ui.screens.BaseScreen
-import dev.ionice.snapshot.ui.navigation.Navigator
 import java.time.LocalDate
 
 @Composable

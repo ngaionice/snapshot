@@ -1,13 +1,10 @@
-package dev.ionice.snapshot.ui.library
+package dev.ionice.snapshot.feature.favorites
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import dev.ionice.snapshot.R
 import dev.ionice.snapshot.testtools.data.database.repository.FRD
-import dev.ionice.snapshot.ui.favorites.FavoritesScreen
-import dev.ionice.snapshot.ui.favorites.FavoritesUiState
 import org.junit.Rule
 import org.junit.Test
 

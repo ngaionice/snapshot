@@ -9,20 +9,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
+import dev.ionice.snapshot.core.navigation.LIBRARY_ROUTE
+import dev.ionice.snapshot.core.navigation.LibraryHomeDestination
 import dev.ionice.snapshot.core.ui.animationDurationMs
-import dev.ionice.snapshot.ui.navigation.NavigationDestination
-import dev.ionice.snapshot.ui.navigation.NavigatorImpl
-
-const val LIBRARY_ROUTE = "library"
-
-object LibraryHomeDestination : NavigationDestination {
-    override val route = LIBRARY_ROUTE
-    override val destination = "home"
-}
+import dev.ionice.snapshot.core.navigation.NavigatorImpl
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.libraryGraph(navController: NavHostController) {
-    navigation(route = LibraryHomeDestination.route,
+    navigation(route = LIBRARY_ROUTE,
         startDestination = "${LibraryHomeDestination.route}/${LibraryHomeDestination.destination}",
         enterTransition = {
             slideIntoContainer(

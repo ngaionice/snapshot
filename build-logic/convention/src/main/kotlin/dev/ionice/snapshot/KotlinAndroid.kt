@@ -58,6 +58,13 @@ internal fun Project.configureKotlinAndroid(
             // Set JVM target to 1.8
             jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
+
+        packagingOptions {
+            resources {
+                excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+                excludes.add("/META-INF/DEPENDENCIES")
+            }
+        }
     }
 }
 

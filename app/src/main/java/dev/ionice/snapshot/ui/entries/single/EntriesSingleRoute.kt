@@ -31,7 +31,7 @@ import dev.ionice.snapshot.core.ui.screens.LoadingScreen
 import dev.ionice.snapshot.ui.entries.EntriesSingleUiState
 import dev.ionice.snapshot.ui.entries.EntriesViewModel
 import dev.ionice.snapshot.ui.entries.single.components.*
-import dev.ionice.snapshot.ui.navigation.Navigator
+import dev.ionice.snapshot.core.navigation.Navigator
 import java.time.LocalDate
 
 @Composable

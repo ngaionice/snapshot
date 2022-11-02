@@ -12,16 +12,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.ionice.snapshot.core.navigation.Navigator
+import dev.ionice.snapshot.core.navigation.SettingsHomeDestination
 import dev.ionice.snapshot.core.ui.DaysUiState
 import dev.ionice.snapshot.core.ui.LocationsUiState
 import dev.ionice.snapshot.core.ui.TagsUiState
 import dev.ionice.snapshot.core.ui.components.PageSection
 import dev.ionice.snapshot.core.ui.components.TopAppBar
 import dev.ionice.snapshot.core.ui.screens.FunctionalityNotAvailableScreen
-import dev.ionice.snapshot.ui.favorites.FavoritesDestination
+import dev.ionice.snapshot.feature.favorites.FavoritesDestination
 import dev.ionice.snapshot.ui.library.components.QuickAccess
-import dev.ionice.snapshot.ui.navigation.Navigator
-import dev.ionice.snapshot.ui.settings.SettingsHomeDestination
 
 @Composable
 fun LibraryRoute(

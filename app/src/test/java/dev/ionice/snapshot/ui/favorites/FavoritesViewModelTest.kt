@@ -1,6 +1,8 @@
 package dev.ionice.snapshot.ui.favorites
 
 import com.google.common.truth.Truth.assertThat
+import dev.ionice.snapshot.feature.favorites.FavoritesUiState
+import dev.ionice.snapshot.feature.favorites.FavoritesViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

@@ -5,17 +5,9 @@ plugins {
 
 android {
     namespace = "dev.ionice.snapshot.testtools"
-
-    packagingOptions {
-        resources {
-            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
-            excludes.add("/META-INF/DEPENDENCIES")
-        }
-    }
 }
 
 dependencies {
-    implementation(project(":app"))
     implementation(project(":core:data"))
     implementation(project(":core:database"))
     implementation(project(":core:sync"))

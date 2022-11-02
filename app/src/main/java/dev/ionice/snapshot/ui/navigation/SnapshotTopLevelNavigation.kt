@@ -8,8 +8,8 @@ import androidx.compose.material.icons.outlined.Today
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import dev.ionice.snapshot.ui.entries.ENTRIES_ROUTE
-import dev.ionice.snapshot.ui.library.LIBRARY_ROUTE
+import dev.ionice.snapshot.core.navigation.ENTRIES_ROUTE
+import dev.ionice.snapshot.core.navigation.LIBRARY_ROUTE
 
 class SnapshotTopLevelNavigation(private val navController: NavHostController) {
 

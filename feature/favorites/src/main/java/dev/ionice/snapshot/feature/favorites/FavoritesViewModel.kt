@@ -1,15 +1,15 @@
-package dev.ionice.snapshot.ui.favorites
+package dev.ionice.snapshot.feature.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ionice.snapshot.core.common.Result
 import dev.ionice.snapshot.core.common.asResult
-import kotlinx.coroutines.flow.*
-import dev.ionice.snapshot.core.database.model.DayEntity
-import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
 import dev.ionice.snapshot.core.data.repository.DayRepository
 import dev.ionice.snapshot.core.data.repository.LocationRepository
+import dev.ionice.snapshot.core.database.model.DayEntity
+import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
