@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import dev.ionice.snapshot.ui.common.components.CardButton
-import dev.ionice.snapshot.ui.common.components.PageSectionContent
+import dev.ionice.snapshot.core.ui.components.CardButton
+import dev.ionice.snapshot.core.ui.components.PageSectionContent
 
 @Composable
 fun QuickAccess(onSelectFavorites: () -> Unit, onSelectRandom: () -> Unit) {

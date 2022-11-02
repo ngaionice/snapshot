@@ -11,7 +11,7 @@ import dev.ionice.snapshot.core.database.model.Date
 import dev.ionice.snapshot.core.database.model.DayEntity
 import dev.ionice.snapshot.core.database.model.DayProperties
 import dev.ionice.snapshot.core.database.model.TagEntryEntity
-import dev.ionice.snapshot.ui.common.DaysUiState
+import dev.ionice.snapshot.core.ui.DaysUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import org.junit.Before

@@ -16,8 +16,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.ui.common.DaysUiState
-import dev.ionice.snapshot.ui.common.components.TopAppBar
+import dev.ionice.snapshot.core.ui.DaysUiState
+import dev.ionice.snapshot.core.ui.components.TopAppBar
 import dev.ionice.snapshot.ui.entries.EntriesViewModel
 import dev.ionice.snapshot.ui.entries.list.components.EntryInsertDialog
 import dev.ionice.snapshot.ui.entries.list.components.WeekSection

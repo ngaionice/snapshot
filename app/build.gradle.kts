@@ -41,6 +41,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:notifications"))
     implementation(project(":core:sync"))
+    implementation(project(":core:ui"))
 
     implementation("androidx.core:core-ktx:1.9.0")
 

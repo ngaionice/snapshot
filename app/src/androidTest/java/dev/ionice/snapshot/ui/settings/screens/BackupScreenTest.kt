@@ -9,11 +9,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import dev.ionice.snapshot.ui.settings.screens.BackupScreen
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.ui.settings.BackupUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

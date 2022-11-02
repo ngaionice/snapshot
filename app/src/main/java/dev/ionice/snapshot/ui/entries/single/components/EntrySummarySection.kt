@@ -20,7 +20,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.ui.common.components.PageSectionContent
+import dev.ionice.snapshot.core.ui.components.PageSectionContent
 
 @Composable
 fun EntrySummarySection(editing: Boolean, text: String, onTextChange: (String) -> Unit) {

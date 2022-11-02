@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common.components
+package dev.ionice.snapshot.core.ui.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateIntAsState

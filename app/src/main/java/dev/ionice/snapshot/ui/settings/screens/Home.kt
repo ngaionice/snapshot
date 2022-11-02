@@ -9,8 +9,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.ui.common.components.BackButton
-import dev.ionice.snapshot.ui.common.screens.BaseScreen
+import dev.ionice.snapshot.core.ui.components.BackButton
+import dev.ionice.snapshot.core.ui.screens.BaseScreen
 import dev.ionice.snapshot.ui.settings.components.SettingRow
 
 @OptIn(ExperimentalMaterial3Api::class)

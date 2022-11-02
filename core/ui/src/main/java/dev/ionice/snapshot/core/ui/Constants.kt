@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common
+package dev.ionice.snapshot.core.ui
 
 import androidx.compose.ui.unit.dp
 

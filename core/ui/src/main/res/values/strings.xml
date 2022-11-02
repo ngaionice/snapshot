@@ -1,0 +1,16 @@
+<resources>
+    <string name="common_back">Back</string>
+    <string name="common_functionality_na_with_reason">Functionality not available as %s.</string>
+    <string name="common_functionality_soon">Functionality not yet implemented!</string>
+    <string name="common_functionality_na_dialog_close">Close</string>
+    <string name="common_calendar_select_date">SELECT DATE</string>
+    <string name="common_dialog_cancel">Cancel</string>
+    <string name="common_dialog_ok">OK</string>
+    <string name="common_dialog_confirm">Confirm</string>
+    <string name="common_datepicker_error_range">Out of range</string>
+
+    <string name="tt_common_date_picker">DatePicker</string>
+    <string name="tt_common_loading_screen">LoadingScreen</string>
+    <string name="tt_common_time_picker_digit_hr">TimePickerHourDigit</string>
+    <string name="tt_common_time_picker_digit_min">TimePickerMinuteDigit</string>
+</resources>

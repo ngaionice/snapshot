@@ -24,8 +24,8 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.ui.common.components.PlaceholderText
-import dev.ionice.snapshot.ui.common.titleMediumLarge
+import dev.ionice.snapshot.core.ui.components.PlaceholderText
+import dev.ionice.snapshot.core.ui.titleMediumLarge
 
 /**
  * The base entry for each setting. Can be configured to provide button functionality.

@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common.components
+package dev.ionice.snapshot.core.ui.components
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons

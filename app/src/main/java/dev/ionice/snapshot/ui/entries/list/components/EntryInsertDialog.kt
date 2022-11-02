@@ -15,7 +15,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.ui.common.components.DatePicker
+import dev.ionice.snapshot.core.ui.components.DatePicker
 import java.time.LocalDate
 
 @Composable

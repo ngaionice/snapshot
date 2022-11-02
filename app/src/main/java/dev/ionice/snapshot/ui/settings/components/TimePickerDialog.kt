@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.ui.common.components.TimePicker
+import dev.ionice.snapshot.core.ui.components.TimePicker
 import java.time.LocalTime
 
 @Composable

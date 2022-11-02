@@ -10,10 +10,10 @@ import dev.ionice.snapshot.core.database.model.DayEntity
 import dev.ionice.snapshot.core.data.repository.DayRepository
 import dev.ionice.snapshot.core.data.repository.LocationRepository
 import dev.ionice.snapshot.core.data.repository.TagRepository
-import dev.ionice.snapshot.ui.common.DayUiState
-import dev.ionice.snapshot.ui.common.DaysUiState
-import dev.ionice.snapshot.ui.common.LocationsUiState
-import dev.ionice.snapshot.ui.common.TagsUiState
+import dev.ionice.snapshot.core.ui.DayUiState
+import dev.ionice.snapshot.core.ui.DaysUiState
+import dev.ionice.snapshot.core.ui.LocationsUiState
+import dev.ionice.snapshot.core.ui.TagsUiState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -127,8 +127,8 @@ class EntriesViewModel @Inject constructor(
 
     fun favorite(isFavorite: Boolean) {
         val dayUiState = singleUiState.value.dayUiState
-        if (dayUiState is DayUiState.Success && dayUiState.data != null && dayUiState.data.properties.isFavorite != isFavorite) {
-            val (properties, tags, location) = dayUiState.data
+        if (dayUiState is DayUiState.Success && dayUiState.data != null && dayUiState.data!!.properties.isFavorite != isFavorite) {
+            val (properties, tags, location) = dayUiState.data!!
             val (id, summary) = properties
             viewModelScope.launch { dayRepository.update(id, summary, isFavorite, location, tags) }
         }

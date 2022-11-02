@@ -12,9 +12,9 @@ import dev.ionice.snapshot.core.database.model.LocationEntryEntity
 import dev.ionice.snapshot.core.database.model.TagEntryEntity
 import dev.ionice.snapshot.core.database.model.TagPropertiesEntity
 import dev.ionice.snapshot.testtools.data.database.repository.FRD
-import dev.ionice.snapshot.ui.common.DayUiState
-import dev.ionice.snapshot.ui.common.LocationsUiState
-import dev.ionice.snapshot.ui.common.TagsUiState
+import dev.ionice.snapshot.core.ui.DayUiState
+import dev.ionice.snapshot.core.ui.LocationsUiState
+import dev.ionice.snapshot.core.ui.TagsUiState
 import dev.ionice.snapshot.ui.entries.EntriesSingleUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before

@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common
+package dev.ionice.snapshot.core.ui
 
 import dev.ionice.snapshot.core.database.model.DayEntity
 import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity

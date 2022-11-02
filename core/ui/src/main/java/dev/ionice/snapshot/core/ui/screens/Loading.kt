@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common.screens
+package dev.ionice.snapshot.core.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
-import dev.ionice.snapshot.R
+import dev.ionice.snapshot.core.ui.R
 
 @Composable
 fun LoadingScreen(message: String? = null, testTag: String? = null) {

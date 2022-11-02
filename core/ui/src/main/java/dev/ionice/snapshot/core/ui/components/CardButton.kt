@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common.components
+package dev.ionice.snapshot.core.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.ionice.snapshot.ui.common.ElevationTokens
+import dev.ionice.snapshot.core.ui.ElevationTokens
 
 /**
  * A button that supports an optional leading icon.

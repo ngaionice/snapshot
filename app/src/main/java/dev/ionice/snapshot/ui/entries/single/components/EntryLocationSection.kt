@@ -17,10 +17,10 @@ import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.database.model.CoordinatesEntity
 import dev.ionice.snapshot.core.database.model.LocationEntryEntity
 import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
-import dev.ionice.snapshot.ui.common.LocationsUiState
-import dev.ionice.snapshot.ui.common.components.PageSectionContent
-import dev.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
-import dev.ionice.snapshot.ui.common.screens.LoadingScreen
+import dev.ionice.snapshot.core.ui.LocationsUiState
+import dev.ionice.snapshot.core.ui.components.PageSectionContent
+import dev.ionice.snapshot.core.ui.screens.FunctionalityNotAvailableScreen
+import dev.ionice.snapshot.core.ui.screens.LoadingScreen
 
 @Composable
 fun EntryLocationSection(

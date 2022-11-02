@@ -22,12 +22,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
 import dev.ionice.snapshot.core.database.model.*
-import dev.ionice.snapshot.ui.common.DayUiState
-import dev.ionice.snapshot.ui.common.LocationsUiState
-import dev.ionice.snapshot.ui.common.TagsUiState
-import dev.ionice.snapshot.ui.common.components.BackButton
-import dev.ionice.snapshot.ui.common.screens.ErrorScreen
-import dev.ionice.snapshot.ui.common.screens.LoadingScreen
+import dev.ionice.snapshot.core.ui.DayUiState
+import dev.ionice.snapshot.core.ui.LocationsUiState
+import dev.ionice.snapshot.core.ui.TagsUiState
+import dev.ionice.snapshot.core.ui.components.BackButton
+import dev.ionice.snapshot.core.ui.screens.ErrorScreen
+import dev.ionice.snapshot.core.ui.screens.LoadingScreen
 import dev.ionice.snapshot.ui.entries.EntriesSingleUiState
 import dev.ionice.snapshot.ui.entries.EntriesViewModel
 import dev.ionice.snapshot.ui.entries.single.components.*
@@ -84,7 +84,7 @@ fun EntriesSingleScreen(
                 NotFoundScreen(dayId = uiState.dayId, onBack = onBack)
             } else {
                 EntryScreen(
-                    day = uiState.dayUiState.data,
+                    day = uiState.dayUiState.data!!,
                     locationProvider = { uiState.locationsUiState },
                     tagProvider = { uiState.tagsUiState },
                     editingCopy = uiState.editingCopy,

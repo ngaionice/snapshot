@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import dev.ionice.snapshot.ui.common.components.PageSectionContent
+import dev.ionice.snapshot.core.ui.components.PageSectionContent
 import dev.ionice.snapshot.ui.entries.single.EntrySection
 
 @Composable

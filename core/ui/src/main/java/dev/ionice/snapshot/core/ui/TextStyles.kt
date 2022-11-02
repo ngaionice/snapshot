@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common
+package dev.ionice.snapshot.core.ui
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable

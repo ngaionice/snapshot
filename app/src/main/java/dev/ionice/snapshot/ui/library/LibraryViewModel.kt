@@ -8,9 +8,9 @@ import dev.ionice.snapshot.core.common.asResult
 import dev.ionice.snapshot.core.data.repository.DayRepository
 import dev.ionice.snapshot.core.data.repository.LocationRepository
 import dev.ionice.snapshot.core.data.repository.TagRepository
-import dev.ionice.snapshot.ui.common.DaysUiState
-import dev.ionice.snapshot.ui.common.LocationsUiState
-import dev.ionice.snapshot.ui.common.TagsUiState
+import dev.ionice.snapshot.core.ui.DaysUiState
+import dev.ionice.snapshot.core.ui.LocationsUiState
+import dev.ionice.snapshot.core.ui.TagsUiState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import java.time.LocalDate

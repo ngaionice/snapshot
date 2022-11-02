@@ -22,9 +22,9 @@ import dev.ionice.snapshot.core.common.Utils
 import dev.ionice.snapshot.core.database.model.DayEntity
 import dev.ionice.snapshot.core.database.model. DayProperties
 import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
-import dev.ionice.snapshot.ui.common.components.BackButton
-import dev.ionice.snapshot.ui.common.components.PlaceholderText
-import dev.ionice.snapshot.ui.common.screens.BaseScreen
+import dev.ionice.snapshot.core.ui.components.BackButton
+import dev.ionice.snapshot.core.ui.components.PlaceholderText
+import dev.ionice.snapshot.core.ui.screens.BaseScreen
 import dev.ionice.snapshot.ui.navigation.Navigator
 import java.time.LocalDate
 

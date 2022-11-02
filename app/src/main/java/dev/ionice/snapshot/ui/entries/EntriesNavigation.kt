@@ -11,7 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
-import dev.ionice.snapshot.ui.common.animationDurationMs
+import dev.ionice.snapshot.core.ui.animationDurationMs
 import dev.ionice.snapshot.ui.entries.list.EntriesListRoute
 import dev.ionice.snapshot.ui.entries.single.EntriesSingleRoute
 import dev.ionice.snapshot.ui.navigation.NavigationDestination

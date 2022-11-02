@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.ionice.snapshot.ui.common.ElevationTokens
+import dev.ionice.snapshot.core.ui.ElevationTokens
 import dev.ionice.snapshot.ui.navigation.SnapshotNavHost
 import dev.ionice.snapshot.ui.navigation.SnapshotNavigationBar
 import dev.ionice.snapshot.ui.navigation.SnapshotTopLevelNavigation

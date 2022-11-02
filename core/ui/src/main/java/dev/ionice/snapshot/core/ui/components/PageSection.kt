@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common.components
+package dev.ionice.snapshot.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

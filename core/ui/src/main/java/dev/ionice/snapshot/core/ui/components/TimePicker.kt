@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common.components
+package dev.ionice.snapshot.core.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -18,9 +18,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.ionice.snapshot.core.ui.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import dev.ionice.snapshot.R
 import java.time.LocalTime
 
 @Composable
@@ -112,7 +112,8 @@ private fun NumberInputBox(
                         .focusRequester(focusRequester)
                         .onFocusChanged {
                             textValue = if (it.isFocused) "" else formatValue(value)
-                        }.testTag(testTag),
+                        }
+                        .testTag(testTag),
                     value = textValue,
                     onValueChange = { onValueChange(filterText(value, it, allowedRange)) },
                     textStyle = MaterialTheme.typography.displayLarge.copy(

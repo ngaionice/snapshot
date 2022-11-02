@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common.components
+package dev.ionice.snapshot.core.ui.components
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
-import dev.ionice.snapshot.ui.common.titleMediumLarge
+import dev.ionice.snapshot.core.ui.titleMediumLarge
 
 @Composable
 fun PlaceholderText(textStyle: TextStyle, modifier: Modifier = Modifier) {

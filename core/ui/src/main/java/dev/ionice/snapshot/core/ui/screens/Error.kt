@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common.screens
+package dev.ionice.snapshot.core.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

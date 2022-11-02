@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.common.components
+package dev.ionice.snapshot.core.ui.components
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -11,6 +11,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun VerticalDivider(modifier: Modifier = Modifier, height: Dp = 16.dp, color: Color = LocalContentColor.current) {
-    Divider(modifier = modifier.width(1.dp).height(height), color = color)
+fun VerticalDivider(
+    modifier: Modifier = Modifier,
+    height: Dp = 16.dp,
+    color: Color = LocalContentColor.current
+) {
+    Divider(modifier = modifier
+        .width(1.dp)
+        .height(height), color = color)
 }

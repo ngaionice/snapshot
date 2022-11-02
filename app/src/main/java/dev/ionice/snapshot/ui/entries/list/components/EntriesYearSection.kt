@@ -25,11 +25,11 @@ import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
 import dev.ionice.snapshot.core.database.model.DayEntity
-import dev.ionice.snapshot.ui.common.DaysUiState
-import dev.ionice.snapshot.ui.common.components.PageSectionContent
-import dev.ionice.snapshot.ui.common.components.PageSectionHeader
-import dev.ionice.snapshot.ui.common.components.PlaceholderText
-import dev.ionice.snapshot.ui.common.components.VerticalDivider
+import dev.ionice.snapshot.core.ui.DaysUiState
+import dev.ionice.snapshot.core.ui.components.PageSectionContent
+import dev.ionice.snapshot.core.ui.components.PageSectionHeader
+import dev.ionice.snapshot.core.ui.components.PlaceholderText
+import dev.ionice.snapshot.core.ui.components.VerticalDivider
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields

@@ -25,11 +25,11 @@ import com.google.android.gms.common.api.ApiException
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
 import dev.ionice.snapshot.sync.GAuthResultContract
-import dev.ionice.snapshot.ui.common.components.BackButton
-import dev.ionice.snapshot.ui.common.components.ConfirmationDialog
-import dev.ionice.snapshot.ui.common.components.PageSection
-import dev.ionice.snapshot.ui.common.screens.BaseScreen
-import dev.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
+import dev.ionice.snapshot.core.ui.components.BackButton
+import dev.ionice.snapshot.core.ui.components.ConfirmationDialog
+import dev.ionice.snapshot.core.ui.components.PageSection
+import dev.ionice.snapshot.core.ui.screens.BaseScreen
+import dev.ionice.snapshot.core.ui.screens.FunctionalityNotAvailableScreen
 import dev.ionice.snapshot.ui.settings.BackupUiState
 import dev.ionice.snapshot.ui.settings.SettingsViewModel
 import dev.ionice.snapshot.ui.settings.components.*

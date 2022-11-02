@@ -8,8 +8,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.ionice.snapshot.ui.common.components.SearchBar
-import dev.ionice.snapshot.ui.common.components.SearchBarState
+import dev.ionice.snapshot.core.ui.components.SearchBar
+import dev.ionice.snapshot.core.ui.components.SearchBarState
 
 private val itemHeight = 64.dp
 

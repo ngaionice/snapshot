@@ -9,7 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
-import dev.ionice.snapshot.ui.common.animationDurationMs
+import dev.ionice.snapshot.core.ui.animationDurationMs
 import dev.ionice.snapshot.ui.navigation.NavigationDestination
 import dev.ionice.snapshot.ui.navigation.NavigatorImpl
 

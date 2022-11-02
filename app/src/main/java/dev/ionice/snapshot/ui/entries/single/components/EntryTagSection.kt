@@ -21,10 +21,10 @@ import com.google.accompanist.flowlayout.FlowRow
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.database.model.TagEntryEntity
 import dev.ionice.snapshot.core.database.model.TagPropertiesEntity
-import dev.ionice.snapshot.ui.common.TagsUiState
-import dev.ionice.snapshot.ui.common.components.PageSectionContent
-import dev.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
-import dev.ionice.snapshot.ui.common.screens.LoadingScreen
+import dev.ionice.snapshot.core.ui.TagsUiState
+import dev.ionice.snapshot.core.ui.components.PageSectionContent
+import dev.ionice.snapshot.core.ui.screens.FunctionalityNotAvailableScreen
+import dev.ionice.snapshot.core.ui.screens.LoadingScreen
 
 @Composable
 fun EntryTagSection(
