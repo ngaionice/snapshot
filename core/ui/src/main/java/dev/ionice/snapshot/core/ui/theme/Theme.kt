@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.theme
+package dev.ionice.snapshot.core.ui.theme
 
 import android.app.Activity
 import android.os.Build

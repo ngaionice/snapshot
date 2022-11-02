@@ -23,7 +23,7 @@ import dev.ionice.snapshot.core.ui.ElevationTokens
 import dev.ionice.snapshot.ui.navigation.SnapshotNavHost
 import dev.ionice.snapshot.ui.navigation.SnapshotNavigationBar
 import dev.ionice.snapshot.ui.navigation.SnapshotTopLevelNavigation
-import dev.ionice.snapshot.ui.theme.SnapshotTheme
+import dev.ionice.snapshot.core.ui.theme.SnapshotTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

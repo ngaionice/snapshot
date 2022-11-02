@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.theme
+package dev.ionice.snapshot.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import dev.ionice.snapshot.R
+import dev.ionice.snapshot.core.ui.R
 
 private val Manrope = FontFamily(
     Font(R.font.manrope_light, FontWeight.Light),
