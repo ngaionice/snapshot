@@ -156,23 +156,23 @@ class DayDaoTest {
         dayDao.insertProperties(dayProps)
 
         // insert location data
-        val locationProps = LocationProperties(
+        val locationProps = LocationPropertiesEntity(
             id = TestingData.Location.initialId,
             coordinates = TestingData.Location.coordinates,
             name = TestingData.Location.name,
             lastUsedAt = 0
         )
         val locationId = locationDao.insertProperties(locationProps)
-        locationDao.insertEntry(LocationEntry(date, locationId))
+        locationDao.insertEntry(LocationEntryEntity(date, locationId))
 
         // insert tag data
-        val tagProps = TagProperties(
+        val tagProps = TagPropertiesEntity(
             id = TestingData.Tag.initialId,
             name = TestingData.Tag.name,
             lastUsedAt = TestingData.Tag.lastUsedAt
         )
         val tagId = tagDao.insertProperties(tagProps)
-        tagDao.insertEntry(TagEntry(date, tagId, TestingData.Tag.content))
+        tagDao.insertEntry(TagEntryEntity(date, tagId, TestingData.Tag.content))
 
         val query = dayDao.get(date)
         assertTrue("Expected a day entry from query, got null.", query != null)

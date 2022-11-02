@@ -60,10 +60,10 @@ fun EntriesSingleRoute(
 fun EntriesSingleScreen(
     uiStateProvider: () -> EntriesSingleUiState,
     onBack: () -> Unit,
-    onEdit: (Day?) -> Unit,
+    onEdit: (DayEntity?) -> Unit,
     onSave: () -> Unit,
     onFavorite: (Boolean) -> Unit,
-    onAddLocation: (String, Coordinates) -> Unit,
+    onAddLocation: (String, CoordinatesEntity) -> Unit,
     onAddTag: (String) -> Unit
 ) {
     val uiState = uiStateProvider()
@@ -103,15 +103,15 @@ fun EntriesSingleScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EntryScreen(
-    day: Day,
-    editingCopy: Day?,
+    day: DayEntity,
+    editingCopy: DayEntity?,
     locationProvider: () -> LocationsUiState,
     tagProvider: () -> TagsUiState,
     onBack: () -> Unit,
-    onEdit: (Day?) -> Unit,
+    onEdit: (DayEntity?) -> Unit,
     onSave: () -> Unit,
     onFavorite: (Boolean) -> Unit,
-    onAddLocation: (String, Coordinates) -> Unit,
+    onAddLocation: (String, CoordinatesEntity) -> Unit,
     onAddTag: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -174,11 +174,11 @@ fun EntryScreen(
     } else {
         day.location
     }
-    val onLocationChange: (LocationProperties) -> Unit = { loc ->
+    val onLocationChange: (LocationPropertiesEntity) -> Unit = { loc ->
         editingCopy?.let {
             onEdit(
                 it.copy(
-                    location = LocationEntry(dayId = it.properties.id, locationId = loc.id)
+                    location = LocationEntryEntity(dayId = it.properties.id, locationId = loc.id)
                 )
             )
         }
@@ -188,7 +188,7 @@ fun EntryScreen(
     } else {
         day.tags
     }
-    val onTagsChange: (List<TagEntry>) -> Unit = { newTags ->
+    val onTagsChange: (List<TagEntryEntity>) -> Unit = { newTags ->
         editingCopy?.let { onEdit(it.copy(tags = newTags)) }
     }
 

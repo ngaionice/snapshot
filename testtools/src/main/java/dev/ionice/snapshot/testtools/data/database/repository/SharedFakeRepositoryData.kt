@@ -10,7 +10,7 @@ object FakeRepositoryData {
     const val locationId = 9999L
     const val tagId = 9999L
 
-    val emptyDay = Day(
+    val emptyDay = DayEntity(
         properties = DayProperties(
             id = dayIds[0],
             summary = "",
@@ -22,7 +22,7 @@ object FakeRepositoryData {
         location = null
     )
 
-    val filledDay = Day(
+    val filledDay = DayEntity(
         properties = DayProperties(
             id = dayIds[0],
             summary = "Fake summary 0",
@@ -30,12 +30,12 @@ object FakeRepositoryData {
             lastModifiedAt = 0,
             date = Date(2021, 8, 1)
         ),
-        tags = listOf(TagEntry(dayIds[0], tagId)),
-        location = LocationEntry(dayIds[0], locationId)
+        tags = listOf(TagEntryEntity(dayIds[0], tagId)),
+        location = LocationEntryEntity(dayIds[0], locationId)
     )
 
     val daySourceData = listOf(
-        Day(
+        DayEntity(
             properties = DayProperties(
                 id = dayIds[0],
                 summary = "Fake summary 0",
@@ -43,10 +43,10 @@ object FakeRepositoryData {
                 lastModifiedAt = 0,
                 date = Date(2021, 8, 1)
             ),
-            tags = listOf(TagEntry(dayIds[0], tagId)),
-            location = LocationEntry(dayIds[0], locationId)
+            tags = listOf(TagEntryEntity(dayIds[0], tagId)),
+            location = LocationEntryEntity(dayIds[0], locationId)
         ),
-        Day(
+        DayEntity(
             properties = DayProperties(
                 id = dayIds[1],
                 summary = "Fake summary 1",
@@ -57,7 +57,7 @@ object FakeRepositoryData {
             tags = emptyList(),
             location = null
         ),
-        Day(
+        DayEntity(
             properties = DayProperties(
                 id = dayIds[2],
                 summary = "Fake summary 2",
@@ -72,15 +72,15 @@ object FakeRepositoryData {
     )
 
     val locationSourceData = listOf(
-        Location(
-            properties = LocationProperties(
+        LocationEntity(
+            properties = LocationPropertiesEntity(
                 id = locationId,
-                coordinates = Coordinates(0.0, 0.0),
+                coordinates = CoordinatesEntity(0.0, 0.0),
                 name = "FakeLocation",
                 lastUsedAt = 0
             ),
             entries = listOf(
-                LocationEntry(
+                LocationEntryEntity(
                     dayIds[0],
                     locationId
                 )
@@ -89,13 +89,13 @@ object FakeRepositoryData {
     )
 
     val tagSourceData = listOf(
-        Tag(
-            properties = TagProperties(
+        TagEntity(
+            properties = TagPropertiesEntity(
                 id = tagId,
                 name = "FakeTag",
                 lastUsedAt = 0
             ),
-            entries = listOf(TagEntry(dayIds[0], tagId))
+            entries = listOf(TagEntryEntity(dayIds[0], tagId))
         )
     )
 

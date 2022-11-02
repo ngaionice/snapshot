@@ -1,22 +1,24 @@
 package dev.ionice.snapshot
 
 import android.app.Application
-import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.graphics.Color
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
+import dev.ionice.snapshot.core.notifications.createNotificationChannels
 import javax.inject.Inject
 
 @HiltAndroidApp
 class SnapshotApplication : Application(), Configuration.Provider {
 
-    @Inject lateinit var workerFactory: HiltWorkerFactory
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannels()
+
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannels(applicationContext)
     }
 
     override fun getWorkManagerConfiguration(): Configuration {
@@ -31,34 +33,5 @@ class SnapshotApplication : Application(), Configuration.Provider {
                 .setWorkerFactory(workerFactory)
                 .build()
         }
-    }
-
-    private fun createNotificationChannels() {
-        val remindersChannel = NotificationChannel(
-            getString(R.string.notification_reminders_channel_id),
-            getString(R.string.notification_reminders_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-
-        remindersChannel.enableLights(true)
-        remindersChannel.lightColor = Color.YELLOW
-        remindersChannel.enableVibration(true)
-        remindersChannel.description =
-            getString(R.string.notification_reminders_channel_description)
-
-        val memoriesChannel = NotificationChannel(
-            getString(R.string.notification_memories_channel_id),
-            getString(R.string.notification_memories_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-
-        memoriesChannel.enableLights(true)
-        memoriesChannel.lightColor = Color.YELLOW
-        memoriesChannel.enableVibration(true)
-        memoriesChannel.description = getString(R.string.notification_memories_channel_description)
-
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(remindersChannel)
-        manager.createNotificationChannel(memoriesChannel)
     }
 }

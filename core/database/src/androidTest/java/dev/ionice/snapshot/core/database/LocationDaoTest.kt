@@ -59,7 +59,7 @@ class LocationDaoTest {
     @Test
     @Throws(IOException::class)
     fun insertLocationProperties(): Unit = runTest {
-        val locationProps = LocationProperties(
+        val locationProps = LocationPropertiesEntity(
             id = TestingData.Location.initialId,
             coordinates = TestingData.Location.coordinates,
             name = TestingData.Location.name,
@@ -81,7 +81,7 @@ class LocationDaoTest {
     @Test(expected = SQLiteConstraintException::class)
     @Throws(IOException::class)
     fun insertLocationPropertiesWithDuplicateId(): Unit = runTest {
-        val locationProps = LocationProperties(
+        val locationProps = LocationPropertiesEntity(
             id = TestingData.Location.initialId,
             coordinates = TestingData.Location.coordinates,
             name = TestingData.Location.name,
@@ -89,7 +89,7 @@ class LocationDaoTest {
         )
         val locationId = locationDao.insertProperties(locationProps)
         locationDao.insertProperties(
-            LocationProperties(
+            LocationPropertiesEntity(
                 id = locationId,
                 coordinates = TestingData.Location.coordinates,
                 name = "AltName",
@@ -104,7 +104,7 @@ class LocationDaoTest {
     @Test(expected = SQLiteConstraintException::class)
     @Throws(IOException::class)
     fun insertLocationPropertiesWithDuplicateCoordinates(): Unit = runTest {
-        val locationProps = LocationProperties(
+        val locationProps = LocationPropertiesEntity(
             id = TestingData.Location.initialId,
             coordinates = TestingData.Location.coordinates,
             name = TestingData.Location.name,
@@ -112,7 +112,7 @@ class LocationDaoTest {
         )
         locationDao.insertProperties(locationProps)
         locationDao.insertProperties(
-            LocationProperties(
+            LocationPropertiesEntity(
                 id = TestingData.Location.initialId,
                 coordinates = TestingData.Location.coordinates,
                 name = "AltName",
@@ -127,7 +127,7 @@ class LocationDaoTest {
     @Test
     @Throws(IOException::class)
     fun updateLocationProperties(): Unit = runTest {
-        val locationProps = LocationProperties(
+        val locationProps = LocationPropertiesEntity(
             id = TestingData.Location.initialId,
             coordinates = TestingData.Location.coordinates,
             name = TestingData.Location.name,
@@ -135,9 +135,9 @@ class LocationDaoTest {
         )
         val locationId = locationDao.insertProperties(locationProps)
         val nameUpdate = "TestLocationUpdate"
-        val coordsUpdate = Coordinates(4.0, 4.0)
+        val coordsUpdate = CoordinatesEntity(4.0, 4.0)
         locationDao.updateProperties(
-            LocationProperties(
+            LocationPropertiesEntity(
                 id = locationId,
                 coordinates = coordsUpdate,
                 name = nameUpdate,
@@ -160,7 +160,7 @@ class LocationDaoTest {
     @Test
     @Throws(IOException::class)
     fun insertLocationEntryWithDuplicateIds(): Unit = runTest {
-        val locationProps = LocationProperties(
+        val locationProps = LocationPropertiesEntity(
             id = TestingData.Location.initialId,
             coordinates = TestingData.Location.coordinates,
             name = TestingData.Location.name,
@@ -176,8 +176,8 @@ class LocationDaoTest {
             date = Date(year, month, dayOfMonth)
         )
         dayDao.insertProperties(dayProps)
-        locationDao.insertEntry(LocationEntry(date, locationId))
-        locationDao.insertEntry(LocationEntry(date, locationId))
+        locationDao.insertEntry(LocationEntryEntity(date, locationId))
+        locationDao.insertEntry(LocationEntryEntity(date, locationId))
     }
 
     /**
@@ -187,7 +187,7 @@ class LocationDaoTest {
     @Test
     @Throws(IOException::class)
     fun insertLocationEntryAndQueryLocation(): Unit = runTest {
-        val locationProps = LocationProperties(
+        val locationProps = LocationPropertiesEntity(
             id = TestingData.Location.initialId,
             coordinates = TestingData.Location.coordinates,
             name = TestingData.Location.name,
@@ -203,7 +203,7 @@ class LocationDaoTest {
             date = Date(year, month, dayOfMonth)
         )
         dayDao.insertProperties(dayProps)
-        locationDao.insertEntry(LocationEntry(date, locationId))
+        locationDao.insertEntry(LocationEntryEntity(date, locationId))
 
         val query = locationDao.get(locationId)
         assertTrue("Expected Location object after insertion, got null.", query != null)

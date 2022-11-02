@@ -1,7 +1,7 @@
 package dev.ionice.snapshot.core.database.dao
 
 import androidx.room.*
-import dev.ionice.snapshot.core.database.model.Day
+import dev.ionice.snapshot.core.database.model.DayEntity
 import dev.ionice.snapshot.core.database.model.DayProperties
 import kotlinx.coroutines.flow.Flow
 
@@ -16,15 +16,15 @@ interface DayDao {
 
     @Transaction
     @Query("select * from Day where id = :id")
-    suspend fun get(id: Long): Day?
+    suspend fun get(id: Long): DayEntity?
 
     @Transaction
     @Query("select * from Day where id = :id")
-    fun getFlow(id: Long): Flow<Day?>
+    fun getFlow(id: Long): Flow<DayEntity?>
 
     @Transaction
     @Query("select * from Day where year = :year order by id desc")
-    fun getListFlowByYear(year: Int): Flow<List<Day>>
+    fun getListFlowByYear(year: Int): Flow<List<DayEntity>>
 
     /**
      * Returns a Flow of DayProperties that are in the range of [start] and [end], inclusive.
@@ -34,13 +34,13 @@ interface DayDao {
      */
     @Transaction
     @Query("select * from Day where id >= :start and id <= :end order by id desc")
-    fun getListFlowByIdRange(start: Long, end: Long): Flow<List<Day>>
+    fun getListFlowByIdRange(start: Long, end: Long): Flow<List<DayEntity>>
 
     @Transaction
     @Query("select * from Day where month = :month and dayOfMonth = :dayOfMonth order by id desc")
-    fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<Day>>
+    fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<DayEntity>>
 
     @Transaction
     @Query("select * from Day where isFavorite = 1 order by id desc")
-    fun getListFlowForFavorites(): Flow<List<Day>>
+    fun getListFlowForFavorites(): Flow<List<DayEntity>>
 }

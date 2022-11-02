@@ -12,7 +12,7 @@ import dev.ionice.snapshot.core.database.dao.TagDao
 import dev.ionice.snapshot.core.database.dao.UtilsDao
 
 @Database(
-    entities = [DayProperties::class, DaySummaryFts::class, LocationProperties::class, LocationEntry::class, TagProperties::class, TagEntry::class, TagEntryFts::class],
+    entities = [DayProperties::class, DaySummaryFts::class, LocationPropertiesEntity::class, LocationEntryEntity::class, TagPropertiesEntity::class, TagEntryEntity::class, TagEntryFts::class],
     version = 2
 )
 abstract class SnapshotDatabase : RoomDatabase() {

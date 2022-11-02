@@ -12,8 +12,8 @@ import dev.ionice.snapshot.core.database.dao.DayDao
 import dev.ionice.snapshot.core.database.dao.TagDao
 import dev.ionice.snapshot.core.database.model.Date
 import dev.ionice.snapshot.core.database.model.DayProperties
-import dev.ionice.snapshot.core.database.model.TagEntry
-import dev.ionice.snapshot.core.database.model.TagProperties
+import dev.ionice.snapshot.core.database.model.TagEntryEntity
+import dev.ionice.snapshot.core.database.model.TagPropertiesEntity
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -52,7 +52,7 @@ class TagDaoTest {
     }
 
     private suspend fun insertBaseProperties(): Long {
-        val tagProps = TagProperties(
+        val tagProps = TagPropertiesEntity(
             id = TestingData.Tag.initialId,
             name = TestingData.Tag.name,
             lastUsedAt = TestingData.Tag.lastUsedAt
@@ -95,7 +95,7 @@ class TagDaoTest {
     @Throws(IOException::class)
     fun insertTagPropertiesWithDuplicateId(): Unit = runTest {
         val tagId = insertBaseProperties()
-        tagDao.insertProperties(TagProperties(id = tagId, name = "NewName", lastUsedAt = 1))
+        tagDao.insertProperties(TagPropertiesEntity(id = tagId, name = "NewName", lastUsedAt = 1))
     }
 
     /**
@@ -108,7 +108,7 @@ class TagDaoTest {
         val nameUpdate = "TestTagUpdate"
         val lastUsedAtUpdate = 1L
         tagDao.updateProperties(
-            TagProperties(
+            TagPropertiesEntity(
                 id = tagId, name = nameUpdate, lastUsedAt = lastUsedAtUpdate
             )
         )
@@ -131,7 +131,7 @@ class TagDaoTest {
     fun insertTagEntryAndQueryTag(): Unit = runTest {
         val tagId = insertBaseProperties()
         val dayId = insertDayProperties()
-        val entry = TagEntry(dayId = dayId, tagId = tagId, content = TestingData.Tag.content)
+        val entry = TagEntryEntity(dayId = dayId, tagId = tagId, content = TestingData.Tag.content)
         tagDao.insertEntry(entry)
 
         val query = tagDao.get(tagId)
@@ -152,9 +152,9 @@ class TagDaoTest {
     fun insertTagEntryWithDuplicateId(): Unit = runTest {
         val tagId = insertBaseProperties()
         val dayId = insertDayProperties()
-        val entry = TagEntry(dayId = dayId, tagId = tagId, content = TestingData.Tag.content)
+        val entry = TagEntryEntity(dayId = dayId, tagId = tagId, content = TestingData.Tag.content)
         tagDao.insertEntry(entry)
-        tagDao.insertEntry(TagEntry(dayId = dayId, tagId = tagId))
+        tagDao.insertEntry(TagEntryEntity(dayId = dayId, tagId = tagId))
     }
 
     /**

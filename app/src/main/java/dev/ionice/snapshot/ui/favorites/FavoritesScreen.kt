@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.core.database.model.Day
-import dev.ionice.snapshot.core.database.model.DayProperties
-import dev.ionice.snapshot.core.database.model.LocationProperties
+import dev.ionice.snapshot.core.database.model.DayEntity
+import dev.ionice.snapshot.core.database.model. DayProperties
+import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
 import dev.ionice.snapshot.ui.common.components.BackButton
 import dev.ionice.snapshot.ui.common.components.PlaceholderText
 import dev.ionice.snapshot.ui.common.screens.BaseScreen
@@ -63,8 +63,8 @@ fun FavoritesScreen(
 
 @Composable
 private fun FavoritesList(
-    entriesProvider: () -> List<Day>,
-    locationsProvider: () -> List<LocationProperties>,
+    entriesProvider: () -> List<DayEntity>,
+    locationsProvider: () -> List<LocationPropertiesEntity>,
     onSelectEntry: (Long) -> Unit
 ) {
     val entries = entriesProvider()

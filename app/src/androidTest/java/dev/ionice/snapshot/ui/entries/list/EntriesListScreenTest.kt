@@ -8,9 +8,9 @@ import com.google.common.truth.Truth.assertThat
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
 import dev.ionice.snapshot.core.database.model.Date
-import dev.ionice.snapshot.core.database.model.Day
+import dev.ionice.snapshot.core.database.model.DayEntity
 import dev.ionice.snapshot.core.database.model.DayProperties
-import dev.ionice.snapshot.core.database.model.TagEntry
+import dev.ionice.snapshot.core.database.model.TagEntryEntity
 import dev.ionice.snapshot.ui.common.DaysUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -180,7 +180,7 @@ class EntriesListScreenTest {
 
     @Test
     fun yearSection_whenSwitchYear_loadsNewYear() {
-        val data = MutableStateFlow(emptyList<Day>())
+        val data = MutableStateFlow(emptyList<DayEntity>())
         composeTestRule.setContent {
             val state = data.collectAsState()
             EntriesListScreen(
@@ -265,18 +265,18 @@ class EntriesListScreenTest {
 }
 
 private val today = LocalDate.now()
-private val entryToday = Day(
+private val entryToday = DayEntity(
     properties = DayProperties(
         summary = "EntriesListScreenTestSummary",
         createdAt = 0,
         lastModifiedAt = 0,
         date = Date(today.year, today.monthValue, today.dayOfMonth)
     ),
-    tags = listOf(TagEntry(today.toEpochDay(), 1)),
+    tags = listOf(TagEntryEntity(today.toEpochDay(), 1)),
     location = null
 )
 private val entries = listOf(
-    Day(
+    DayEntity(
         properties = DayProperties(
             id = LocalDate.of(2022, 1, 1).toEpochDay(),
             summary = "EntriesListScreenTestSummary",

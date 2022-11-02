@@ -16,6 +16,7 @@ android {
 
 dependencies {
     implementation(project(":app"))
+    implementation(project(":core:data"))
     implementation(project(":core:database"))
     implementation(project(":core:sync"))
 

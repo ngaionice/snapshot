@@ -2,7 +2,7 @@ package dev.ionice.snapshot.testtools.data.preferences
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import dev.ionice.snapshot.data.preferences.PreferencesRepository
+import dev.ionice.snapshot.core.data.repository.PreferencesRepository
 import java.time.LocalTime
 
 class FakePreferencesRepository : PreferencesRepository {

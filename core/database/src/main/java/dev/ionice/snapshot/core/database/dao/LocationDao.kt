@@ -1,42 +1,42 @@
 package dev.ionice.snapshot.core.database.dao
 
 import androidx.room.*
-import dev.ionice.snapshot.core.database.model.Location
-import dev.ionice.snapshot.core.database.model.LocationEntry
-import dev.ionice.snapshot.core.database.model.LocationProperties
+import dev.ionice.snapshot.core.database.model.LocationEntity
+import dev.ionice.snapshot.core.database.model.LocationEntryEntity
+import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LocationDao {
 
     @Insert
-    suspend fun insertProperties(location: LocationProperties): Long
+    suspend fun insertProperties(location: LocationPropertiesEntity): Long
 
     @Update
-    suspend fun updateProperties(location: LocationProperties)
+    suspend fun updateProperties(location: LocationPropertiesEntity)
 
     @Delete
-    suspend fun delete(location: LocationProperties)
+    suspend fun delete(location: LocationPropertiesEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertEntry(entry: LocationEntry)
+    suspend fun insertEntry(entry: LocationEntryEntity)
 
     @Insert
-    suspend fun insertEntries(entries: List<LocationEntry>)
+    suspend fun insertEntries(entries: List<LocationEntryEntity>)
 
     @Delete
-    suspend fun deleteEntry(entry: LocationEntry)
+    suspend fun deleteEntry(entry: LocationEntryEntity)
 
     @Delete
-    suspend fun deleteEntries(entries: List<LocationEntry>)
+    suspend fun deleteEntries(entries: List<LocationEntryEntity>)
 
     @Transaction
     @Query("select * from Location where id = :id")
-    suspend fun get(id: Long): Location?
+    suspend fun get(id: Long): LocationEntity?
 
     @Query("select * from Location")
-    suspend fun getAllProperties(): List<LocationProperties>
+    suspend fun getAllProperties(): List<LocationPropertiesEntity>
 
     @Query("select * from Location")
-    fun getAllPropertiesFlow(): Flow<List<LocationProperties>>
+    fun getAllPropertiesFlow(): Flow<List<LocationPropertiesEntity>>
 }

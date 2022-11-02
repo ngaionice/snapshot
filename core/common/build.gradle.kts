@@ -1,5 +1,6 @@
 plugins {
     id("snapshot.android.library")
+    id("snapshot.android.hilt")
 }
 
 android {
@@ -8,4 +9,6 @@ android {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.android)
+
+    implementation(libs.hilt.android)
 }

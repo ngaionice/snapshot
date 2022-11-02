@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ionice.snapshot.core.common.Result
 import dev.ionice.snapshot.core.common.asResult
-import dev.ionice.snapshot.data.database.repository.DayRepository
-import dev.ionice.snapshot.data.database.repository.LocationRepository
-import dev.ionice.snapshot.data.database.repository.TagRepository
+import dev.ionice.snapshot.core.data.repository.DayRepository
+import dev.ionice.snapshot.core.data.repository.LocationRepository
+import dev.ionice.snapshot.core.data.repository.TagRepository
 import dev.ionice.snapshot.ui.common.DaysUiState
 import dev.ionice.snapshot.ui.common.LocationsUiState
 import dev.ionice.snapshot.ui.common.TagsUiState

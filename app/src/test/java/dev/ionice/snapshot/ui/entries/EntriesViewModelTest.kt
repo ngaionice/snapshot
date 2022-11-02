@@ -91,7 +91,7 @@ class EntriesViewModelTest {
 
             // use current date because EntriesViewModel defaults to using current date as initial value
             val today = LocalDate.now()
-            val data = Day(
+            val data = DayEntity(
                 properties = DayProperties(
                     summary = "",
                     createdAt = 0L,
@@ -130,10 +130,10 @@ class EntriesViewModelTest {
     fun uiStateLocation_whenLocationSuccess_thenShowSuccess() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.singleUiState.collect {} }
 
-        val data = Location(
-            properties = LocationProperties(
+        val data = LocationEntity(
+            properties = LocationPropertiesEntity(
                 id = 0,
-                coordinates = Coordinates(0.0, 0.0),
+                coordinates = CoordinatesEntity(0.0, 0.0),
                 name = "",
                 lastUsedAt = 0
             ),
@@ -153,8 +153,8 @@ class EntriesViewModelTest {
     fun uiStateTags_whenTagsSuccess_thenShowSuccess() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.singleUiState.collect {} }
 
-        val data = Tag(
-            properties = TagProperties(id = 0, name = "", lastUsedAt = 0),
+        val data = TagEntity(
+            properties = TagPropertiesEntity(id = 0, name = "", lastUsedAt = 0),
             entries = emptyList()
         )
         tagRepository.sendTags(listOf(data))
@@ -185,8 +185,8 @@ class EntriesViewModelTest {
         viewModel.edit(
             dayToEdit.copy(
                 properties = properties.copy(summary = newSummary),
-                tags = listOf(TagEntry(dayId = FRD.dayIds[1], tagId = FRD.tagId)),
-                location = LocationEntry(dayId = FRD.dayIds[1], locationId = FRD.locationId)
+                tags = listOf(TagEntryEntity(dayId = FRD.dayIds[1], tagId = FRD.tagId)),
+                location = LocationEntryEntity(dayId = FRD.dayIds[1], locationId = FRD.locationId)
             )
         )
         advanceUntilIdle()
@@ -199,9 +199,9 @@ class EntriesViewModelTest {
         val (nProperties, nTags, nLocation) = updated
 
         assertThat(nProperties.summary).isEqualTo(newSummary)
-        assertThat(nTags).contains(TagEntry(dayId = FRD.dayIds[1], tagId = FRD.tagId))
+        assertThat(nTags).contains(TagEntryEntity(dayId = FRD.dayIds[1], tagId = FRD.tagId))
         assertThat(nLocation).isEqualTo(
-            LocationEntry(
+            LocationEntryEntity(
                 dayId = FRD.dayIds[1],
                 locationId = FRD.locationId
             )
@@ -235,7 +235,7 @@ class EntriesViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.listUiState.collect {} }
 
         val existing = locationRepository.getAllPropertiesFlow().first()
-        val location = Pair("EntriesViewModelLocation", Coordinates(180.0, 180.0))
+        val location = Pair("EntriesViewModelLocation", CoordinatesEntity(180.0, 180.0))
 
         assertThat(existing.map { it.name }).doesNotContain(location.first)
 

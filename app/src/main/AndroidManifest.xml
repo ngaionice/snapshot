@@ -28,7 +28,7 @@
         </activity>
 
         <receiver
-            android:name=".notifications.receivers.ReminderAlarmReceiver"
+            android:name="dev.ionice.snapshot.core.notifications.receivers.ReminderAlarmReceiver"
             android:enabled="true"
             android:exported="false">
         </receiver>

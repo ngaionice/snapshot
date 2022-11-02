@@ -1,6 +1,6 @@
 package dev.ionice.snapshot.core.database
 
-import dev.ionice.snapshot.core.database.model.Coordinates
+import dev.ionice.snapshot.core.database.model.CoordinatesEntity
 import java.time.LocalDate
 
 object TestingData {
@@ -17,7 +17,7 @@ object TestingData {
         const val initialId = 0L
         private const val lat = -82.8628
         private const val lon = 135.0000
-        val coordinates = Coordinates(lat, lon)
+        val coordinates = CoordinatesEntity(lat, lon)
         const val name = "TestLocation"
         const val lastUsedAt = 0L
     }

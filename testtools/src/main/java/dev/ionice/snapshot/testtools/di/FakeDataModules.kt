@@ -13,12 +13,9 @@ import dev.ionice.snapshot.core.database.dao.DayDao
 import dev.ionice.snapshot.core.database.dao.LocationDao
 import dev.ionice.snapshot.core.database.dao.TagDao
 import dev.ionice.snapshot.core.database.dao.UtilsDao
-import dev.ionice.snapshot.data.database.repository.DayRepository
-import dev.ionice.snapshot.data.database.repository.LocationRepository
-import dev.ionice.snapshot.data.database.repository.TagRepository
-import dev.ionice.snapshot.data.preferences.PreferencesRepository
-import dev.ionice.snapshot.di.RepositoryModule
-import dev.ionice.snapshot.di.ServiceProviderModule
+import dev.ionice.snapshot.core.data.repository.PreferencesRepository
+import dev.ionice.snapshot.core.data.repository.RepositoryModule
+import dev.ionice.snapshot.core.data.repository.ServiceProviderModule
 import dev.ionice.snapshot.sync.BackupModule
 import dev.ionice.snapshot.sync.BackupRepository
 import dev.ionice.snapshot.testtools.data.backup.FakeBackupModule
@@ -65,15 +62,15 @@ object RepositoryMockModule {
 
     @Provides
     @Singleton
-    fun provideDayRepository(): DayRepository = FakeDayRepository()
+    fun provideDayRepository(): dev.ionice.snapshot.core.data.repository.DayRepository = FakeDayRepository()
 
     @Provides
     @Singleton
-    fun provideLocationRepository(): LocationRepository = FakeLocationRepository()
+    fun provideLocationRepository(): dev.ionice.snapshot.core.data.repository.LocationRepository = FakeLocationRepository()
 
     @Provides
     @Singleton
-    fun provideTagRepository(): TagRepository = FakeTagRepository()
+    fun provideTagRepository(): dev.ionice.snapshot.core.data.repository.TagRepository = FakeTagRepository()
 
     @Provides
     @Singleton

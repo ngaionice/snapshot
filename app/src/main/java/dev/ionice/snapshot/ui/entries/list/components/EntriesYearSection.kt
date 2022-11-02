@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.core.database.model.Day
+import dev.ionice.snapshot.core.database.model.DayEntity
 import dev.ionice.snapshot.ui.common.DaysUiState
 import dev.ionice.snapshot.ui.common.components.PageSectionContent
 import dev.ionice.snapshot.ui.common.components.PageSectionHeader
@@ -138,7 +138,7 @@ fun LazyListScope.getYearSectionContent(
 
 @Composable
 private fun YearSectionItem(
-    days: List<Day>,
+    days: List<DayEntity>,
     week: Int,
     isExpanded: Boolean,
     onSelectWeek: () -> Unit,
@@ -181,7 +181,7 @@ private fun YearSectionItem(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun YearSectionSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
+private fun YearSectionSubItem(dayProvider: () -> DayEntity, onViewItem: () -> Unit) {
     val day = dayProvider()
     val tt = stringResource(R.string.tt_entries_year_subitem)
     Row(modifier = Modifier

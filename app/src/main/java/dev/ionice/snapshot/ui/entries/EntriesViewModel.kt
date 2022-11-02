@@ -5,11 +5,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ionice.snapshot.core.common.Result
 import dev.ionice.snapshot.core.common.asResult
-import dev.ionice.snapshot.core.database.model.Coordinates
-import dev.ionice.snapshot.core.database.model.Day
-import dev.ionice.snapshot.data.database.repository.DayRepository
-import dev.ionice.snapshot.data.database.repository.LocationRepository
-import dev.ionice.snapshot.data.database.repository.TagRepository
+import dev.ionice.snapshot.core.database.model.CoordinatesEntity
+import dev.ionice.snapshot.core.database.model.DayEntity
+import dev.ionice.snapshot.core.data.repository.DayRepository
+import dev.ionice.snapshot.core.data.repository.LocationRepository
+import dev.ionice.snapshot.core.data.repository.TagRepository
 import dev.ionice.snapshot.ui.common.DayUiState
 import dev.ionice.snapshot.ui.common.DaysUiState
 import dev.ionice.snapshot.ui.common.LocationsUiState
@@ -30,7 +30,7 @@ class EntriesViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val dayId = MutableStateFlow<Long?>(null)
-    private val mutableDayCopy = MutableStateFlow<Day?>(null)
+    private val mutableDayCopy = MutableStateFlow<DayEntity?>(null)
 
     private val today = MutableStateFlow(LocalDate.now().toEpochDay())
     private val year = MutableStateFlow(LocalDate.now().year)
@@ -113,7 +113,7 @@ class EntriesViewModel @Inject constructor(
         this.dayId.update { dayId }
     }
 
-    fun edit(day: Day?) {
+    fun edit(day: DayEntity?) {
         mutableDayCopy.update { day }
     }
 
@@ -134,7 +134,7 @@ class EntriesViewModel @Inject constructor(
         }
     }
 
-    fun addLocation(name: String, coordinates: Coordinates) {
+    fun addLocation(name: String, coordinates: CoordinatesEntity) {
         viewModelScope.launch { locationRepository.add(coordinates, name) }
     }
 
@@ -152,5 +152,5 @@ data class EntriesSingleUiState(
     val dayUiState: DayUiState,
     val locationsUiState: LocationsUiState,
     val tagsUiState: TagsUiState,
-    val editingCopy: Day?
+    val editingCopy: DayEntity?
 )

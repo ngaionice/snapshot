@@ -7,10 +7,10 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.google.common.truth.Truth.assertThat
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.core.database.model.Day
-import dev.ionice.snapshot.core.database.model.LocationEntry
-import dev.ionice.snapshot.core.database.model.TagEntry
-import dev.ionice.snapshot.core.database.model.TagProperties
+import dev.ionice.snapshot.core.database.model.DayEntity
+import dev.ionice.snapshot.core.database.model.LocationEntryEntity
+import dev.ionice.snapshot.core.database.model.TagEntryEntity
+import dev.ionice.snapshot.core.database.model.TagPropertiesEntity
 import dev.ionice.snapshot.testtools.data.database.repository.FRD
 import dev.ionice.snapshot.ui.common.DayUiState
 import dev.ionice.snapshot.ui.common.LocationsUiState
@@ -142,7 +142,7 @@ class EntriesSingleScreenTest {
 
     @Test
     fun uiState_whenToggleEditMode_updatesEditingCopy() {
-        var copy: Day? = null
+        var copy: DayEntity? = null
         composeTestRule.setContent {
             EntriesSingleScreen(uiStateProvider = { uiStateSuccessHasFilledData },
                 onBack = { },
@@ -242,7 +242,7 @@ class EntriesSingleScreenTest {
 
     @Test
     fun summary_whenChangeText_callsOnEditAndUpdatesText() {
-        val modified = MutableStateFlow<Day?>(null)
+        val modified = MutableStateFlow<DayEntity?>(null)
         composeTestRule.setContent {
             val editingCopy = modified.collectAsState()
             EntriesSingleScreen(uiStateProvider = { uiStateSuccessHasFilledData.copy(editingCopy = editingCopy.value) },
@@ -302,7 +302,7 @@ class EntriesSingleScreenTest {
 
     @Test
     fun location_whenEditModeAndSelectLocation_callsOnEdit() {
-        val modified = MutableStateFlow<Day?>(null)
+        val modified = MutableStateFlow<DayEntity?>(null)
         composeTestRule.setContent {
             val editingCopy = modified.collectAsState()
             EntriesSingleScreen(uiStateProvider = { uiStateSuccessHasBlankData.copy(editingCopy = editingCopy.value) },
@@ -329,7 +329,7 @@ class EntriesSingleScreenTest {
 
         assertThat(modified.value).isEqualTo(
             day.copy(
-                location = LocationEntry(
+                location = LocationEntryEntity(
                     dayId = day.properties.id, locationId = FRD.locationSourceData[0].properties.id
                 )
             )
@@ -375,7 +375,7 @@ class EntriesSingleScreenTest {
 
     @Test
     fun tags_whenSelectTag_callsOnEdit() {
-        val modified = MutableStateFlow<Day?>(null)
+        val modified = MutableStateFlow<DayEntity?>(null)
         composeTestRule.setContent {
             val editingCopy = modified.collectAsState()
             EntriesSingleScreen(uiStateProvider = { uiStateSuccessHasBlankData.copy(editingCopy = editingCopy.value) },
@@ -403,7 +403,7 @@ class EntriesSingleScreenTest {
         assertThat(modified.value).isEqualTo(
             day.copy(
                 tags = listOf(
-                    TagEntry(
+                    TagEntryEntity(
                         dayId = day.properties.id, tagId = FRD.tagSourceData[0].properties.id
                     )
                 )
@@ -413,8 +413,8 @@ class EntriesSingleScreenTest {
 
     @Test
     fun tags_whenAddTag_callsOnAddTagAndOnEdit() {
-        val modified = MutableStateFlow<Day?>(null)
-        val tags = MutableStateFlow<List<TagProperties>>(emptyList())
+        val modified = MutableStateFlow<DayEntity?>(null)
+        val tags = MutableStateFlow<List<TagPropertiesEntity>>(emptyList())
         composeTestRule.setContent {
             val editingCopy = modified.collectAsState()
             val tagsState = tags.collectAsState()
@@ -430,7 +430,7 @@ class EntriesSingleScreenTest {
                 onFavorite = { },
                 onAddLocation = { _, _ -> },
                 onAddTag = {
-                    tags.tryEmit(tags.value + TagProperties(id = 1001, name = it, lastUsedAt = 0))
+                    tags.tryEmit(tags.value + TagPropertiesEntity(id = 1001, name = it, lastUsedAt = 0))
                 })
         }
         val day = (uiStateSuccessHasBlankData.dayUiState as DayUiState.Success).data!!
@@ -452,7 +452,7 @@ class EntriesSingleScreenTest {
         val tagId = tags.value.find { it.name == newTagName }!!.id
         assertThat(modified.value).isEqualTo(
             day.copy(
-                tags = listOf(TagEntry(dayId = day.properties.id, tagId = tagId))
+                tags = listOf(TagEntryEntity(dayId = day.properties.id, tagId = tagId))
             )
         )
     }

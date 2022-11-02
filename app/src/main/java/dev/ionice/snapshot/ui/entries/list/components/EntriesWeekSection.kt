@@ -19,7 +19,7 @@ import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 import dev.ionice.snapshot.R
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.core.database.model.Day
+import dev.ionice.snapshot.core.database.model.DayEntity
 import dev.ionice.snapshot.ui.common.DaysUiState
 import dev.ionice.snapshot.ui.common.components.PageSection
 import java.time.LocalDate
@@ -91,7 +91,7 @@ fun WeekSection(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeekSectionItem(day: Day, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun WeekSectionItem(day: DayEntity, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val containerColor = MaterialTheme.colorScheme.surfaceVariant
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     val date = LocalDate.ofEpochDay(day.properties.id)

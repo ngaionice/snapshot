@@ -14,9 +14,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.core.database.model.Coordinates
-import dev.ionice.snapshot.core.database.model.LocationEntry
-import dev.ionice.snapshot.core.database.model.LocationProperties
+import dev.ionice.snapshot.core.database.model.CoordinatesEntity
+import dev.ionice.snapshot.core.database.model.LocationEntryEntity
+import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
 import dev.ionice.snapshot.ui.common.LocationsUiState
 import dev.ionice.snapshot.ui.common.components.PageSectionContent
 import dev.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
@@ -26,9 +26,9 @@ import dev.ionice.snapshot.ui.common.screens.LoadingScreen
 fun EntryLocationSection(
     uiStateProvider: () -> LocationsUiState,
     editing: Boolean,
-    selectedLocation: LocationEntry?,
-    onSelectLocation: (LocationProperties) -> Unit,
-    onAddLocation: (String, Coordinates) -> Unit
+    selectedLocation: LocationEntryEntity?,
+    onSelectLocation: (LocationPropertiesEntity) -> Unit,
+    onAddLocation: (String, CoordinatesEntity) -> Unit
 ) {
     when (val uiState = uiStateProvider()) {
         is LocationsUiState.Loading -> {
@@ -68,8 +68,8 @@ fun EntryLocationSection(
 
 @Composable
 private fun LocationIndicator(
-    locationsProvider: () -> List<LocationProperties>,
-    selectedLocation: LocationEntry?
+    locationsProvider: () -> List<LocationPropertiesEntity>,
+    selectedLocation: LocationEntryEntity?
 ) {
     val locations = locationsProvider()
     val tt = stringResource(R.string.tt_entries_single_location_info_display)
@@ -95,9 +95,9 @@ private fun LocationIndicator(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LocationDropdownSelector(
-    locationsProvider: () -> List<LocationProperties>,
-    selectedLocation: LocationEntry?,
-    onSelectLocation: (LocationProperties) -> Unit
+    locationsProvider: () -> List<LocationPropertiesEntity>,
+    selectedLocation: LocationEntryEntity?,
+    onSelectLocation: (LocationPropertiesEntity) -> Unit
 ) {
     val locations = locationsProvider()
     val (expanded, setExpanded) = remember { mutableStateOf(false) }
@@ -134,7 +134,7 @@ private fun LocationDropdownSelector(
 }
 
 @Composable
-private fun AutoDetectLocationButton(onAddLocation: (String, Coordinates) -> Unit) {
+private fun AutoDetectLocationButton(onAddLocation: (String, CoordinatesEntity) -> Unit) {
     IconButton(onClick = { /*TODO*/ }, enabled = false) {
         Icon(imageVector = Icons.Filled.MyLocation, contentDescription = "auto-detect location")
     }

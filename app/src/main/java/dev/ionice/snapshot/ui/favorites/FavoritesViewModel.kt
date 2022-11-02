@@ -6,10 +6,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ionice.snapshot.core.common.Result
 import dev.ionice.snapshot.core.common.asResult
 import kotlinx.coroutines.flow.*
-import dev.ionice.snapshot.core.database.model.Day
-import dev.ionice.snapshot.core.database.model.LocationProperties
-import dev.ionice.snapshot.data.database.repository.DayRepository
-import dev.ionice.snapshot.data.database.repository.LocationRepository
+import dev.ionice.snapshot.core.database.model.DayEntity
+import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
+import dev.ionice.snapshot.core.data.repository.DayRepository
+import dev.ionice.snapshot.core.data.repository.LocationRepository
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,7 +47,7 @@ sealed interface FavoritesUiState {
     object Loading : FavoritesUiState
     object Error : FavoritesUiState
     data class Success(
-        val entries: List<Day>,
-        val locations: List<LocationProperties>
+        val entries: List<DayEntity>,
+        val locations: List<LocationPropertiesEntity>
     ) : FavoritesUiState
 }

@@ -37,6 +37,9 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:database"))
+    implementation(project(":core:data"))
+    implementation(project(":core:model"))
+    implementation(project(":core:notifications"))
     implementation(project(":core:sync"))
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -84,11 +87,9 @@ dependencies {
     // Material 3 theming for launch screens and other misc. places
     implementation(libs.material)
 
-    // Google Services: for access to Google Drive
+    // Google Services
     implementation(libs.android.gms.playServicesAuth)
     implementation(libs.google.api.client)
-    implementation(libs.google.api.services.drive)
-    implementation(libs.google.http.client.gson)
 
     // Testing
     testImplementation(project(":testtools"))

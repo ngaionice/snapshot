@@ -19,8 +19,8 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
 import dev.ionice.snapshot.R
-import dev.ionice.snapshot.core.database.model.TagEntry
-import dev.ionice.snapshot.core.database.model.TagProperties
+import dev.ionice.snapshot.core.database.model.TagEntryEntity
+import dev.ionice.snapshot.core.database.model.TagPropertiesEntity
 import dev.ionice.snapshot.ui.common.TagsUiState
 import dev.ionice.snapshot.ui.common.components.PageSectionContent
 import dev.ionice.snapshot.ui.common.screens.FunctionalityNotAvailableScreen
@@ -31,9 +31,9 @@ fun EntryTagSection(
     editing: Boolean,
     dayId: Long,
     uiStateProvider: () -> TagsUiState,
-    selectedTags: List<TagEntry>,
+    selectedTags: List<TagEntryEntity>,
     onAddTag: (String) -> Unit,
-    onSelectedTagsChange: (List<TagEntry>) -> Unit
+    onSelectedTagsChange: (List<TagEntryEntity>) -> Unit
 ) {
     val (displayedTagId, setDisplayedTagId) = remember { mutableStateOf<Long?>(null) }
 
@@ -57,7 +57,7 @@ fun EntryTagSection(
                             onAddTag = onAddTag,
                             onSelectTag = {
                                 onSelectedTagsChange(
-                                    selectedTags + TagEntry(dayId = dayId, tagId = it.id)
+                                    selectedTags + TagEntryEntity(dayId = dayId, tagId = it.id)
                                 )
                             })
                     }
@@ -100,8 +100,8 @@ fun EntryTagSection(
 @Composable
 private fun TagDisplay(
     editing: Boolean,
-    tagsMap: Map<Long, TagProperties>,
-    selectedTags: List<TagEntry>,
+    tagsMap: Map<Long, TagPropertiesEntity>,
+    selectedTags: List<TagEntryEntity>,
     displayedTagId: Long?,
     onClick: (Long) -> Unit
 ) {
@@ -123,7 +123,7 @@ private fun TagDisplay(
 
 @Composable
 private fun TagInserter(
-    tags: List<TagProperties>, onAddTag: (String) -> Unit, onSelectTag: (TagProperties) -> Unit
+    tags: List<TagPropertiesEntity>, onAddTag: (String) -> Unit, onSelectTag: (TagPropertiesEntity) -> Unit
 ) {
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { setShowDialog(true) }) {
@@ -143,7 +143,7 @@ private fun TagInserter(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TagEditor(
-    tagName: String, tagEntry: TagEntry, onContentChange: (String) -> Unit, onDelete: () -> Unit
+    tagName: String, tagEntry: TagEntryEntity, onContentChange: (String) -> Unit, onDelete: () -> Unit
 ) {
     Divider()
     Text(text = "#$tagName", style = MaterialTheme.typography.titleMedium)
@@ -161,7 +161,7 @@ private fun TagEditor(
 }
 
 @Composable
-private fun TagsContentDisplay(tagsMap: Map<Long, TagProperties>, selectedTags: List<TagEntry>) {
+private fun TagsContentDisplay(tagsMap: Map<Long, TagPropertiesEntity>, selectedTags: List<TagEntryEntity>) {
     val rendered = selectedTags.filter { !it.content.isNullOrEmpty() }
     if (rendered.isNotEmpty()) {
         Divider()
@@ -180,14 +180,14 @@ private fun TagsContentDisplay(tagsMap: Map<Long, TagProperties>, selectedTags: 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TagInsertionDialog(
-    tags: List<TagProperties>,
+    tags: List<TagPropertiesEntity>,
     onAddTag: (String) -> Unit,
-    onSelectTag: (TagProperties) -> Unit,
+    onSelectTag: (TagPropertiesEntity) -> Unit,
     onClose: () -> Unit
 ) {
     val (tabIndex, setTabIndex) = remember { mutableStateOf(0) }
     val (queued, setQueued) = remember { mutableStateOf<String?>(null) }
-    val (selectedTag, setSelectedTag) = remember { mutableStateOf<TagProperties?>(null) }
+    val (selectedTag, setSelectedTag) = remember { mutableStateOf<TagPropertiesEntity?>(null) }
     val (inputValue, setInputValue) = remember { mutableStateOf("") }
     val (dropdownExpanded, setDropdownExpanded) = remember { mutableStateOf(false) }
 
