@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":core:sync"))
     implementation(project(":core:ui"))
 
+    implementation(project(":feature:entries"))
     implementation(project(":feature:favorites"))
 
     implementation("androidx.core:core-ktx:1.9.0")

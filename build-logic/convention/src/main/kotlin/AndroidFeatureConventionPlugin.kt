@@ -48,13 +48,19 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", project(":core:ui"))
 
                 add("testImplementation", project(":core:testing"))
+                add("testImplementation", project(":testtools"))
+
                 add("androidTestImplementation", project(":core:testing"))
+                add("androidTestImplementation", project(":testtools"))
 
                 add("implementation", libs.findLibrary("androidx.hilt.navigation.compose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtimeKtx").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewmodelCompose").get())
 
                 add("implementation", libs.findLibrary("kotlinx.coroutines.android").get())
+
+                add("implementation", libs.findLibrary("accompanist.navigationAnimation").get())
+                add("implementation", libs.findLibrary("androidx.compose.material3").get())
             }
         }
     }

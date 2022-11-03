@@ -23,26 +23,6 @@
         <item quantity="other">%d tags</item>
     </plurals>
 
-    <!--  entries screen  -->
-    <string name="entries_list_week_header">This week</string>
-    <string name="entries_year_no_results">No entries found.</string>
-    <string name="entries_add_entry">Add entry</string>
-    <string name="entries_single_loading">Loading entry</string>
-    <string name="entries_single_save">Save edits</string>
-    <string name="entries_single_edit">Edit entry</string>
-    <string name="entries_single_favorite">Mark as a favorite</string>
-    <string name="entries_single_exit_edit">Exit edit mode</string>
-    <string name="entries_single_tags_btn">Show tags section</string>
-    <string name="entries_single_location_btn">Show location section</string>
-    <string name="entries_single_summary_btn">Show summary section</string>
-    <string name="entries_single_summary_placeholder">Start writing your summary!</string>
-    <string name="entries_single_location_placeholder">Select a location!</string>
-    <string name="entries_single_tags_placeholder">Start adding tags!</string>
-    <string name="entries_single_tag_add">Add tag to entry</string>
-    <string name="entries_single_tag_delete">Delete tag from entry</string>
-    <string name="entries_single_tag_add_select_existing">Select</string>
-    <string name="entries_single_tag_add_create_new">Add new</string>
-
     <!--  settings screen  -->
     <string name="settings_screen_header">Settings</string>
 
@@ -101,24 +81,6 @@
     <string name="tt_common_loading_screen">LoadingScreen</string>
     <string name="tt_common_time_picker_digit_hr">TimePickerHourDigit</string>
     <string name="tt_common_time_picker_digit_min">TimePickerMinuteDigit</string>
-
-    <string name="tt_entries_week_item">WeekSectionItem</string>
-    <string name="tt_entries_week_item_placeholder">WeekSectionItemPlaceholder</string>
-    <string name="tt_entries_week_add_entry_item">WeekSectionAddEntryItem</string>
-    <string name="tt_entries_year_item">YearSectionItem</string>
-    <string name="tt_entries_year_item_placeholder">YearSectionItemPlaceholder</string>
-    <string name="tt_entries_year_subitem">YearSectionSubItem</string>
-    <string name="tt_entries_year_header_prev">YearSectionHeaderPrev</string>
-    <string name="tt_entries_year_header_next">YearSectionHeaderNext</string>
-    <string name="tt_entries_dialog_confirm">EntryInsertDialogConfirm</string>
-    <string name="tt_entries_single_not_found">EntriesSingleNotFoundScreen</string>
-    <string name="tt_entries_single_entry">EntriesSingleEntryScreen</string>
-    <string name="tt_entries_single_summary">EntrySummarySection</string>
-    <string name="tt_entries_single_location_info_display">EntryLocationInfoDisplay</string>
-    <string name="tt_entries_single_location_selector">EntryLocationSelector</string>
-    <string name="tt_entries_single_tags_display">EntryTagDisplay</string>
-    <string name="tt_entries_single_tag_selector">EntryTagSelector</string>
-    <string name="tt_entries_single_tag_creator">EntryTagCreator</string>
 
     <string name="tt_settings_row_placeholder">SettingsRowPlaceholder</string>
     <string name="tt_settings_notifs_main_toggle">SettingsNotifsMainToggle</string>

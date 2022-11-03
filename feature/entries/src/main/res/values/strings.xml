@@ -1,0 +1,48 @@
+<resources>
+    <string name="common_dialog_cancel">Cancel</string>
+    <string name="common_dialog_ok">OK</string>
+    <string name="common_datepicker_error_range">Out of range</string>
+    <string name="tt_common_date_picker">DatePicker</string>
+
+    <string name="list_week_header">This week</string>
+    <string name="year_no_results">No entries found.</string>
+    <string name="add_entry">Add entry</string>
+    <string name="single_loading">Loading entry</string>
+    <string name="single_save">Save edits</string>
+    <string name="single_edit">Edit entry</string>
+    <string name="single_favorite">Mark as a favorite</string>
+    <string name="single_exit_edit">Exit edit mode</string>
+    <string name="single_tags">Show tags section</string>
+    <string name="single_location">Show location section</string>
+    <string name="single_summary">Show summary section</string>
+    <string name="single_summary_placeholder">Start writing your summary!</string>
+    <string name="single_location_placeholder">Select a location!</string>
+    <string name="single_tags_placeholder">Start adding tags!</string>
+    <string name="single_tag_add">Add tag to entry</string>
+    <string name="single_tag_delete">Delete tag from entry</string>
+    <string name="single_tag_add_select_existing">Select</string>
+    <string name="single_tag_add_create_new">Add new</string>
+
+    <plurals name="tag_count">
+        <item quantity="one">%d tag</item>
+        <item quantity="other">%d tags</item>
+    </plurals>
+
+    <string name="tt_week_item">WeekSectionItem</string>
+    <string name="tt_week_item_placeholder">WeekSectionItemPlaceholder</string>
+    <string name="tt_week_add_entry_item">WeekSectionAddEntryItem</string>
+    <string name="tt_year_item">YearSectionItem</string>
+    <string name="tt_year_item_placeholder">YearSectionItemPlaceholder</string>
+    <string name="tt_year_subitem">YearSectionSubItem</string>
+    <string name="tt_year_header_prev">YearSectionHeaderPrev</string>
+    <string name="tt_year_header_next">YearSectionHeaderNext</string>
+    <string name="tt_dialog_confirm">EntryInsertDialogConfirm</string>
+    <string name="tt_single_not_found">EntriesSingleNotFoundScreen</string>
+    <string name="tt_single_entry">EntriesSingleEntryScreen</string>
+    <string name="tt_single_summary">EntrySummarySection</string>
+    <string name="tt_single_location_info_display">EntryLocationInfoDisplay</string>
+    <string name="tt_single_location_selector">EntryLocationSelector</string>
+    <string name="tt_single_tags_display">EntryTagDisplay</string>
+    <string name="tt_single_tag_selector">EntryTagSelector</string>
+    <string name="tt_single_tag_creator">EntryTagCreator</string>
+</resources>

@@ -13,8 +13,8 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import dev.ionice.snapshot.core.navigation.EntriesListDestination
 import dev.ionice.snapshot.core.ui.animationDurationMs
+import dev.ionice.snapshot.feature.entries.entriesGraph
 import dev.ionice.snapshot.feature.favorites.favoritesGraph
-import dev.ionice.snapshot.ui.entries.entriesGraph
 import dev.ionice.snapshot.ui.library.libraryGraph
 import dev.ionice.snapshot.ui.settings.settingsGraph
 
