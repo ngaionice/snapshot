@@ -61,6 +61,8 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
 
                 add("implementation", libs.findLibrary("accompanist.navigationAnimation").get())
                 add("implementation", libs.findLibrary("androidx.compose.material3").get())
+
+                add("debugImplementation", libs.findLibrary("androidx.compose.ui.testManifest").get())
             }
         }
     }

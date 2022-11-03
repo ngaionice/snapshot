@@ -22,74 +22,10 @@
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tags</item>
     </plurals>
-
-    <!--  settings screen  -->
-    <string name="settings_screen_header">Settings</string>
-
-    <string name="settings_screen_notifs_header">Notifications</string>
-    <string name="settings_screen_notifs_subtitle">Daily reminders, memories</string>
-
-    <string name="settings_screen_backup_header"><![CDATA[Backup & Restore]]></string>
-    <string name="settings_screen_backup_subtitle">Backup account, frequency</string>
-    <string name="settings_screen_backup_na_reason">the device is offline</string>
-    <string name="settings_screen_backup_main_switch">Use cloud backups</string>
-
-    <string name="settings_screen_backup_general_subsection_header">General</string>
-    <string name="settings_screen_backup_manual_actions_subsection_header">Manual actions</string>
-    <string name="settings_screen_backup_auto_backup_subsection_header">Automatic backups</string>
-
-    <string name="settings_screen_backup_drive_settings">Google Drive Settings</string>
-    <string name="settings_screen_sync_in_progress">Database sync in progress</string>
-
-    <string name="settings_screen_backup_login">Login to Google</string>
-    <string name="settings_screen_backup_login_failed">Google sign in failed, tap to retry</string>
-    <string name="settings_screen_backup_selected_account">Current selected account</string>
-
-    <string name="settings_screen_backup_last_backup">Last backup</string>
-    <string name="settings_screen_backup_last_backup_never">Never</string>
-
-    <string name="settings_screen_backup_start_backup">Back up to Google Drive</string>
-    <string name="settings_screen_backup_start_restore">Restore from Google Drive</string>
-    <string name="settings_screen_backup_dialog_header">Confirm backup</string>
-    <string name="settings_screen_backup_dialog_content">Confirm that you want to back up data to Google Drive.</string>
-    <string name="settings_screen_restore_dialog_header">Confirm restore</string>
-    <string name="settings_screen_restore_dialog_content">Confirm that you want to restore data from Google Drive.</string>
-
-    <string name="settings_auto_backup_freq_never">Never</string>
-    <string name="settings_auto_backup_freq_daily">Daily</string>
-    <string name="settings_auto_backup_freq_weekly">Weekly</string>
-    <string name="settings_auto_backup_freq_monthly">Monthly</string>
-
-    <string name="settings_auto_backup_use_metered">Back up using metered data</string>
-    <string name="settings_auto_backup_use_metered_secondary">Charges may apply</string>
-
-    <string name="settings_screen_theming_header">Theming</string>
-    <string name="settings_screen_theming_subtitle"><![CDATA[Dynamic & custom themes]]></string>
-
-    <!--  notifications  -->
-    <string name="settings_auto_backup_frequency">Backup frequency</string>
-    <string name="settings_auto_backup_time">Backup time</string>
-
-    <!--  snackbar messages  -->
-    <string name="snackbar_backup_success">Backup successful</string>
-    <string name="snackbar_backup_failure">Backup failed</string>
-    <string name="snackbar_restore_success">Restore successful, restarting app in a moment</string>
-    <string name="snackbar_restore_failure">Restore failed</string>
-
+    
     <!--  content descriptions for testing  -->
     <string name="tt_common_date_picker">DatePicker</string>
     <string name="tt_common_loading_screen">LoadingScreen</string>
     <string name="tt_common_time_picker_digit_hr">TimePickerHourDigit</string>
     <string name="tt_common_time_picker_digit_min">TimePickerMinuteDigit</string>
-
-    <string name="tt_settings_row_placeholder">SettingsRowPlaceholder</string>
-    <string name="tt_settings_notifs_main_toggle">SettingsNotifsMainToggle</string>
-    <string name="tt_settings_notifs_reminders_toggle">SettingsNotifsRemindersToggle</string>
-    <string name="tt_settings_notifs_reminders_time_btn">SettingsNotifsRemindersTime</string>
-    <string name="tt_settings_time_picker_confirm">TimePickerDialogConfirm</string>
-    <string name="tt_settings_backup_loading">SettingsBackupLoadingScreen</string>
-    <string name="tt_settings_backup_main_toggle">SettingsBackupMainToggle</string>
-    <string name="tt_settings_backup_functions">SettingsBackupFunctionalities</string>
-    <string name="tt_settings_backup_metered_toggle">SettingsBackupMeteredToggle</string>
-    <string name="tt_settings_backup_freq_selector">SettingsBackupFreqSelector</string>
-</resources>
+    </resources>

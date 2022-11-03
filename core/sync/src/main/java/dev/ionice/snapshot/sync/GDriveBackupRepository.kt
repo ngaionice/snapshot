@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
 import java.time.LocalDateTime
 
 class GDriveBackupRepository(private val appContext: Context) : BackupRepository {
@@ -27,7 +28,8 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
         BackupRepository.BackupStatus(
             isInProgress = backupModule.hasRunningJobs(),
             action = null,
-            isSuccess = false
+            isSuccess = false,
+            updatedAt = Instant.now().epochSecond
         )
     )
 
@@ -40,7 +42,8 @@ class GDriveBackupRepository(private val appContext: Context) : BackupRepository
                 BackupRepository.BackupStatus(
                     isInProgress = isInProgress,
                     action = if (type == BackupSyncWorker.WORK_TYPE_BACKUP) ACTION_TYPE_BACKUP else ACTION_TYPE_RESTORE,
-                    isSuccess = isSuccess
+                    isSuccess = isSuccess,
+                    updatedAt = Instant.now().epochSecond
                 )
             }
 

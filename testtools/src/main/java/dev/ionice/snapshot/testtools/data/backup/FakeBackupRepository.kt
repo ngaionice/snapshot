@@ -3,6 +3,7 @@ package dev.ionice.snapshot.testtools.data.backup
 import dev.ionice.snapshot.sync.BackupRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.time.Instant
 import java.time.LocalDateTime
 
 class FakeBackupRepository : BackupRepository {
@@ -11,7 +12,8 @@ class FakeBackupRepository : BackupRepository {
         BackupRepository.BackupStatus(
             isInProgress = false,
             action = null,
-            isSuccess = false
+            isSuccess = false,
+            updatedAt = Instant.now().epochSecond
         )
     )
 
@@ -30,7 +32,8 @@ class FakeBackupRepository : BackupRepository {
             BackupRepository.BackupStatus(
                 isInProgress = true,
                 action = "Backup",
-                isSuccess = false
+                isSuccess = false,
+                updatedAt = Instant.now().epochSecond
             )
         )
     }
@@ -40,7 +43,8 @@ class FakeBackupRepository : BackupRepository {
             BackupRepository.BackupStatus(
                 isInProgress = true,
                 action = "Restore",
-                isSuccess = false
+                isSuccess = false,
+                updatedAt = Instant.now().epochSecond
             )
         )
     }
@@ -55,7 +59,8 @@ class FakeBackupRepository : BackupRepository {
             BackupRepository.BackupStatus(
                 isInProgress = false,
                 action = "Backup",
-                isSuccess = isSuccess
+                isSuccess = isSuccess,
+                updatedAt = Instant.now().epochSecond
             )
         )
     }
@@ -68,7 +73,8 @@ class FakeBackupRepository : BackupRepository {
             BackupRepository.BackupStatus(
                 isInProgress = false,
                 action = "Restore",
-                isSuccess = isSuccess
+                isSuccess = isSuccess,
+                updatedAt = Instant.now().epochSecond
             )
         )
     }

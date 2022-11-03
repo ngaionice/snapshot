@@ -39,6 +39,7 @@ dependencies {
 
     implementation(project(":feature:entries"))
     implementation(project(":feature:favorites"))
+    implementation(project(":feature:settings"))
 
     implementation("androidx.core:core-ktx:1.9.0")
 

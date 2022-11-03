@@ -14,9 +14,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dev.ionice.snapshot.core.navigation.EntriesListDestination
 import dev.ionice.snapshot.core.navigation.LibraryHomeDestination
+import dev.ionice.snapshot.core.ui.snackbar.SnackbarManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import dev.ionice.snapshot.ui.snackbar.SnackbarManager
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
