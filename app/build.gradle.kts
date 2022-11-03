@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":feature:library"))
     implementation(project(":feature:search"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:tags"))
 
     implementation("androidx.core:core-ktx:1.9.0")
 

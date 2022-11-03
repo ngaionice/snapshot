@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.navigation
+package dev.ionice.snapshot.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FolderCopy

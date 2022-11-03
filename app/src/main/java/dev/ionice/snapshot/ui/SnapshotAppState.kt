@@ -1,4 +1,4 @@
-package dev.ionice.snapshot
+package dev.ionice.snapshot.ui
 
 import android.content.res.Resources
 import androidx.compose.animation.ExperimentalAnimationApi
