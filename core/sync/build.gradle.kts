@@ -1,5 +1,6 @@
 plugins {
     id("snapshot.android.library")
+    id("snapshot.android.hilt")
 }
 
 android {
@@ -22,4 +23,5 @@ dependencies {
     implementation(libs.google.api.client)
     implementation(libs.google.api.services.drive)
     implementation(libs.google.http.client.gson)
+    kapt(libs.hilt.ext.compiler)
 }
