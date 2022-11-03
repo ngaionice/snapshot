@@ -4,22 +4,4 @@
     <string name="common_dialog_cancel">Cancel</string>
     <string name="common_dialog_ok">OK</string>
     <string name="common_datepicker_error_range">Out of range</string>
-
-    <!--  day screen  -->
-    <string name="day_screen_placeholder_header">Day</string>
-    <string name="day_screen_not_found">No entry found.</string>
-    <string name="day_screen_edit_day">Edit day entry</string>
-    <string name="day_screen_save_day">Save</string>
-    <string name="day_screen_summary_header">Summary</string>
-    <string name="day_screen_location_header">Location</string>
-    <string name="day_screen_metrics_header">Metrics</string>
-    <string name="day_screen_delete_tag">Delete tag</string>
-    <string name="day_screen_add_tag">Add tag</string>
-    <string name="day_screen_search">Search summaries</string>
-    <string name="day_screen_switch_year">Switch years</string>
-
-    <plurals name="day_screen_tag_count">
-        <item quantity="one">%d tag</item>
-        <item quantity="other">%d tags</item>
-    </plurals>
 </resources>

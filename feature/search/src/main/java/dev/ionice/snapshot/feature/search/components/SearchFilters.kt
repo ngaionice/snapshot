@@ -1,4 +1,4 @@
-//package me.ionice.snapshot.ui.days.components
+package dev.ionice.snapshot.feature.search.components
 //
 //import androidx.compose.foundation.layout.Arrangement
 //import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-//package me.ionice.snapshot.ui.days.screens
+package dev.ionice.snapshot.feature.search.screens
 //
 //import androidx.compose.foundation.clickable
 //import androidx.compose.foundation.layout.*
