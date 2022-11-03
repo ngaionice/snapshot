@@ -9,14 +9,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
-import dev.ionice.snapshot.core.navigation.NavigationDestination
+import dev.ionice.snapshot.core.navigation.FavoritesDestination
 import dev.ionice.snapshot.core.navigation.NavigatorImpl
 import dev.ionice.snapshot.core.ui.animationDurationMs
-
-object FavoritesDestination : NavigationDestination {
-    override val route = "favorites"
-    override val destination = "home"
-}
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.favoritesGraph(navController: NavHostController) {

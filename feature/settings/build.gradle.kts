@@ -8,10 +8,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:data"))
     implementation(project(":core:sync"))
-    implementation(project(":core:ui"))
 
     implementation(libs.accompanist.placeholderMaterial)
     implementation(libs.android.gms.playServicesAuth)

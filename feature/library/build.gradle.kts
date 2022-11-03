@@ -9,7 +9,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:data"))
-    implementation(project(":core:model"))
-    implementation(project(":core:ui"))
+    implementation(libs.accompanist.pager)
+
+    implementation(libs.androidx.compose.material.iconsExtended)
 }

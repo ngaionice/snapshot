@@ -1,0 +1,6 @@
+<resources>
+    <plurals name="tag_count">
+        <item quantity="one">%d tag</item>
+        <item quantity="other">%d tags</item>
+    </plurals>
+</resources>

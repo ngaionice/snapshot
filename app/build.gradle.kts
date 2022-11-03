@@ -29,16 +29,13 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
-    implementation(project(":core:database"))
-    implementation(project(":core:data"))
-    implementation(project(":core:model"))
     implementation(project(":core:notifications"))
     implementation(project(":core:navigation"))
-    implementation(project(":core:sync"))
     implementation(project(":core:ui"))
 
     implementation(project(":feature:entries"))
     implementation(project(":feature:favorites"))
+    implementation(project(":feature:library"))
     implementation(project(":feature:settings"))
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -54,30 +51,18 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // Accompanist for various UI functionality
-    implementation(libs.accompanist.flowlayout)
     implementation(libs.accompanist.navigationAnimation)
-    implementation(libs.accompanist.pager)
-    implementation(libs.accompanist.placeholderMaterial)
     implementation(libs.accompanist.systemuicontroller)
-
-    // Lifecycles
-    implementation(libs.androidx.lifecycle.runtimeKtx)
-    implementation(libs.androidx.lifecycle.viewmodelCompose)
 
     // Co-routines
     implementation(libs.kotlinx.coroutines.android)
-
-    // DataStore
-    implementation(libs.androidx.datastore.preferences)
 
     // WorkManager
     implementation(libs.androidx.work.ktx)
 
     // Hilt for DI
-    implementation(libs.hilt.android)
     implementation(libs.hilt.ext.work)
     implementation(libs.androidx.hilt.navigation.compose)
-    kapt(libs.hilt.compiler)
     kapt(libs.hilt.ext.compiler)
 
     // Saved state for ViewModel
@@ -85,18 +70,6 @@ dependencies {
 
     // Material 3 theming for launch screens and other misc. places
     implementation(libs.material)
-
-    // Google Services
-    implementation(libs.android.gms.playServicesAuth)
-    implementation(libs.google.api.client)
-
-    // Testing
-    testImplementation(project(":testtools"))
-    testImplementation(project(":core:testing"))
-
-    // Android testing
-    androidTestImplementation(project(":testtools"))
-    androidTestImplementation(project(":core:testing"))
 
     // Debugging
     debugImplementation(libs.androidx.compose.ui.tooling)

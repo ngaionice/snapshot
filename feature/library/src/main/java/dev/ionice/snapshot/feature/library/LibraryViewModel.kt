@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.library
+package dev.ionice.snapshot.feature.library
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -57,3 +57,8 @@ object SettingsThemingDestination : NavigationDestination {
     override val route = SETTINGS_ROUTE
     override val destination = "theming"
 }
+
+object FavoritesDestination : NavigationDestination {
+    override val route = "favorites"
+    override val destination = "home"
+}

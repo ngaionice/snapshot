@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.library.components
+package dev.ionice.snapshot.feature.library.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -25,7 +25,9 @@ fun QuickAccess(onSelectFavorites: () -> Unit, onSelectRandom: () -> Unit) {
             CardButton(
                 label = "Favorites",
                 onClick = onSelectFavorites,
-                modifier = Modifier.weight(1f).testTag("LibraryQuickAccessFavorites"),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("LibraryQuickAccessFavorites"),
                 leadingIcon = Icons.Outlined.FavoriteBorder,
                 contentDescription = "Favorites",
             )
@@ -33,7 +35,9 @@ fun QuickAccess(onSelectFavorites: () -> Unit, onSelectRandom: () -> Unit) {
             CardButton(
                 label = "Random",
                 onClick = onSelectRandom,
-                modifier = Modifier.weight(1f).testTag("LibraryQuickAccessRandom"),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("LibraryQuickAccessRandom"),
                 enabled = false,
                 leadingIcon = Icons.Outlined.Casino,
                 contentDescription = "Random",

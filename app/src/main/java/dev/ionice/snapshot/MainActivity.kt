@@ -20,10 +20,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.ionice.snapshot.core.ui.ElevationTokens
+import dev.ionice.snapshot.core.ui.theme.SnapshotTheme
 import dev.ionice.snapshot.ui.navigation.SnapshotNavHost
 import dev.ionice.snapshot.ui.navigation.SnapshotNavigationBar
 import dev.ionice.snapshot.ui.navigation.SnapshotTopLevelNavigation
-import dev.ionice.snapshot.core.ui.theme.SnapshotTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

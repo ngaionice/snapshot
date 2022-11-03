@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.library
+package dev.ionice.snapshot.feature.library
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

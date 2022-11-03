@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.ui.library
+package dev.ionice.snapshot.feature.library
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -11,8 +11,8 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import dev.ionice.snapshot.core.navigation.LIBRARY_ROUTE
 import dev.ionice.snapshot.core.navigation.LibraryHomeDestination
-import dev.ionice.snapshot.core.ui.animationDurationMs
 import dev.ionice.snapshot.core.navigation.NavigatorImpl
+import dev.ionice.snapshot.core.ui.animationDurationMs
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.libraryGraph(navController: NavHostController) {

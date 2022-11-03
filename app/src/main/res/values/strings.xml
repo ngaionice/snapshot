@@ -22,10 +22,4 @@
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tags</item>
     </plurals>
-    
-    <!--  content descriptions for testing  -->
-    <string name="tt_common_date_picker">DatePicker</string>
-    <string name="tt_common_loading_screen">LoadingScreen</string>
-    <string name="tt_common_time_picker_digit_hr">TimePickerHourDigit</string>
-    <string name="tt_common_time_picker_digit_min">TimePickerMinuteDigit</string>
-    </resources>
+</resources>

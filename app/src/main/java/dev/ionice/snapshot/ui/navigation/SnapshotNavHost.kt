@@ -15,8 +15,8 @@ import dev.ionice.snapshot.core.navigation.EntriesListDestination
 import dev.ionice.snapshot.core.ui.animationDurationMs
 import dev.ionice.snapshot.feature.entries.entriesGraph
 import dev.ionice.snapshot.feature.favorites.favoritesGraph
+import dev.ionice.snapshot.feature.library.libraryGraph
 import dev.ionice.snapshot.feature.settings.settingsGraph
-import dev.ionice.snapshot.ui.library.libraryGraph
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
