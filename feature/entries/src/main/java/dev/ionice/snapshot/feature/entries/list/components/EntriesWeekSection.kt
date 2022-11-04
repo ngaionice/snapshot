@@ -28,7 +28,7 @@ import java.time.format.TextStyle
 private const val CARD_WIDTH = 0.3333f
 
 @Composable
-fun WeekSection(
+internal fun WeekSection(
     uiStateProvider: () -> DaysUiState,
     onAddEntry: (Long) -> Unit,
     onSelectEntry: (Long) -> Unit
@@ -91,7 +91,7 @@ fun WeekSection(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeekSectionItem(day: DayEntity, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun WeekSectionItem(day: DayEntity, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val containerColor = MaterialTheme.colorScheme.surfaceVariant
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     val date = LocalDate.ofEpochDay(day.properties.id)
@@ -138,7 +138,7 @@ fun WeekSectionItem(day: DayEntity, onClick: () -> Unit, modifier: Modifier = Mo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeekSectionAddEntryItem(dayId: Long, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun WeekSectionAddEntryItem(dayId: Long, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val containerColor = MaterialTheme.colorScheme.primaryContainer
     val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
     val date = LocalDate.ofEpochDay(dayId)
@@ -184,7 +184,7 @@ fun WeekSectionAddEntryItem(dayId: Long, onClick: () -> Unit, modifier: Modifier
 }
 
 @Composable
-fun WeekSectionItemPlaceholder(modifier: Modifier = Modifier) {
+internal fun WeekSectionItemPlaceholder(modifier: Modifier = Modifier) {
     val tt = stringResource(R.string.tt_week_item_placeholder)
     Card(
         modifier = modifier

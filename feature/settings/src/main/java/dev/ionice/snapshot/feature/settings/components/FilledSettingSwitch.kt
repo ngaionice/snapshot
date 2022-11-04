@@ -18,7 +18,7 @@ import dev.ionice.snapshot.core.ui.titleMediumLarge
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilledSettingSwitch(
+internal fun FilledSettingSwitch(
     mainLabel: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -49,7 +49,7 @@ fun FilledSettingSwitch(
 }
 
 @Composable
-fun FilledSettingSwitchPlaceholder() {
+internal fun FilledSettingSwitchPlaceholder() {
     Card(modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)) {
         Row(
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),

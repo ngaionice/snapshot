@@ -58,7 +58,7 @@ fun BackupRoute(viewModel: SettingsViewModel = hiltViewModel(), onBack: () -> Un
 
 @VisibleForTesting
 @Composable
-fun BackupScreen(
+internal fun BackupScreen(
     uiStateProvider: () -> BackupUiState,
     onEnableBackup: (Boolean) -> Unit,
     onSuccessfulLogin: (GoogleSignInAccount) -> Unit,

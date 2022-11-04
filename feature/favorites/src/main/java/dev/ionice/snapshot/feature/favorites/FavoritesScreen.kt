@@ -41,7 +41,7 @@ fun FavoritesRoute(viewModel: FavoritesViewModel = hiltViewModel(), navigator: N
 @OptIn(ExperimentalMaterial3Api::class)
 @VisibleForTesting
 @Composable
-fun FavoritesScreen(
+internal fun FavoritesScreen(
     uiStateProvider: () -> FavoritesUiState,
     onSelectEntry: (Long) -> Unit,
     onBack: () -> Unit

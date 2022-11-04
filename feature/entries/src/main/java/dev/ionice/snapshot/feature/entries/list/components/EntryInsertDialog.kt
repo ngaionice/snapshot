@@ -19,7 +19,7 @@ import dev.ionice.snapshot.feature.entries.R
 import java.time.LocalDate
 
 @Composable
-fun EntryInsertDialog(onDismiss: () -> Unit, onAddEntry: (Long) -> Unit) {
+internal fun EntryInsertDialog(onDismiss: () -> Unit, onAddEntry: (Long) -> Unit) {
     val (date, setDate) = remember { mutableStateOf(LocalDate.now()) }
     val (errorMessage, setErrorMessage) = remember { mutableStateOf("") }
 

@@ -23,7 +23,7 @@ import dev.ionice.snapshot.core.ui.components.PageSectionContent
 import dev.ionice.snapshot.feature.entries.R
 
 @Composable
-fun EntrySummarySection(editing: Boolean, text: String, onTextChange: (String) -> Unit) {
+internal fun EntrySummarySection(editing: Boolean, text: String, onTextChange: (String) -> Unit) {
     val focusRequester = remember { FocusRequester() }
     val (textFieldValue, setTextFieldValue) = remember { mutableStateOf(TextFieldValue(text)) }
 

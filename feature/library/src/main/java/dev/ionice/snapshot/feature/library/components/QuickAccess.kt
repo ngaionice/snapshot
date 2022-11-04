@@ -15,7 +15,7 @@ import dev.ionice.snapshot.core.ui.components.CardButton
 import dev.ionice.snapshot.core.ui.components.PageSectionContent
 
 @Composable
-fun QuickAccess(onSelectFavorites: () -> Unit, onSelectRandom: () -> Unit) {
+internal fun QuickAccess(onSelectFavorites: () -> Unit, onSelectRandom: () -> Unit) {
     PageSectionContent {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),

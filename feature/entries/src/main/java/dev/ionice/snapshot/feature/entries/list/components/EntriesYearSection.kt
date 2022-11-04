@@ -35,7 +35,7 @@ import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 
 @Composable
-fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
+internal fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> Unit) {
     val year = yearProvider()
     val ttPrev = stringResource(R.string.tt_year_header_prev)
     val ttNext = stringResource(R.string.tt_year_header_next)

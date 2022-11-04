@@ -27,7 +27,7 @@ import dev.ionice.snapshot.core.ui.screens.LoadingScreen
 import dev.ionice.snapshot.feature.entries.R
 
 @Composable
-fun EntryTagSection(
+internal fun EntryTagSection(
     editing: Boolean,
     dayId: Long,
     uiStateProvider: () -> TagsUiState,

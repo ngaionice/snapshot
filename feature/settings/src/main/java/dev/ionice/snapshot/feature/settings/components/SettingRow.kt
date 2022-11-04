@@ -31,7 +31,7 @@ import dev.ionice.snapshot.feature.settings.R
  * The base entry for each setting. Can be configured to provide button functionality.
  */
 @Composable
-fun SettingRow(
+internal fun SettingRow(
     mainLabel: String,
     secondaryLabel: String? = null,
     icon: ImageVector? = null,
@@ -80,7 +80,7 @@ fun SettingRow(
 }
 
 @Composable
-fun SettingRowPlaceholder(
+internal fun SettingRowPlaceholder(
     mainLabel: String? = null,
     hasShape: Boolean = false,
     hasSecondary: Boolean = false

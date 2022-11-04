@@ -57,7 +57,7 @@ fun EntriesSingleRoute(
 
 @VisibleForTesting
 @Composable
-fun EntriesSingleScreen(
+internal fun EntriesSingleScreen(
     uiStateProvider: () -> EntriesSingleUiState,
     onBack: () -> Unit,
     onEdit: (DayEntity?) -> Unit,
@@ -102,7 +102,7 @@ fun EntriesSingleScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryScreen(
+private fun EntryScreen(
     day: DayEntity,
     editingCopy: DayEntity?,
     locationProvider: () -> LocationsUiState,
@@ -250,7 +250,7 @@ fun EntryScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotFoundScreen(dayId: Long, onBack: () -> Unit) {
+private fun NotFoundScreen(dayId: Long, onBack: () -> Unit) {
     val tt = stringResource(R.string.tt_single_not_found)
     Scaffold(
         modifier = Modifier.semantics { testTag = tt },

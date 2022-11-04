@@ -17,7 +17,7 @@ import dev.ionice.snapshot.feature.settings.R
 import java.time.LocalTime
 
 @Composable
-fun TimePickerDialog(
+internal fun TimePickerDialog(
     initialTime: LocalTime = LocalTime.MIDNIGHT,
     onSelection: (LocalTime) -> Unit,
     onClose: () -> Unit

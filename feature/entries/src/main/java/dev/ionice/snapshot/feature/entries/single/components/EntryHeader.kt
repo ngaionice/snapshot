@@ -11,7 +11,7 @@ import dev.ionice.snapshot.core.common.Utils
 import java.time.LocalDate
 
 @Composable
-fun EntryHeader(dayId: Long) {
+internal fun EntryHeader(dayId: Long) {
     val date = LocalDate.ofEpochDay(dayId)
 
     Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 28.dp, top = 60.dp)) {

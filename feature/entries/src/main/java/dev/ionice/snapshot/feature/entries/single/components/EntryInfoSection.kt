@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.core.common.RelativeTime
 
 @Composable
-fun EntryInfoSection(lastModifiedAt: Long) {
+internal fun EntryInfoSection(lastModifiedAt: Long) {
     Row(
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 16.dp)

@@ -15,7 +15,7 @@ import dev.ionice.snapshot.core.ui.components.PlaceholderText
 import dev.ionice.snapshot.core.ui.titleMediumLarge
 
 @Composable
-fun SettingSwitch(
+internal fun SettingSwitch(
     mainLabel: String,
     secondaryLabel: String? = null,
     checked: Boolean,
@@ -54,7 +54,7 @@ fun SettingSwitch(
 }
 
 @Composable
-fun SettingSwitchPlaceholder(mainLabel: String? = null, hasSecondary: Boolean = false) {
+internal fun SettingSwitchPlaceholder(mainLabel: String? = null, hasSecondary: Boolean = false) {
     Row(
         modifier = Modifier.padding(horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically

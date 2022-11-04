@@ -16,7 +16,7 @@ import dev.ionice.snapshot.core.ui.components.PageSectionContent
 import dev.ionice.snapshot.feature.entries.single.EntrySection
 
 @Composable
-fun EntrySectionToggle(selectedProvider: () -> EntrySection, onSelect: (EntrySection) -> Unit) {
+internal fun EntrySectionToggle(selectedProvider: () -> EntrySection, onSelect: (EntrySection) -> Unit) {
     val selected = selectedProvider()
 
     PageSectionContent {

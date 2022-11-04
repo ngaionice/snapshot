@@ -47,7 +47,7 @@ fun EntriesListRoute(viewModel: EntriesViewModel = hiltViewModel(), navigator: N
 @VisibleForTesting
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun EntriesListScreen(
+internal fun EntriesListScreen(
     weekEntriesProvider: () -> DaysUiState,
     yearEntriesProvider: () -> DaysUiState,
     yearProvider: () -> Int,
