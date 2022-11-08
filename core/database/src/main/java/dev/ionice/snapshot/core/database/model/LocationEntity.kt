@@ -3,7 +3,6 @@ package dev.ionice.snapshot.core.database.model
 import androidx.room.*
 import dev.ionice.snapshot.core.model.Coordinates
 import dev.ionice.snapshot.core.model.Location
-import dev.ionice.snapshot.core.model.LocationEntry
 
 data class LocationEntity(
     @Embedded
@@ -17,9 +16,8 @@ fun LocationEntity.toExternalModel(): Location {
     return Location(
         id,
         name,
-        coordinates.toExternalModel(),
-        lastUsedAt,
-        entries.map { it.toExternalModel() }
+        Coordinates(coordinates.lat, coordinates.lon),
+        lastUsedAt
     )
 }
 
@@ -57,8 +55,6 @@ data class LocationEntryEntity(
     val locationId: Long
 )
 
-fun LocationEntryEntity.toExternalModel(): LocationEntry = LocationEntry(dayId, locationId)
-
 /**
  * Accurate up to 6 decimal places.
  */
@@ -66,5 +62,3 @@ data class CoordinatesEntity(
     val lat: Double,
     val lon: Double
 )
-
-fun CoordinatesEntity.toExternalModel(): Coordinates = Coordinates(lat, lon)

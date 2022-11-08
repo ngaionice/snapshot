@@ -8,13 +8,13 @@ data class Day(
     val summary: String,
     private val createdAt: Long,         // epoch second
     private val lastModifiedAt: Long,    // epoch second
-    val isFavorite: Boolean = false,
-    val location: LocationEntry? = null,
-    val tags: List<TagEntry>
+    val isFavorite: Boolean,
+    val location: Location?,
+    val tags: List<ContentTag>
 ) {
-    fun getDate(): LocalDate = LocalDate.ofEpochDay(id)
+    fun date(): LocalDate = LocalDate.ofEpochDay(id)
 
-    fun getCreatedAt(): Instant = Instant.ofEpochSecond(createdAt)
+    fun createdAt(): Instant = Instant.ofEpochSecond(createdAt)
 
-    fun getLastModifiedAt(): Instant = Instant.ofEpochSecond(lastModifiedAt)
+    fun lastModifiedAt(): Instant = Instant.ofEpochSecond(lastModifiedAt)
 }

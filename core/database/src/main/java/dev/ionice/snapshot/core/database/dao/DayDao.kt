@@ -26,6 +26,36 @@ interface DayDao {
     @Query("select * from Day where year = :year order by id desc")
     fun getListFlowByYear(year: Int): Flow<List<DayEntity>>
 
+    @Transaction
+    @Query("""
+        select * from Day d join DaySummaryFts df on d.id = df.id 
+            where DaySummaryFts match :queryString 
+            and (:startDayId is null or d.id >= :startDayId)
+            and (:endDayId is null or d.id <= :endDayId)
+            and (:isFavorite is null or d.isFavorite = 1)
+    """)
+    fun searchBySummary(
+        queryString: String,
+        startDayId: Long? = null,
+        endDayId: Long? = null,
+        isFavorite: Boolean? = null
+    ): Flow<List<DayEntity>>
+
+    @Transaction
+    @Query("""
+        select * from Day d join TagEntryFts tf on d.id = tf.dayId 
+            where TagEntryFts match :queryString
+            and (:startDayId is null or d.id >= :startDayId)
+            and (:endDayId is null or d.id <= :endDayId)
+            and (:isFavorite is null or d.isFavorite = 1)
+    """)
+    fun searchByTagEntry(
+        queryString: String,
+        startDayId: Long? = null,
+        endDayId: Long? = null,
+        isFavorite: Boolean? = null
+    ): Flow<List<DayEntity>>
+
     /**
      * Returns a Flow of DayProperties that are in the range of [start] and [end], inclusive.
      *
@@ -33,8 +63,13 @@ interface DayDao {
      * @param end The last epoch day to get a flow for.
      */
     @Transaction
-    @Query("select * from Day where id >= :start and id <= :end order by id desc")
-    fun getListFlowByIdRange(start: Long, end: Long): Flow<List<DayEntity>>
+    @Query("""
+        select * from Day 
+            where (:start is null or id >= :start) 
+            and (:end is null or id <= :end)
+            order by id desc
+    """)
+    fun getListFlowByIdRange(start: Long? = null, end: Long? = null): Flow<List<DayEntity>>
 
     @Transaction
     @Query("select * from Day where month = :month and dayOfMonth = :dayOfMonth order by id desc")

@@ -2,8 +2,6 @@ package dev.ionice.snapshot.core.database.model
 
 import androidx.room.*
 import dev.ionice.snapshot.core.model.Tag
-import dev.ionice.snapshot.core.model.TagEntry
-import dev.ionice.snapshot.core.model.TagProperties
 
 data class TagEntity(
     @Embedded
@@ -11,11 +9,6 @@ data class TagEntity(
     @Relation(parentColumn = "id", entityColumn = "tagId")
     val entries: List<TagEntryEntity>
 )
-
-fun TagEntity.toExternalModel(): Tag {
-    val (id, name, lastUsedAt) = properties
-    return Tag(id, name, lastUsedAt, entries.map { it.toExternalModel() })
-}
 
 @Entity(tableName = "Tag")
 data class TagPropertiesEntity(
@@ -25,7 +18,7 @@ data class TagPropertiesEntity(
     val lastUsedAt: Long
 )
 
-fun TagPropertiesEntity.toExternalModel(): TagProperties = TagProperties(id, name, lastUsedAt)
+fun TagPropertiesEntity.toExternalModel(): Tag = Tag(id, name, lastUsedAt)
 
 @Entity(
     tableName = "TagEntry",
@@ -51,8 +44,6 @@ data class TagEntryEntity(
     val tagId: Long,
     val content: String? = null
 )
-
-fun TagEntryEntity.toExternalModel(): TagEntry = TagEntry(dayId, tagId, content)
 
 @Fts4(contentEntity = TagEntryEntity::class)
 @Entity

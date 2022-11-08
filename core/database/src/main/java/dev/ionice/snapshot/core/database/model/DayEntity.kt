@@ -22,8 +22,8 @@ fun DayEntity.toExternalModel(): Day {
         createdAt,
         lastModifiedAt,
         isFavorite,
-        location?.toExternalModel(),
-        tags.map { it.toExternalModel() }
+        null,
+        emptyList()
     )
 }
 
