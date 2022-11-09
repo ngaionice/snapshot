@@ -6,16 +6,16 @@ import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
+import com.google.common.truth.Truth.assertThat
 import dev.ionice.snapshot.core.database.dao.DayDao
 import dev.ionice.snapshot.core.database.dao.TagDao
 import dev.ionice.snapshot.core.database.model.Date
-import dev.ionice.snapshot.core.database.model.DayProperties
-import dev.ionice.snapshot.core.database.model.TagEntryEntity
-import dev.ionice.snapshot.core.database.model.TagPropertiesEntity
+import dev.ionice.snapshot.core.database.model.DayEntity
+import dev.ionice.snapshot.core.database.model.DayTagCrossRef
+import dev.ionice.snapshot.core.database.model.TagEntity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -52,23 +52,23 @@ class TagDaoTest {
     }
 
     private suspend fun insertBaseProperties(): Long {
-        val tagProps = TagPropertiesEntity(
+        val tagProps = TagEntity(
             id = TestingData.Tag.initialId,
             name = TestingData.Tag.name,
             lastUsedAt = TestingData.Tag.lastUsedAt
         )
-        return tagDao.insertProperties(tagProps)
+        return tagDao.insertEntity(tagProps)
     }
 
     private suspend fun insertDayProperties(): Long {
-        val dayProps = DayProperties(
+        val dayProps = DayEntity(
             id = TestingData.Day.date,
             summary = TestingData.Day.daySummary,
             createdAt = 0,
             lastModifiedAt = 0,
             date = Date(TestingData.Day.year, TestingData.Day.month, TestingData.Day.dayOfMonth)
         )
-        return dayDao.insertProperties(dayProps)
+        return dayDao.insertEntity(dayProps)
     }
 
     /**
@@ -80,12 +80,12 @@ class TagDaoTest {
         val tagId = insertBaseProperties()
 
         val query = tagDao.get(tagId)
-        assertTrue("Expected Tag object after insertion, got null.", query != null)
+        assertThat(query).isNotNull()
 
         val (id, name, lastUsedAt) = query!!.properties
-        assertTrue(id == tagId)
-        assertTrue(name == TestingData.Tag.name)
-        assertTrue(lastUsedAt == TestingData.Tag.lastUsedAt)
+        assertThat(id).isEqualTo(tagId)
+        assertThat(name).isEqualTo(TestingData.Tag.name)
+        assertThat(lastUsedAt).isEqualTo(TestingData.Tag.lastUsedAt)
     }
 
     /**
@@ -95,7 +95,7 @@ class TagDaoTest {
     @Throws(IOException::class)
     fun insertTagPropertiesWithDuplicateId(): Unit = runTest {
         val tagId = insertBaseProperties()
-        tagDao.insertProperties(TagPropertiesEntity(id = tagId, name = "NewName", lastUsedAt = 1))
+        tagDao.insertEntity(TagEntity(id = tagId, name = "NewName", lastUsedAt = 1))
     }
 
     /**
@@ -107,19 +107,19 @@ class TagDaoTest {
         val tagId = insertBaseProperties()
         val nameUpdate = "TestTagUpdate"
         val lastUsedAtUpdate = 1L
-        tagDao.updateProperties(
-            TagPropertiesEntity(
+        tagDao.updateEntity(
+            TagEntity(
                 id = tagId, name = nameUpdate, lastUsedAt = lastUsedAtUpdate
             )
         )
 
         val query = tagDao.get(tagId)
-        assertTrue("Expected Tag object after insertion, got null.", query != null)
+        assertThat(query).isNotNull()
 
         val (id, name, lastUsedAt) = query!!.properties
-        assertTrue(id == tagId)
-        assertTrue(name == nameUpdate)
-        assertTrue(lastUsedAt == lastUsedAtUpdate)
+        assertThat(id).isEqualTo(tagId)
+        assertThat(name).isEqualTo(nameUpdate)
+        assertThat(lastUsedAt).isEqualTo(lastUsedAtUpdate)
     }
 
     /**
@@ -131,17 +131,15 @@ class TagDaoTest {
     fun insertTagEntryAndQueryTag(): Unit = runTest {
         val tagId = insertBaseProperties()
         val dayId = insertDayProperties()
-        val entry = TagEntryEntity(dayId = dayId, tagId = tagId, content = TestingData.Tag.content)
-        tagDao.insertEntry(entry)
+        val entry = DayTagCrossRef(dayId = dayId, tagId = tagId, content = TestingData.Tag.content)
+        tagDao.insertCrossRef(entry)
 
         val query = tagDao.get(tagId)
-        assertTrue("Expected Tag object after insertion, got null.", query != null)
+        assertThat(query).isNotNull()
 
-        assertTrue("Expected 1 TagEntry, got ${query!!.entries.size}", query.entries.size == 1)
+        assertThat(query!!.entries.size).isEqualTo(1)
         val queryEntry = query.entries[0]
-        assertTrue(queryEntry.dayId == dayId)
-        assertTrue(queryEntry.tagId == tagId)
-        assertTrue(queryEntry.content == TestingData.Tag.content)
+        assertThat(queryEntry.id).isEqualTo(dayId)
     }
 
     /**
@@ -152,9 +150,9 @@ class TagDaoTest {
     fun insertTagEntryWithDuplicateId(): Unit = runTest {
         val tagId = insertBaseProperties()
         val dayId = insertDayProperties()
-        val entry = TagEntryEntity(dayId = dayId, tagId = tagId, content = TestingData.Tag.content)
-        tagDao.insertEntry(entry)
-        tagDao.insertEntry(TagEntryEntity(dayId = dayId, tagId = tagId))
+        val entry = DayTagCrossRef(dayId = dayId, tagId = tagId, content = TestingData.Tag.content)
+        tagDao.insertCrossRef(entry)
+        tagDao.insertCrossRef(DayTagCrossRef(dayId = dayId, tagId = tagId))
     }
 
     /**
@@ -163,6 +161,6 @@ class TagDaoTest {
     @Test
     @Throws(IOException::class)
     fun queryNonExistentTag(): Unit = runTest {
-        assertTrue(tagDao.get(3) == null)
+        assertThat(tagDao.get(3)).isNull()
     }
 }

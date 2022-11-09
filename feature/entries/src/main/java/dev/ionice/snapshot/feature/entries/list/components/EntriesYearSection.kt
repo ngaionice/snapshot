@@ -23,7 +23,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.core.database.model.DayEntity
+import dev.ionice.snapshot.core.model.Day
 import dev.ionice.snapshot.core.ui.DaysUiState
 import dev.ionice.snapshot.core.ui.components.PageSectionContent
 import dev.ionice.snapshot.core.ui.components.PageSectionHeader
@@ -108,7 +108,7 @@ fun LazyListScope.getYearSectionContent(
             val weekFields = WeekFields.of(Utils.locale)
 
             val map = entries.groupBy { day ->
-                val date = LocalDate.ofEpochDay(day.properties.id)
+                val date = LocalDate.ofEpochDay(day.id)
                 date.get(weekFields.weekOfWeekBasedYear())
                     .let { if (it == 53 && date.dayOfYear < 7) 0 else it }
             }
@@ -138,15 +138,15 @@ fun LazyListScope.getYearSectionContent(
 
 @Composable
 private fun YearSectionItem(
-    days: List<DayEntity>,
+    days: List<Day>,
     week: Int,
     isExpanded: Boolean,
     onSelectWeek: () -> Unit,
     onSelectEntry: (Long) -> Unit
 ) {
-    val startOfWeek = LocalDate.ofEpochDay(days.last().properties.id)
+    val startOfWeek = LocalDate.ofEpochDay(days.last().id)
         .with(TemporalAdjusters.previousOrSame(Utils.firstDayOfWeek))
-    val endOfWeek = LocalDate.ofEpochDay(days.last().properties.id)
+    val endOfWeek = LocalDate.ofEpochDay(days.last().id)
         .with(TemporalAdjusters.nextOrSame(Utils.lastDayOfWeek))
     val tt = stringResource(R.string.tt_year_item)
 
@@ -172,7 +172,7 @@ private fun YearSectionItem(
             Column {
                 days.forEach {
                     YearSectionSubItem(dayProvider = { it },
-                        onViewItem = { onSelectEntry(it.properties.id) })
+                        onViewItem = { onSelectEntry(it.id) })
                 }
             }
         }
@@ -181,7 +181,7 @@ private fun YearSectionItem(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun YearSectionSubItem(dayProvider: () -> DayEntity, onViewItem: () -> Unit) {
+private fun YearSectionSubItem(dayProvider: () -> Day, onViewItem: () -> Unit) {
     val day = dayProvider()
     val tt = stringResource(R.string.tt_year_subitem)
     Row(modifier = Modifier
@@ -193,7 +193,7 @@ private fun YearSectionSubItem(dayProvider: () -> DayEntity, onViewItem: () -> U
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = Utils.shortDateFormatter.format(LocalDate.ofEpochDay(day.properties.id)),
+            text = Utils.shortDateFormatter.format(LocalDate.ofEpochDay(day.id)),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface
         )

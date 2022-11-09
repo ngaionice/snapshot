@@ -64,15 +64,15 @@ class DayDaoTest {
      */
     @Test
     @Throws(IOException::class)
-    fun insertDayProperties(): Unit = runTest {
-        val props = DayProperties(
+    fun insertDayEntity(): Unit = runTest {
+        val props = DayEntity(
             id = date,
             summary = summary,
             createdAt = 0,
             lastModifiedAt = 0,
             date = Date(year, month, dayOfMonth)
         )
-        dayDao.insertProperties(props)
+        dayDao.insertEntity(props)
 
         val query = dayDao.get(date)
         assertThat(query).isNotNull()
@@ -89,14 +89,14 @@ class DayDaoTest {
     @Test
     @Throws(IOException::class)
     fun searchSummary(): Unit = runTest {
-        val props = DayProperties(
+        val props = DayEntity(
             id = date,
             summary = summary,
             createdAt = 0,
             lastModifiedAt = 0,
             date = Date(year, month, dayOfMonth)
         )
-        dayDao.insertProperties(props)
+        dayDao.insertEntity(props)
 
         val query = dayDao.searchBySummary("summary").first()
         assertThat(query.size).isEqualTo(1)
@@ -105,14 +105,14 @@ class DayDaoTest {
     @Test
     @Throws(IOException::class)
     fun searchSummaryNoMatch(): Unit = runTest {
-        val props = DayProperties(
+        val props = DayEntity(
             id = date,
             summary = summary,
             createdAt = 0,
             lastModifiedAt = 0,
             date = Date(year, month, dayOfMonth)
         )
-        dayDao.insertProperties(props)
+        dayDao.insertEntity(props)
 
         val query = dayDao.searchBySummary(queryString = "summary", startDayId = date + 1).first()
         assertThat(query.size).isEqualTo(0)
@@ -121,22 +121,22 @@ class DayDaoTest {
     @Test
     @Throws(IOException::class)
     fun searchTagEntry(): Unit = runTest {
-        val props = DayProperties(
+        val props = DayEntity(
             id = date,
             summary = summary,
             createdAt = 0,
             lastModifiedAt = 0,
             date = Date(year, month, dayOfMonth)
         )
-        dayDao.insertProperties(props)
+        dayDao.insertEntity(props)
 
-        val tagProps = TagPropertiesEntity(
+        val tagProps = TagEntity(
             id = TestingData.Tag.initialId,
             name = TestingData.Tag.name,
             lastUsedAt = TestingData.Tag.lastUsedAt
         )
-        val tagId = tagDao.insertProperties(tagProps)
-        tagDao.insertEntry(TagEntryEntity(date, tagId, TestingData.Tag.content))
+        val tagId = tagDao.insertEntity(tagProps)
+        tagDao.insertCrossRef(DayTagCrossRef(date, tagId, TestingData.Tag.content))
 
         val query = dayDao.searchByTagEntry(queryString = "TestTagContent").first()
         assertThat(query.size).isEqualTo(1)
@@ -145,22 +145,22 @@ class DayDaoTest {
     @Test
     @Throws(IOException::class)
     fun searchTagEntryNoMatch(): Unit = runTest {
-        val props = DayProperties(
+        val props = DayEntity(
             id = date,
             summary = summary,
             createdAt = 0,
             lastModifiedAt = 0,
             date = Date(year, month, dayOfMonth)
         )
-        dayDao.insertProperties(props)
+        dayDao.insertEntity(props)
 
-        val tagProps = TagPropertiesEntity(
+        val tagProps = TagEntity(
             id = TestingData.Tag.initialId,
             name = TestingData.Tag.name,
             lastUsedAt = TestingData.Tag.lastUsedAt
         )
-        val tagId = tagDao.insertProperties(tagProps)
-        tagDao.insertEntry(TagEntryEntity(date, tagId, TestingData.Tag.content))
+        val tagId = tagDao.insertEntity(tagProps)
+        tagDao.insertCrossRef(DayTagCrossRef(date, tagId, TestingData.Tag.content))
 
         val query = dayDao.searchByTagEntry(queryString = "???").first()
         assertThat(query.size).isEqualTo(0)
@@ -172,15 +172,15 @@ class DayDaoTest {
     @Test
     @Throws(IOException::class)
     fun insertDuplicateDayProperties(): Unit = runTest {
-        val props = DayProperties(
+        val props = DayEntity(
             id = date,
             summary = summary,
             createdAt = 0,
             lastModifiedAt = 0,
             date = Date(year, month, dayOfMonth)
         )
-        dayDao.insertProperties(props)
-        dayDao.insertProperties(props.copy(summary = "Replacement!"))
+        dayDao.insertEntity(props)
+        dayDao.insertEntity(props.copy(summary = "Replacement!"))
 
         val query = dayDao.get(date)
         assertThat(query).isNotNull()
@@ -193,16 +193,16 @@ class DayDaoTest {
     @Test
     @Throws(IOException::class)
     fun updateDayProperties(): Unit = runTest {
-        val props = DayProperties(
+        val props = DayEntity(
             id = date,
             summary = summary,
             createdAt = 0,
             lastModifiedAt = 0,
             date = Date(year, month, dayOfMonth)
         )
-        dayDao.insertProperties(props)
+        dayDao.insertEntity(props)
         val summaryUpdate = "TestSummaryUpdate"
-        dayDao.updateProperties(
+        dayDao.updateEntity(
             props.copy(
                 summary = summaryUpdate, createdAt = 1, lastModifiedAt = 1, isFavorite = true
             )
@@ -227,46 +227,48 @@ class DayDaoTest {
     fun queryDay(): Unit = runTest {
 
         // insert day data
-        val dayProps = DayProperties(
+        val dayProps = DayEntity(
             id = date,
             summary = summary,
             createdAt = 0,
             lastModifiedAt = 0,
             date = Date(year, month, dayOfMonth)
         )
-        dayDao.insertProperties(dayProps)
+        dayDao.insertEntity(dayProps)
 
         // insert location data
-        val locationProps = LocationPropertiesEntity(
+        val locationProps = LocationEntity(
             id = TestingData.Location.initialId,
             coordinates = TestingData.Location.coordinates,
             name = TestingData.Location.name,
             lastUsedAt = 0
         )
-        val locationId = locationDao.insertProperties(locationProps)
-        locationDao.insertEntry(LocationEntryEntity(date, locationId))
+        val locationId = locationDao.insertEntity(locationProps)
+        locationDao.insertCrossRef(DayLocationCrossRef(date, locationId))
 
         // insert tag data
-        val tagProps = TagPropertiesEntity(
+        val tagProps = TagEntity(
             id = TestingData.Tag.initialId,
             name = TestingData.Tag.name,
             lastUsedAt = TestingData.Tag.lastUsedAt
         )
-        val tagId = tagDao.insertProperties(tagProps)
-        tagDao.insertEntry(TagEntryEntity(date, tagId, TestingData.Tag.content))
+        val tagId = tagDao.insertEntity(tagProps)
+        tagDao.insertCrossRef(DayTagCrossRef(date, tagId, TestingData.Tag.content))
 
         val query = dayDao.get(date)
         assertThat(query).isNotNull()
 
         assertThat(query!!.location).isNotNull()
-        val (locDayId, locLocationId) = query.location!!
-        assertThat(locDayId).isEqualTo(date)
+        val (locLocationId) = query.location!!
         assertThat(locLocationId).isEqualTo(locationId)
 
         assertThat(query.tags.size).isEqualTo(1)
-        val (tagDayId, tagTagId) = query.tags[0]
-        assertThat(tagDayId).isEqualTo(date)
+        val (tagTagId) = query.tags[0]
         assertThat(tagTagId).isEqualTo(tagId)
+
+        val tagContent = query.tagContents.find { it.tagId == tagTagId }
+        assertThat(tagContent).isNotNull()
+        assertThat(tagContent!!.content).isEqualTo(TestingData.Tag.content)
     }
 
     /**
@@ -275,6 +277,6 @@ class DayDaoTest {
     @Test
     @Throws(IOException::class)
     fun queryNonExistentDay(): Unit = runTest {
-        assertThat(dayDao.get(LocalDate.now().toEpochDay())).isNotNull()
+        assertThat(dayDao.get(LocalDate.now().toEpochDay())).isNull()
     }
 }

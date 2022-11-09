@@ -10,6 +10,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:database"))
+    implementation(project(":core:model"))
     implementation(project(":core:sync"))
 
     api(libs.junit4)

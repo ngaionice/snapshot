@@ -20,7 +20,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.core.database.model.*
+import dev.ionice.snapshot.core.model.ContentTag
+import dev.ionice.snapshot.core.model.Coordinates
+import dev.ionice.snapshot.core.model.Day
+import dev.ionice.snapshot.core.model.Location
 import dev.ionice.snapshot.core.navigation.Navigator
 import dev.ionice.snapshot.core.ui.DayUiState
 import dev.ionice.snapshot.core.ui.LocationsUiState
@@ -30,8 +33,8 @@ import dev.ionice.snapshot.core.ui.screens.ErrorScreen
 import dev.ionice.snapshot.core.ui.screens.LoadingScreen
 import dev.ionice.snapshot.feature.entries.R
 import dev.ionice.snapshot.feature.entries.single.components.*
-import dev.ionice.snapshot.ui.entries.EntriesSingleUiState
-import dev.ionice.snapshot.ui.entries.EntriesViewModel
+import dev.ionice.snapshot.feature.entries.EntriesSingleUiState
+import dev.ionice.snapshot.feature.entries.EntriesViewModel
 import java.time.LocalDate
 
 @Composable
@@ -60,10 +63,10 @@ fun EntriesSingleRoute(
 internal fun EntriesSingleScreen(
     uiStateProvider: () -> EntriesSingleUiState,
     onBack: () -> Unit,
-    onEdit: (DayEntity?) -> Unit,
+    onEdit: (Day?) -> Unit,
     onSave: () -> Unit,
     onFavorite: (Boolean) -> Unit,
-    onAddLocation: (String, CoordinatesEntity) -> Unit,
+    onAddLocation: (String, Coordinates) -> Unit,
     onAddTag: (String) -> Unit
 ) {
     val uiState = uiStateProvider()
@@ -103,15 +106,15 @@ internal fun EntriesSingleScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EntryScreen(
-    day: DayEntity,
-    editingCopy: DayEntity?,
+    day: Day,
+    editingCopy: Day?,
     locationProvider: () -> LocationsUiState,
     tagProvider: () -> TagsUiState,
     onBack: () -> Unit,
-    onEdit: (DayEntity?) -> Unit,
+    onEdit: (Day?) -> Unit,
     onSave: () -> Unit,
     onFavorite: (Boolean) -> Unit,
-    onAddLocation: (String, CoordinatesEntity) -> Unit,
+    onAddLocation: (String, Coordinates) -> Unit,
     onAddTag: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -147,9 +150,9 @@ private fun EntryScreen(
                     contentDescription = stringResource(R.string.single_edit)
                 )
             }
-            IconButton(onClick = { onFavorite(!day.properties.isFavorite) }) {
+            IconButton(onClick = { onFavorite(!day.isFavorite) }) {
                 Icon(
-                    imageVector = if (day.properties.isFavorite) {
+                    imageVector = if (day.isFavorite) {
                         Icons.Filled.Favorite
                     } else {
                         Icons.Filled.FavoriteBorder
@@ -161,12 +164,12 @@ private fun EntryScreen(
     }
 
     val summaryText = if (editing && editingCopy != null) {
-        editingCopy.properties.summary
+        editingCopy.summary
     } else {
-        day.properties.summary
+        day.summary
     }
     val onSummaryChange: (String) -> Unit = { text ->
-        editingCopy?.let { onEdit(it.copy(properties = it.properties.copy(summary = text))) }
+        editingCopy?.let { onEdit(it.copy(summary = text)) }
     }
 
     val location = if (editing && editingCopy != null) {
@@ -174,13 +177,9 @@ private fun EntryScreen(
     } else {
         day.location
     }
-    val onLocationChange: (LocationPropertiesEntity) -> Unit = { loc ->
+    val onLocationChange: (Location) -> Unit = { loc ->
         editingCopy?.let {
-            onEdit(
-                it.copy(
-                    location = LocationEntryEntity(dayId = it.properties.id, locationId = loc.id)
-                )
-            )
+            onEdit(it.copy(location = loc))
         }
     }
     val tags = if (editing && editingCopy != null) {
@@ -188,7 +187,7 @@ private fun EntryScreen(
     } else {
         day.tags
     }
-    val onTagsChange: (List<TagEntryEntity>) -> Unit = { newTags ->
+    val onTagsChange: (List<ContentTag>) -> Unit = { newTags ->
         editingCopy?.let { onEdit(it.copy(tags = newTags)) }
     }
 
@@ -212,7 +211,7 @@ private fun EntryScreen(
         }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            EntryHeader(dayId = day.properties.id)
+            EntryHeader(dayId = day.id)
             EntrySectionToggle(
                 selectedProvider = { selectedSection }, onSelect = setSelectedSection
             )
@@ -236,7 +235,6 @@ private fun EntryScreen(
                 EntrySection.Tags -> {
                     EntryTagSection(
                         editing = editing,
-                        dayId = day.properties.id,
                         uiStateProvider = tagProvider,
                         selectedTags = tags,
                         onAddTag = onAddTag,

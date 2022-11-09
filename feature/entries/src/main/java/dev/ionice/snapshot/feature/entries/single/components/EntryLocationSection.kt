@@ -13,9 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
-import dev.ionice.snapshot.core.database.model.CoordinatesEntity
-import dev.ionice.snapshot.core.database.model.LocationEntryEntity
-import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
+import dev.ionice.snapshot.core.model.Coordinates
+import dev.ionice.snapshot.core.model.Location
 import dev.ionice.snapshot.core.ui.LocationsUiState
 import dev.ionice.snapshot.core.ui.components.PageSectionContent
 import dev.ionice.snapshot.core.ui.screens.FunctionalityNotAvailableScreen
@@ -26,9 +25,9 @@ import dev.ionice.snapshot.feature.entries.R
 internal fun EntryLocationSection(
     uiStateProvider: () -> LocationsUiState,
     editing: Boolean,
-    selectedLocation: LocationEntryEntity?,
-    onSelectLocation: (LocationPropertiesEntity) -> Unit,
-    onAddLocation: (String, CoordinatesEntity) -> Unit
+    selectedLocation: Location?,
+    onSelectLocation: (Location) -> Unit,
+    onAddLocation: (String, Coordinates) -> Unit
 ) {
     when (val uiState = uiStateProvider()) {
         is LocationsUiState.Loading -> {
@@ -68,8 +67,8 @@ internal fun EntryLocationSection(
 
 @Composable
 private fun LocationIndicator(
-    locationsProvider: () -> List<LocationPropertiesEntity>,
-    selectedLocation: LocationEntryEntity?
+    locationsProvider: () -> List<Location>,
+    selectedLocation: Location?
 ) {
     val locations = locationsProvider()
     val tt = stringResource(R.string.tt_single_location_info_display)
@@ -78,7 +77,7 @@ private fun LocationIndicator(
         .semantics { testTag = tt }) {
         Column(modifier = Modifier.padding(16.dp)) {
             selectedLocation?.let { loc ->
-                locations.find { it.id == loc.locationId }?.let { properties ->
+                locations.find { it.id == loc.id }?.let { properties ->
                     Text(text = properties.name)
                     properties.let {
                         Text(
@@ -95,16 +94,16 @@ private fun LocationIndicator(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LocationDropdownSelector(
-    locationsProvider: () -> List<LocationPropertiesEntity>,
-    selectedLocation: LocationEntryEntity?,
-    onSelectLocation: (LocationPropertiesEntity) -> Unit
+    locationsProvider: () -> List<Location>,
+    selectedLocation: Location?,
+    onSelectLocation: (Location) -> Unit
 ) {
     val locations = locationsProvider()
     val (expanded, setExpanded) = remember { mutableStateOf(false) }
     val tt = stringResource(R.string.tt_single_location_selector)
 
     val selectedLocationProperties =
-        selectedLocation?.let { loc -> locations.find { it.id == loc.locationId } }
+        selectedLocation?.let { loc -> locations.find { it.id == loc.id } }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -134,7 +133,7 @@ private fun LocationDropdownSelector(
 }
 
 @Composable
-private fun AutoDetectLocationButton(onAddLocation: (String, CoordinatesEntity) -> Unit) {
+private fun AutoDetectLocationButton(onAddLocation: (String, Coordinates) -> Unit) {
     IconButton(onClick = { /*TODO*/ }, enabled = false) {
         Icon(imageVector = Icons.Filled.MyLocation, contentDescription = "auto-detect location")
     }

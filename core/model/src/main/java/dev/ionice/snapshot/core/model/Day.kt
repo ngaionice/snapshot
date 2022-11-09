@@ -6,11 +6,11 @@ import java.time.LocalDate
 data class Day(
     val id: Long,
     val summary: String,
-    private val createdAt: Long,         // epoch second
-    private val lastModifiedAt: Long,    // epoch second
     val isFavorite: Boolean,
     val location: Location?,
-    val tags: List<ContentTag>
+    val tags: List<ContentTag>,
+    private val createdAt: Long,         // epoch second
+    private val lastModifiedAt: Long,    // epoch second
 ) {
     fun date(): LocalDate = LocalDate.ofEpochDay(id)
 

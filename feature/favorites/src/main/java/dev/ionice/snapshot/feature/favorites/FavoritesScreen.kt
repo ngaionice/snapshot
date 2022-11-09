@@ -18,9 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.core.database.model.DayEntity
-import dev.ionice.snapshot.core.database.model.DayProperties
-import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
+import dev.ionice.snapshot.core.model.Day
 import dev.ionice.snapshot.core.navigation.Navigator
 import dev.ionice.snapshot.core.ui.components.BackButton
 import dev.ionice.snapshot.core.ui.components.PlaceholderText
@@ -53,7 +51,6 @@ internal fun FavoritesScreen(
             is FavoritesUiState.Error -> FavoritesError()
             is FavoritesUiState.Success -> FavoritesList(
                 entriesProvider = { uiState.entries },
-                locationsProvider = { uiState.locations },
                 onSelectEntry = onSelectEntry
             )
         }
@@ -62,12 +59,10 @@ internal fun FavoritesScreen(
 
 @Composable
 private fun FavoritesList(
-    entriesProvider: () -> List<DayEntity>,
-    locationsProvider: () -> List<LocationPropertiesEntity>,
+    entriesProvider: () -> List<Day>,
     onSelectEntry: (Long) -> Unit
 ) {
     val entries = entriesProvider()
-    val locations = locationsProvider().associateBy({ it.id }, { it.name })
     LazyColumn(modifier = Modifier.testTag(stringResource(R.string.tt_favorites_list))) {
         if (entries.isEmpty()) {
             item {
@@ -82,9 +77,9 @@ private fun FavoritesList(
             entries.forEach { day ->
                 item {
                     FavoritesEntry(
-                        entry = day.properties,
-                        location = day.location?.let { locations[it.locationId] },
-                        onSelect = { onSelectEntry(day.properties.id) }
+                        entry = day,
+                        location = day.location?.name,
+                        onSelect = { onSelectEntry(day.id) }
                     )
                 }
             }
@@ -93,7 +88,7 @@ private fun FavoritesList(
 }
 
 @Composable
-private fun FavoritesEntry(entry: DayProperties, location: String?, onSelect: () -> Unit) {
+private fun FavoritesEntry(entry: Day, location: String?, onSelect: () -> Unit) {
     Column(modifier = Modifier
         .clickable { onSelect() }
         .fillMaxWidth()

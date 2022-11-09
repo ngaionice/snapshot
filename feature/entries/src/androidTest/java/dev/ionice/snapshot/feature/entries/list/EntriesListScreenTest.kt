@@ -6,10 +6,9 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.google.common.truth.Truth.assertThat
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.core.database.model.Date
-import dev.ionice.snapshot.core.database.model.DayEntity
-import dev.ionice.snapshot.core.database.model.DayProperties
-import dev.ionice.snapshot.core.database.model.TagEntryEntity
+import dev.ionice.snapshot.core.model.ContentTag
+import dev.ionice.snapshot.core.model.Day
+import dev.ionice.snapshot.core.model.Tag
 import dev.ionice.snapshot.core.ui.DaysUiState
 import dev.ionice.snapshot.feature.entries.R
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -180,7 +179,7 @@ class EntriesListScreenTest {
 
     @Test
     fun yearSection_whenSwitchYear_loadsNewYear() {
-        val data = MutableStateFlow(emptyList<DayEntity>())
+        val data = MutableStateFlow(emptyList<Day>())
         composeTestRule.setContent {
             val state = data.collectAsState()
             EntriesListScreen(
@@ -190,7 +189,7 @@ class EntriesListScreenTest {
                 onAddEntry = { },
                 onSelectEntry = { },
                 onSelectSettings = { },
-                onChangeYear = { year -> data.update { entries.filter { it.properties.date.year == year } } }
+                onChangeYear = { year -> data.update { entries.filter { it.date().year == year } } }
             )
         }
 
@@ -265,25 +264,22 @@ class EntriesListScreenTest {
 }
 
 private val today = LocalDate.now()
-private val entryToday = DayEntity(
-    properties = DayProperties(
-        summary = "EntriesListScreenTestSummary",
-        createdAt = 0,
-        lastModifiedAt = 0,
-        date = Date(today.year, today.monthValue, today.dayOfMonth)
-    ),
-    tags = listOf(TagEntryEntity(today.toEpochDay(), 1)),
+private val entryToday = Day(
+    id = today.toEpochDay(),
+    summary = "EntriesListScreenTestSummary",
+    createdAt = 0,
+    lastModifiedAt = 0,
+    isFavorite = false,
+    tags = listOf(ContentTag(tag = Tag(id = 1, name = "RandomName", lastUsedAt = 0))),
     location = null
 )
 private val entries = listOf(
-    DayEntity(
-        properties = DayProperties(
-            id = LocalDate.of(2022, 1, 1).toEpochDay(),
-            summary = "EntriesListScreenTestSummary",
-            createdAt = 0,
-            lastModifiedAt = 0,
-            date = Date(today.year, today.monthValue, today.dayOfMonth)
-        ),
+    Day(
+        id = LocalDate.of(2022, 1, 1).toEpochDay(),
+        summary = "EntriesListScreenTestSummary",
+        createdAt = 0,
+        lastModifiedAt = 0,
+        isFavorite = false,
         tags = emptyList(),
         location = null
     )

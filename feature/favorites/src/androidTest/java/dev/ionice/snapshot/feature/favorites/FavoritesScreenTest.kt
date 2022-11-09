@@ -51,8 +51,7 @@ class FavoritesScreenTest {
             FavoritesScreen(
                 uiStateProvider = {
                     FavoritesUiState.Success(
-                        entries = emptyList(),
-                        locations = emptyList()
+                        entries = emptyList()
                     )
                 },
                 onSelectEntry = {},
@@ -71,8 +70,7 @@ class FavoritesScreenTest {
             FavoritesScreen(
                 uiStateProvider = {
                     FavoritesUiState.Success(
-                        entries = FRD.daySourceData.filter { it.properties.isFavorite },
-                        locations = FRD.locationSourceData.map { it.properties }
+                        entries = FRD.daySourceData.filter { it.isFavorite }
                     )
                 },
                 onSelectEntry = {},
@@ -82,7 +80,7 @@ class FavoritesScreenTest {
 
         // Assert
         composeTestRule.onAllNodesWithTag(getString(R.string.tt_favorites_entry))
-            .assertCountEquals(FRD.daySourceData.filter { it.properties.isFavorite }.size)
+            .assertCountEquals(FRD.daySourceData.filter { it.isFavorite }.size)
     }
 
     private fun getString(@StringRes resId: Int) =

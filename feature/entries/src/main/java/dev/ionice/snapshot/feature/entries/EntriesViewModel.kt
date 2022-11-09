@@ -1,15 +1,15 @@
-package dev.ionice.snapshot.ui.entries
+package dev.ionice.snapshot.feature.entries
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ionice.snapshot.core.common.Result
 import dev.ionice.snapshot.core.common.asResult
-import dev.ionice.snapshot.core.database.model.CoordinatesEntity
-import dev.ionice.snapshot.core.database.model.DayEntity
 import dev.ionice.snapshot.core.data.repository.DayRepository
 import dev.ionice.snapshot.core.data.repository.LocationRepository
 import dev.ionice.snapshot.core.data.repository.TagRepository
+import dev.ionice.snapshot.core.model.Coordinates
+import dev.ionice.snapshot.core.model.Day
 import dev.ionice.snapshot.core.ui.DayUiState
 import dev.ionice.snapshot.core.ui.DaysUiState
 import dev.ionice.snapshot.core.ui.LocationsUiState
@@ -30,7 +30,7 @@ class EntriesViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val dayId = MutableStateFlow<Long?>(null)
-    private val mutableDayCopy = MutableStateFlow<DayEntity?>(null)
+    private val mutableDayCopy = MutableStateFlow<Day?>(null)
 
     private val today = MutableStateFlow(LocalDate.now().toEpochDay())
     private val year = MutableStateFlow(LocalDate.now().year)
@@ -39,7 +39,7 @@ class EntriesViewModel @Inject constructor(
         dayId.flatMapLatest { dayId -> dayId?.let { dayRepository.getFlow(it) } ?: emptyFlow() }
             .asResult()
     private val locationsFlow = locationRepository.getAllPropertiesFlow().asResult()
-    private val tagsFlow = tagRepository.getAllPropertiesFlow().asResult()
+    private val tagsFlow = tagRepository.getAllFlow().asResult()
 
     private val weekFlow = today.flatMapLatest {
         dayRepository.getListFlowInIdRange(today.value - 6, today.value).asResult()
@@ -113,28 +113,26 @@ class EntriesViewModel @Inject constructor(
         this.dayId.update { dayId }
     }
 
-    fun edit(day: DayEntity?) {
+    fun edit(day: Day?) {
         mutableDayCopy.update { day }
     }
 
     fun save() {
         mutableDayCopy.value?.let {
-            val (properties, tags, location) = it
-            val (id, summary, _, _, isFavorite) = properties
+            val (id, summary, isFavorite, location, tags) = it
             viewModelScope.launch { dayRepository.update(id, summary, isFavorite, location, tags) }
         }
     }
 
     fun favorite(isFavorite: Boolean) {
         val dayUiState = singleUiState.value.dayUiState
-        if (dayUiState is DayUiState.Success && dayUiState.data != null && dayUiState.data!!.properties.isFavorite != isFavorite) {
-            val (properties, tags, location) = dayUiState.data!!
-            val (id, summary) = properties
+        if (dayUiState is DayUiState.Success && dayUiState.data != null && dayUiState.data!!.isFavorite != isFavorite) {
+            val (id, summary, _, location, tags) = dayUiState.data!!
             viewModelScope.launch { dayRepository.update(id, summary, isFavorite, location, tags) }
         }
     }
 
-    fun addLocation(name: String, coordinates: CoordinatesEntity) {
+    fun addLocation(name: String, coordinates: Coordinates) {
         viewModelScope.launch { locationRepository.add(coordinates, name) }
     }
 
@@ -152,5 +150,5 @@ data class EntriesSingleUiState(
     val dayUiState: DayUiState,
     val locationsUiState: LocationsUiState,
     val tagsUiState: TagsUiState,
-    val editingCopy: DayEntity?
+    val editingCopy: Day?
 )

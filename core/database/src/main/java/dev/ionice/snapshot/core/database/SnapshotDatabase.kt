@@ -5,14 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SimpleSQLiteQuery
-import dev.ionice.snapshot.core.database.model.*
 import dev.ionice.snapshot.core.database.dao.DayDao
 import dev.ionice.snapshot.core.database.dao.LocationDao
 import dev.ionice.snapshot.core.database.dao.TagDao
 import dev.ionice.snapshot.core.database.dao.UtilsDao
+import dev.ionice.snapshot.core.database.model.*
 
 @Database(
-    entities = [DayProperties::class, DaySummaryFts::class, LocationPropertiesEntity::class, LocationEntryEntity::class, TagPropertiesEntity::class, TagEntryEntity::class, TagEntryFts::class],
+    entities = [DayEntity::class, DaySummaryFts::class, LocationEntity::class, DayLocationCrossRef::class, TagEntity::class, DayTagCrossRef::class, TagEntryFts::class],
     version = 2
 )
 abstract class SnapshotDatabase : RoomDatabase() {

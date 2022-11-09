@@ -13,13 +13,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
-import dev.ionice.snapshot.core.database.model.TagEntryEntity
-import dev.ionice.snapshot.core.database.model.TagPropertiesEntity
+import dev.ionice.snapshot.core.model.ContentTag
+import dev.ionice.snapshot.core.model.Tag
 import dev.ionice.snapshot.core.ui.TagsUiState
 import dev.ionice.snapshot.core.ui.components.PageSectionContent
 import dev.ionice.snapshot.core.ui.screens.FunctionalityNotAvailableScreen
@@ -29,11 +30,10 @@ import dev.ionice.snapshot.feature.entries.R
 @Composable
 internal fun EntryTagSection(
     editing: Boolean,
-    dayId: Long,
     uiStateProvider: () -> TagsUiState,
-    selectedTags: List<TagEntryEntity>,
+    selectedTags: List<ContentTag>,
     onAddTag: (String) -> Unit,
-    onSelectedTagsChange: (List<TagEntryEntity>) -> Unit
+    onSelectedTagsChange: (List<ContentTag>) -> Unit
 ) {
     val (displayedTagId, setDisplayedTagId) = remember { mutableStateOf<Long?>(null) }
 
@@ -52,12 +52,12 @@ internal fun EntryTagSection(
                 is TagsUiState.Success -> {
                     val tagsMap = uiState.data.associateBy({ it.id }, { it })
                     if (editing) {
-                        val selectedTagIds = selectedTags.map { it.tagId }.toSet()
+                        val selectedTagIds = selectedTags.map { it.tag.id }.toSet()
                         TagInserter(tags = uiState.data.filter { !selectedTagIds.contains(it.id) },
                             onAddTag = onAddTag,
                             onSelectTag = {
                                 onSelectedTagsChange(
-                                    selectedTags + TagEntryEntity(dayId = dayId, tagId = it.id)
+                                    selectedTags + ContentTag(tag = it)
                                 )
                             })
                     }
@@ -73,16 +73,16 @@ internal fun EntryTagSection(
                             Text("Click on a tag to edit it!")
                         } else {
                             TagEditor(tagName = tagsMap[displayedTagId]!!.name,
-                                tagEntry = selectedTags.find { it.tagId == displayedTagId }!!,
+                                tagEntry = selectedTags.find { it.tag.id == displayedTagId }!!,
                                 onContentChange = { content ->
                                     onSelectedTagsChange(selectedTags.map {
-                                        if (it.tagId == displayedTagId) {
+                                        if (it.tag.id == displayedTagId) {
                                             it.copy(content = content)
                                         } else it
                                     })
                                 },
                                 onDelete = {
-                                    onSelectedTagsChange(selectedTags.filter { it.tagId != displayedTagId })
+                                    onSelectedTagsChange(selectedTags.filter { it.tag.id != displayedTagId })
                                     setDisplayedTagId(null)
                                 })
                         }
@@ -100,8 +100,8 @@ internal fun EntryTagSection(
 @Composable
 private fun TagDisplay(
     editing: Boolean,
-    tagsMap: Map<Long, TagPropertiesEntity>,
-    selectedTags: List<TagEntryEntity>,
+    tagsMap: Map<Long, Tag>,
+    selectedTags: List<ContentTag>,
     displayedTagId: Long?,
     onClick: (Long) -> Unit
 ) {
@@ -114,18 +114,18 @@ private fun TagDisplay(
         crossAxisSpacing = 8.dp,
         modifier = Modifier.semantics { testTag = tt }) {
         selectedTags.forEach {
-            InputChip(selected = displayedTagId == it.tagId && editing,
-                onClick = { onClick(it.tagId) },
-                label = { Text(tagsMap[it.tagId]!!.name) })
+            InputChip(selected = displayedTagId == it.tag.id && editing,
+                onClick = { onClick(it.tag.id) },
+                label = { Text(tagsMap[it.tag.id]!!.name) })
         }
     }
 }
 
 @Composable
 private fun TagInserter(
-    tags: List<TagPropertiesEntity>,
+    tags: List<Tag>,
     onAddTag: (String) -> Unit,
-    onSelectTag: (TagPropertiesEntity) -> Unit
+    onSelectTag: (Tag) -> Unit
 ) {
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { setShowDialog(true) }) {
@@ -146,7 +146,7 @@ private fun TagInserter(
 @Composable
 private fun TagEditor(
     tagName: String,
-    tagEntry: TagEntryEntity,
+    tagEntry: ContentTag,
     onContentChange: (String) -> Unit,
     onDelete: () -> Unit
 ) {
@@ -167,8 +167,8 @@ private fun TagEditor(
 
 @Composable
 private fun TagsContentDisplay(
-    tagsMap: Map<Long, TagPropertiesEntity>,
-    selectedTags: List<TagEntryEntity>
+    tagsMap: Map<Long, Tag>,
+    selectedTags: List<ContentTag>
 ) {
     val rendered = selectedTags.filter { !it.content.isNullOrEmpty() }
     if (rendered.isNotEmpty()) {
@@ -176,7 +176,7 @@ private fun TagsContentDisplay(
         rendered.forEach {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = "#${tagsMap[it.tagId]!!.name}",
+                    text = "#${tagsMap[it.tag.id]!!.name}",
                     style = MaterialTheme.typography.titleSmall
                 )
                 Text(text = it.content!!)
@@ -188,14 +188,14 @@ private fun TagsContentDisplay(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TagInsertionDialog(
-    tags: List<TagPropertiesEntity>,
+    tags: List<Tag>,
     onAddTag: (String) -> Unit,
-    onSelectTag: (TagPropertiesEntity) -> Unit,
+    onSelectTag: (Tag) -> Unit,
     onClose: () -> Unit
 ) {
     val (tabIndex, setTabIndex) = remember { mutableStateOf(0) }
     val (queued, setQueued) = remember { mutableStateOf<String?>(null) }
-    val (selectedTag, setSelectedTag) = remember { mutableStateOf<TagPropertiesEntity?>(null) }
+    val (selectedTag, setSelectedTag) = remember { mutableStateOf<Tag?>(null) }
     val (inputValue, setInputValue) = remember { mutableStateOf("") }
     val (dropdownExpanded, setDropdownExpanded) = remember { mutableStateOf(false) }
 
@@ -249,10 +249,11 @@ private fun TagInsertionDialog(
             }
             when (tabIndex) {
                 0 -> {
-                    val tt = stringResource(R.string.tt_single_tag_selector)
-                    ExposedDropdownMenuBox(expanded = dropdownExpanded,
+                    ExposedDropdownMenuBox(
+                        expanded = dropdownExpanded,
                         onExpandedChange = setDropdownExpanded,
-                        modifier = Modifier.semantics { testTag = tt }) {
+                        modifier = Modifier.testTag(stringResource(R.string.tt_single_tag_selector))
+                    ) {
                         OutlinedTextField(
                             modifier = Modifier.menuAnchor(),
                             readOnly = true,
@@ -273,11 +274,12 @@ private fun TagInsertionDialog(
                     }
                 }
                 1 -> {
-                    val tt = stringResource(R.string.tt_single_tag_creator)
                     if (queued == null) {
-                        OutlinedTextField(value = inputValue,
+                        OutlinedTextField(
+                            value = inputValue,
                             onValueChange = setInputValue,
-                            modifier = Modifier.semantics { testTag = tt })
+                            modifier = Modifier.testTag(stringResource(R.string.tt_single_tag_creator))
+                        )
                     } else {
                         CircularProgressIndicator()
                     }

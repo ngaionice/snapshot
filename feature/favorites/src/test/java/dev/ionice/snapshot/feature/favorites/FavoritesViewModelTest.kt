@@ -1,15 +1,14 @@
 package dev.ionice.snapshot.feature.favorites
 
 import com.google.common.truth.Truth.assertThat
+import dev.ionice.snapshot.testtools.MainCoroutineRule
+import dev.ionice.snapshot.testtools.data.database.repository.FakeDayRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import dev.ionice.snapshot.testtools.MainCoroutineRule
-import dev.ionice.snapshot.testtools.data.database.repository.FakeDayRepository
-import dev.ionice.snapshot.testtools.data.database.repository.FakeLocationRepository
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,11 +25,10 @@ class FavoritesViewModelTest {
 
     // VM dependencies
     private val dayRepository = FakeDayRepository()
-    private val locationRepository = FakeLocationRepository()
 
     @Before
     fun setupViewModel() {
-        viewModel = FavoritesViewModel(dayRepository, locationRepository)
+        viewModel = FavoritesViewModel(dayRepository)
     }
 
     @Test

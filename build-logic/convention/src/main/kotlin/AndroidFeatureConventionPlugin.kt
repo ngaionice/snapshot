@@ -42,7 +42,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             dependencies {
                 add("implementation", project(":core:common"))
                 add("implementation", project(":core:data"))
-                add("implementation", project(":core:database"))
                 add("implementation", project(":core:model"))
                 add("implementation", project(":core:navigation"))
                 add("implementation", project(":core:ui"))

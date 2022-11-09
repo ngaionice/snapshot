@@ -2,51 +2,51 @@ package dev.ionice.snapshot.core.database.dao
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import dev.ionice.snapshot.core.database.model.PopulatedTag
+import dev.ionice.snapshot.core.database.model.DayTagCrossRef
 import dev.ionice.snapshot.core.database.model.TagEntity
-import dev.ionice.snapshot.core.database.model.TagEntryEntity
-import dev.ionice.snapshot.core.database.model.TagPropertiesEntity
 
 @Dao
 interface TagDao {
 
     @Insert
-    suspend fun insertProperties(tag: TagPropertiesEntity): Long
+    suspend fun insertEntity(tag: TagEntity): Long
 
     @Update
-    suspend fun updateProperties(tag: TagPropertiesEntity)
+    suspend fun updateEntity(tag: TagEntity)
 
     @Delete
-    suspend fun delete(tag: TagPropertiesEntity)
+    suspend fun delete(tag: TagEntity)
 
     @Insert
-    suspend fun insertEntry(entry: TagEntryEntity)
+    suspend fun insertCrossRef(entry: DayTagCrossRef)
 
     @Insert
-    suspend fun insertEntries(entries: List<TagEntryEntity>)
+    suspend fun insertCrossRefs(entries: List<DayTagCrossRef>)
 
     @Update
-    suspend fun updateEntry(entry: TagEntryEntity)
+    suspend fun updateCrossRef(entry: DayTagCrossRef)
 
     @Update
-    suspend fun updateEntries(entries: List<TagEntryEntity>)
+    suspend fun updateCrossRefs(entries: List<DayTagCrossRef>)
 
     @Delete
-    suspend fun deleteEntry(entry: TagEntryEntity)
+    suspend fun deleteCrossRef(entry: DayTagCrossRef)
 
     @Delete
-    suspend fun deleteEntries(entries: List<TagEntryEntity>)
+    suspend fun deleteCrossRefs(entries: List<DayTagCrossRef>)
 
     @Transaction
     @Query("select * from Tag where id = :id")
-    suspend fun get(id: Long): TagEntity?
+    suspend fun get(id: Long): PopulatedTag?
 
     @Query("select * from Tag")
-    suspend fun getAllProperties(): List<TagPropertiesEntity>
+    suspend fun getAllEntities(): List<TagEntity>
 
     @Query("select * from Tag")
-    fun getAllPropertiesFlow(): Flow<List<TagPropertiesEntity>>
+    fun getAllEntitiesFlow(): Flow<List<TagEntity>>
 
     @Query("select * from Tag order by lastUsedAt desc limit 10")
-    fun getRecentlyUsedFlow(): Flow<List<TagPropertiesEntity>>
+    fun getRecentEntitiesFlow(): Flow<List<TagEntity>>
 
 }

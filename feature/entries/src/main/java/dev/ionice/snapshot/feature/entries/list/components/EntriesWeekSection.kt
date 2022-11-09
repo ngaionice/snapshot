@@ -18,7 +18,7 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 import dev.ionice.snapshot.core.common.Utils
-import dev.ionice.snapshot.core.database.model.DayEntity
+import dev.ionice.snapshot.core.model.Day
 import dev.ionice.snapshot.core.ui.DaysUiState
 import dev.ionice.snapshot.core.ui.components.PageSection
 import dev.ionice.snapshot.feature.entries.R
@@ -65,7 +65,7 @@ internal fun WeekSection(
 
         val today = LocalDate.now().toEpochDay()
         val dateRange = (today downTo today - 6).toList()
-        val entries = (uiState as DaysUiState.Success).data.associateBy { it.properties.id }
+        val entries = (uiState as DaysUiState.Success).data.associateBy { it.id }
 
         LazyRow(
             contentPadding = PaddingValues(24.dp),
@@ -91,10 +91,10 @@ internal fun WeekSection(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun WeekSectionItem(day: DayEntity, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun WeekSectionItem(day: Day, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val containerColor = MaterialTheme.colorScheme.surfaceVariant
     val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val date = LocalDate.ofEpochDay(day.properties.id)
+    val date = LocalDate.ofEpochDay(day.id)
     val tt = stringResource(R.string.tt_week_item)
     Card(
         modifier = modifier.semantics { testTag = tt },
@@ -138,7 +138,11 @@ internal fun WeekSectionItem(day: DayEntity, onClick: () -> Unit, modifier: Modi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun WeekSectionAddEntryItem(dayId: Long, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun WeekSectionAddEntryItem(
+    dayId: Long,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val containerColor = MaterialTheme.colorScheme.primaryContainer
     val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
     val date = LocalDate.ofEpochDay(dayId)

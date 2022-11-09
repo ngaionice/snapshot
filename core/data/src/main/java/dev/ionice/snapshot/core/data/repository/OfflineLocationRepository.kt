@@ -1,12 +1,12 @@
 package dev.ionice.snapshot.core.data.repository
 
 import dev.ionice.snapshot.core.database.dao.LocationDao
-import dev.ionice.snapshot.core.database.model.CoordinatesEntity
-import dev.ionice.snapshot.core.database.model.LocationEntity
-import dev.ionice.snapshot.core.database.model.LocationEntryEntity
-import dev.ionice.snapshot.core.database.model.LocationPropertiesEntity
+import dev.ionice.snapshot.core.database.model.*
+import dev.ionice.snapshot.core.model.Coordinates
+import dev.ionice.snapshot.core.model.Location
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.Instant
 
@@ -15,16 +15,16 @@ class OfflineLocationRepository(
     private val locationDao: LocationDao,
 ) : LocationRepository {
 
-    override suspend fun get(locationId: Long): LocationEntity? {
-        return withContext(dispatcher) { locationDao.get(locationId) }
-    }
+//    override suspend fun get(locationId: Long): PopulatedLocation? {
+//        return withContext(dispatcher) { locationDao.get(locationId) }
+//    }
 
-    override suspend fun add(coordinates: CoordinatesEntity, name: String): Long {
+    override suspend fun add(coordinates: Coordinates, name: String): Long {
         return withContext(dispatcher) {
-            locationDao.insertProperties(
-                LocationPropertiesEntity(
+            locationDao.insertEntity(
+                LocationEntity(
                     id = 0,
-                    coordinates = coordinates,
+                    coordinates = CoordinatesEntity(coordinates.lat, coordinates.lon),
                     name = name,
                     lastUsedAt = Instant.now().epochSecond
                 )
@@ -32,37 +32,11 @@ class OfflineLocationRepository(
         }
     }
 
-    override suspend fun update(
-        locationId: Long,
-        coordinates: CoordinatesEntity,
-        name: String,
-        entries: List<LocationEntryEntity>
-    ) {
-        withContext(dispatcher) {
-            val existing = locationDao.get(locationId)
-                ?: throw IllegalArgumentException("No Location found for the given locationId.")
-            locationDao.updateProperties(
-                LocationPropertiesEntity(
-                    id = locationId,
-                    coordinates = coordinates,
-                    name = name,
-                    lastUsedAt = Instant.now().epochSecond
-                )
-            )
-            val oldEntries = existing.entries.map { it.dayId }.toSet()
-            val newEntries = entries.map { it.dayId }.toSet()
-            (newEntries subtract oldEntries).map { LocationEntryEntity(it, locationId) }
-                .let { locationDao.insertEntries(it) }
-            (oldEntries subtract newEntries).map { LocationEntryEntity(it, locationId) }
-                .let { locationDao.deleteEntries(it) }
-        }
+    override suspend fun getAllProperties(): List<Location> {
+        return withContext(dispatcher) { locationDao.getAllEntities().map { it.toExternalModel() } }
     }
 
-    override suspend fun getAllProperties(): List<LocationPropertiesEntity> {
-        return withContext(dispatcher) { locationDao.getAllProperties() }
-    }
-
-    override fun getAllPropertiesFlow(): Flow<List<LocationPropertiesEntity>> {
-        return locationDao.getAllPropertiesFlow()
+    override fun getAllPropertiesFlow(): Flow<List<Location>> {
+        return locationDao.getAllEntitiesFlow().map { lst -> lst.map { it.toExternalModel() } }
     }
 }

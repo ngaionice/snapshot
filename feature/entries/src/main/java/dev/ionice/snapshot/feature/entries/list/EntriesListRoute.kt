@@ -11,20 +11,19 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.ionice.snapshot.core.navigation.Navigator
 import dev.ionice.snapshot.core.navigation.SettingsHomeDestination
 import dev.ionice.snapshot.core.ui.DaysUiState
 import dev.ionice.snapshot.core.ui.components.TopAppBar
+import dev.ionice.snapshot.feature.entries.EntriesViewModel
 import dev.ionice.snapshot.feature.entries.R
 import dev.ionice.snapshot.feature.entries.list.components.EntryInsertDialog
 import dev.ionice.snapshot.feature.entries.list.components.WeekSection
 import dev.ionice.snapshot.feature.entries.list.components.YearSectionHeader
 import dev.ionice.snapshot.feature.entries.list.components.getYearSectionContent
-import dev.ionice.snapshot.ui.entries.EntriesViewModel
 
 @Composable
 fun EntriesListRoute(viewModel: EntriesViewModel = hiltViewModel(), navigator: Navigator) {
@@ -72,7 +71,8 @@ internal fun EntriesListScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { setShowDialog(true) },
-                modifier = Modifier.semantics { testTag = cdAdd }) {
+                modifier = Modifier.testTag(cdAdd)
+            ) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = cdAdd)
             }
         }

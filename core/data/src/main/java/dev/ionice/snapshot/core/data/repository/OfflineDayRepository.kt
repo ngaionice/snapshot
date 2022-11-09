@@ -4,8 +4,12 @@ import dev.ionice.snapshot.core.database.dao.DayDao
 import dev.ionice.snapshot.core.database.dao.LocationDao
 import dev.ionice.snapshot.core.database.dao.TagDao
 import dev.ionice.snapshot.core.database.model.*
+import dev.ionice.snapshot.core.model.ContentTag
+import dev.ionice.snapshot.core.model.Day
+import dev.ionice.snapshot.core.model.Location
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.LocalDate
@@ -17,15 +21,11 @@ class OfflineDayRepository(
     private val tagDao: TagDao
 ) : DayRepository {
 
-    override suspend fun get(dayId: Long): DayEntity? {
-        return withContext(dispatcher) { dayDao.get(dayId) }
-    }
-
     override suspend fun create(dayId: Long) {
         val currentTime = Instant.now().epochSecond
         val date = LocalDate.ofEpochDay(dayId)
-        dayDao.insertProperties(
-            DayProperties(
+        dayDao.insertEntity(
+            DayEntity(
                 id = dayId,
                 summary = "",
                 createdAt = currentTime,
@@ -40,58 +40,92 @@ class OfflineDayRepository(
         dayId: Long,
         summary: String,
         isFavorite: Boolean,
-        location: LocationEntryEntity?,
-        tags: List<TagEntryEntity>
+        location: Location?,
+        tags: List<ContentTag>
     ) {
         withContext(dispatcher) {
-            val existingEntry = dayDao.get(dayId)
+            val existingDbEntry = dayDao.get(dayId)
+            val existingModel = existingDbEntry?.toExternalModel()
             val currentTime = Instant.now().epochSecond
-            if (existingEntry == null) {
+            if (existingModel == null) {
                 throw IllegalArgumentException("No existing Day found for the given dayId: $dayId")
-            } else {
-                dayDao.updateProperties(
-                    existingEntry.properties.copy(
-                        summary = summary, isFavorite = isFavorite, lastModifiedAt = currentTime
+            }
+
+            val updateTagLastUsed: suspend (Long) -> Unit = {
+                tagDao.updateEntity(
+                    TagEntity(
+                        id = it,
+                        name = tags.filter { ct -> ct.tag.id == it }[0].tag.name,
+                        lastUsedAt = currentTime
                     )
                 )
-                // compare location, if not equal then need to delete old and insert new
-                val oldLoc = existingEntry.location
-                if (oldLoc != location) {
-                    println("inserting location")
-                    println(location)
-                    oldLoc?.let { locationDao.deleteEntry(it) }
-                    location?.let { locationDao.insertEntry(it) }
-                }
-                // compare tags: delete old ones, insert new ones, update common ones
-                val newTags = tags.associateBy({ it.tagId }, { it.content })
-                val oldTags = existingEntry.tags.associateBy({ it.tagId }, { it.content })
-                (oldTags.keys subtract newTags.keys).map { TagEntryEntity(dayId, it, oldTags[it]) }
-                    .let { tagDao.deleteEntries(it) }
-                (newTags.keys subtract oldTags.keys).map { TagEntryEntity(dayId, it, newTags[it]) }
-                    .let { tagDao.insertEntries(it) }
-                (newTags.keys intersect oldTags.keys).filter { newTags[it] != oldTags[it] }
-                    .map { TagEntryEntity(dayId, it, newTags[it]) }.let { tagDao.updateEntries(it) }
             }
+
+            val updateLocationLastUsed: suspend (Location) -> Unit = {
+                val (lat, lon) = it.coordinates
+                locationDao.updateEntity(
+                    LocationEntity(
+                        id = it.id,
+                        coordinates = CoordinatesEntity(lat, lon),
+                        name = it.name,
+                        lastUsedAt = currentTime
+                    )
+                )
+            }
+
+            dayDao.updateEntity(
+                existingDbEntry.properties.copy(
+                    summary = summary, isFavorite = isFavorite, lastModifiedAt = currentTime
+                )
+            )
+            // compare location, if not equal then need to delete old and insert new
+            val oldLocId = existingModel.location?.id
+            if (oldLocId != location?.id) {
+                oldLocId?.let { locationDao.deleteCrossRef(DayLocationCrossRef(dayId, it)) }
+                location?.let {
+                    locationDao.insertCrossRef(DayLocationCrossRef(dayId, it.id))
+                    updateLocationLastUsed(it)
+                }
+            }
+            // compare tags: delete old ones, insert new ones, update common ones
+            val newTags = tags.associateBy({ it.tag.id }, { it.content })
+            val oldTags = existingModel.tags.associateBy({ it.tag.id }, { it.content })
+
+            (oldTags.keys subtract newTags.keys).map { DayTagCrossRef(dayId, it, oldTags[it]) }
+                .let { tagDao.deleteCrossRefs(it) }
+            (newTags.keys subtract oldTags.keys).map {
+                updateTagLastUsed(it)
+                DayTagCrossRef(dayId, it, newTags[it])
+            }
+                .let { tagDao.insertCrossRefs(it) }
+            (newTags.keys intersect oldTags.keys).filter { newTags[it] != oldTags[it] }
+                .map {
+                    updateTagLastUsed(it)
+                    DayTagCrossRef(dayId, it, newTags[it])
+                }
+                .let { tagDao.updateCrossRefs(it) }
         }
     }
 
-    override fun getFlow(dayId: Long): Flow<DayEntity?> {
-        return dayDao.getFlow(dayId)
+    override fun getFlow(dayId: Long): Flow<Day?> {
+        return dayDao.getFlow(dayId).map { it?.toExternalModel() }
     }
 
-    override fun getListFlowByYear(year: Int): Flow<List<DayEntity>> {
-        return dayDao.getListFlowByYear(year)
+    override fun getListFlowByYear(year: Int): Flow<List<Day>> {
+        return dayDao.getListFlowByYear(year).map { lst -> lst.map { it.toExternalModel() } }
     }
 
-    override fun getListFlowInIdRange(start: Long, end: Long): Flow<List<DayEntity>> {
+    override fun getListFlowInIdRange(start: Long, end: Long): Flow<List<Day>> {
         return dayDao.getListFlowByIdRange(start, end)
+            .map { lst -> lst.map { it.toExternalModel() } }
     }
 
-    override fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<DayEntity>> {
+    override fun getListFlowByDayOfYear(month: Int, dayOfMonth: Int): Flow<List<Day>> {
         return dayDao.getListFlowByDayOfYear(month, dayOfMonth)
+            .map { lst -> lst.map { it.toExternalModel() } }
     }
 
-    override fun getListFlowForFavorites(): Flow<List<DayEntity>> {
-        return dayDao.getListFlowForFavorites()
+    override fun getListFlowForFavorites(): Flow<List<Day>> {
+        return dayDao.getListFlowForFavorites().map { lst -> lst.map { it.toExternalModel() } }
     }
 }
