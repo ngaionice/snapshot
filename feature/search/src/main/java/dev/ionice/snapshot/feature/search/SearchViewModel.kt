@@ -115,7 +115,7 @@ class SearchViewModel @Inject constructor(
 
     fun setFilters(filters: Filters) {
         this.filtersFlow.update { filters }
-        search()
+        if (searchStringFlow.value.isNotEmpty()) search()
     }
 }
 
