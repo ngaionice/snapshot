@@ -29,7 +29,7 @@ interface DayDao {
     @Transaction
     @Query("""
         select * from Day d join DaySummaryFts df on d.id = df.id 
-            where DaySummaryFts match :queryString 
+            where DaySummaryFts match :queryString || '*'
             and (:startDayId is null or d.id >= :startDayId)
             and (:endDayId is null or d.id <= :endDayId)
             and (:isFavorite is null or d.isFavorite = 1)
@@ -45,7 +45,7 @@ interface DayDao {
     @Transaction
     @Query("""
         select * from Day d join TagEntryFts tf on d.id = tf.dayId 
-            where TagEntryFts match :queryString
+            where TagEntryFts match :queryString || '*'
             and (:startDayId is null or d.id >= :startDayId)
             and (:endDayId is null or d.id <= :endDayId)
             and (:isFavorite is null or d.isFavorite = 1)

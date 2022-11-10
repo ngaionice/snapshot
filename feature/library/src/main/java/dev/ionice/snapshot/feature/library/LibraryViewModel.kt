@@ -25,7 +25,7 @@ class LibraryViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val today = MutableStateFlow(LocalDate.now())
-    private val locationFlow = locationRepository.getAllPropertiesFlow().asResult()
+    private val locationFlow = locationRepository.getAllFlow().asResult()
     private val tagsFlow = tagRepository.getRecentlyUsedFlow().asResult()
 
     val uiState: StateFlow<LibraryUiState> = combine(

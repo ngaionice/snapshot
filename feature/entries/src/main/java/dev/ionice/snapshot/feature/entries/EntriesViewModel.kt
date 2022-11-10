@@ -38,7 +38,7 @@ class EntriesViewModel @Inject constructor(
     private val dayFlow =
         dayId.flatMapLatest { dayId -> dayId?.let { dayRepository.getFlow(it) } ?: emptyFlow() }
             .asResult()
-    private val locationsFlow = locationRepository.getAllPropertiesFlow().asResult()
+    private val locationsFlow = locationRepository.getAllFlow().asResult()
     private val tagsFlow = tagRepository.getAllFlow().asResult()
 
     private val weekFlow = today.flatMapLatest {

@@ -221,7 +221,7 @@ class EntriesViewModelTest {
     fun entriesViewModel_whenAddLocation_insertsLocationIntoRepo() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.listUiState.collect {} }
 
-        val existing = locationRepository.getAllPropertiesFlow().first()
+        val existing = locationRepository.getAllFlow().first()
         val location = Pair("EntriesViewModelLocation", Coordinates(180.0, 180.0))
 
         assertThat(existing.map { it.name }).doesNotContain(location.first)
@@ -229,7 +229,7 @@ class EntriesViewModelTest {
         viewModel.addLocation(location.first, location.second)
         advanceUntilIdle()
 
-        val updated = locationRepository.getAllPropertiesFlow().first()
+        val updated = locationRepository.getAllFlow().first()
         val entry = updated.find { it.name == location.first }
         assertThat(entry).isNotNull()
         assertThat(entry!!.coordinates).isEqualTo(location.second)

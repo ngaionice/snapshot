@@ -4,16 +4,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
@@ -27,14 +25,16 @@ import java.time.format.DateTimeParseException
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePicker(
-    date: LocalDate,
+    date: LocalDate?,
     onSelectDate: (LocalDate) -> Unit,
     showErrorIcon: Boolean,
     setErrorMessage: (String) -> Unit,
-    allowFuture: Boolean = true
+    allowFuture: Boolean = true,
+    label: String? = null,
+    contentDescription: String? = null
 ) {
-    val (dateString, setDateString) = remember { mutableStateOf(date.format(formatter)) }
-    val errorMessage = stringResource(R.string.common_datepicker_error_range)
+    val (dateString, setDateString) = remember { mutableStateOf(date?.format(formatter) ?: "") }
+    val errorMessage = stringResource(R.string.date_picker_range_error_msg)
     val onValueChange: (String) -> Unit = {
         val cleaned = trimAndClean(it)
         setDateString(cleaned)
@@ -53,12 +53,14 @@ fun DatePicker(
         }
     }
     Column {
+        val cd = contentDescription ?: stringResource(R.string.cd_date_picker_text_field)
         OutlinedTextField(
-            modifier = Modifier.testTag(stringResource(R.string.tt_common_date_picker)),
+            modifier = Modifier.semantics { this.contentDescription = cd },
             value = dateString,
+            singleLine = true,
             onValueChange = onValueChange,
-            label = { Text("Date") },
-            placeholder = { Text("yyyy-mm-dd") },
+            label = { Text(label ?: stringResource(R.string.date_picker_default_label)) },
+            placeholder = { Text("yyyy-mm-dd", style = MaterialTheme.typography.labelSmall) },
             trailingIcon = {
                 if (showErrorIcon) {
                     Icon(imageVector = Icons.Filled.Error, contentDescription = "error")

@@ -16,6 +16,7 @@ import dev.ionice.snapshot.core.ui.animationDurationMs
 import dev.ionice.snapshot.feature.entries.entriesGraph
 import dev.ionice.snapshot.feature.favorites.favoritesGraph
 import dev.ionice.snapshot.feature.library.libraryGraph
+import dev.ionice.snapshot.feature.search.searchGraph
 import dev.ionice.snapshot.feature.settings.settingsGraph
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -42,5 +43,7 @@ fun SnapshotNavHost(
         settingsGraph(navController = navController)
 
         favoritesGraph(navController = navController)
+
+        searchGraph(navController = navController)
     }
 }

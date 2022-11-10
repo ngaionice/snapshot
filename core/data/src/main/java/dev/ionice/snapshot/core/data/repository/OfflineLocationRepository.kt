@@ -32,11 +32,11 @@ class OfflineLocationRepository(
         }
     }
 
-    override suspend fun getAllProperties(): List<Location> {
+    override suspend fun getAll(): List<Location> {
         return withContext(dispatcher) { locationDao.getAllEntities().map { it.toExternalModel() } }
     }
 
-    override fun getAllPropertiesFlow(): Flow<List<Location>> {
+    override fun getAllFlow(): Flow<List<Location>> {
         return locationDao.getAllEntitiesFlow().map { lst -> lst.map { it.toExternalModel() } }
     }
 }

@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.time.LocalTime
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class OfflinePreferencesRepository(private val appContext: Context) : PreferencesRepository {
@@ -66,6 +67,12 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
             if (e is IOException) emit(emptyPreferences())
             else throw e
         }.map { mapNotificationsPreferences(it) }
+
+    override fun getRecentSearchesFlow(): Flow<PreferencesRepository.SearchHistory> =
+        dataStore.data.catch { e ->
+            if (e is IOException) emit(emptyPreferences())
+            else throw e
+        }.map { mapSearchHistory(it) }
 
     override suspend fun setBackupEnabled(enabled: Boolean) {
         dataStore.edit {
@@ -124,6 +131,32 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
         }
     }
 
+    override suspend fun insertRecentSearch(searchString: String) {
+        val currPrefs = dataStore.data.first().toPreferences()
+        var separator = currPrefs[Keys.SEARCH_STR_SEPARATOR]
+        if (separator == null) {
+            separator = UUID.randomUUID().toString()
+            dataStore.edit {
+                it[Keys.SEARCH_STR_SEPARATOR] = UUID.randomUUID().toString()
+                it[Keys.SEARCH_HISTORY] = listOf(searchString).joinToString(separator)
+            }
+        } else {
+            val history = currPrefs[Keys.SEARCH_HISTORY]?.split(separator) ?: emptyList()
+            val newResults = history.filter { str -> !str.equals(searchString, ignoreCase = true) }
+                .takeLast(4) + searchString
+            dataStore.edit {
+                it[Keys.SEARCH_HISTORY] = newResults.joinToString(separator)
+            }
+        }
+
+    }
+
+    override suspend fun clearRecentSearches() {
+        dataStore.edit {
+            it.remove(Keys.SEARCH_HISTORY)
+        }
+    }
+
     private fun mapBackupPreferences(preferences: Preferences): PreferencesRepository.BackupPrefs {
         val defaults = PreferencesRepository.BackupPrefs.DEFAULT
         val isEnabled = preferences[Keys.BACKUP_ENABLED] ?: defaults.isEnabled
@@ -147,6 +180,15 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
             preferences[Keys.NOTIFS_MEMORIES_ENABLED] ?: defaults.isMemoriesEnabled
         return PreferencesRepository.NotifsPrefs(
             areNotifsEnabled, isRemindersEnabled, reminderTime, isMemoriesEnabled
+        )
+    }
+
+    private fun mapSearchHistory(preferences: Preferences): PreferencesRepository.SearchHistory {
+        // if no separator, can't split history properly; return empty list
+        val separator = preferences[Keys.SEARCH_STR_SEPARATOR]
+            ?: return PreferencesRepository.SearchHistory(emptyList())
+        return PreferencesRepository.SearchHistory(
+            preferences[Keys.SEARCH_HISTORY]?.split(separator) ?: emptyList()
         )
     }
 
@@ -194,6 +236,10 @@ class OfflinePreferencesRepository(private val appContext: Context) : Preference
         val NOTIFS_REMINDERS_ENABLED = booleanPreferencesKey("${NOTIFS_BASE}_reminders_enabled")
         val NOTIFS_REMINDERS_TIME = longPreferencesKey("${NOTIFS_BASE}_reminders_time")
         val NOTIFS_MEMORIES_ENABLED = booleanPreferencesKey("${NOTIFS_BASE}_memories_enabled")
+
+        private const val SEARCH_BASE = "searches"
+        val SEARCH_STR_SEPARATOR = stringPreferencesKey("${SEARCH_BASE}_sep")
+        val SEARCH_HISTORY = stringPreferencesKey("${SEARCH_BASE}_history")
     }
 }
 

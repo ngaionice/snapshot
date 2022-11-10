@@ -11,6 +11,7 @@ object Utils {
     val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
     val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     val fullDateMonthFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMMM dd")
+    val numericDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("uuuu/MM/dd")
 
     val locale: Locale = Locale.US
 

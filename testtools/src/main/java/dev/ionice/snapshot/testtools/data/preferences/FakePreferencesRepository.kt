@@ -9,10 +9,12 @@ class FakePreferencesRepository : PreferencesRepository {
 
     private val backupPrefsFlow = MutableStateFlow(PreferencesRepository.BackupPrefs.DEFAULT)
     private val notifsPrefsFlow = MutableStateFlow(PreferencesRepository.NotifsPrefs.DEFAULT)
+    private val searchHistoryFlow = MutableStateFlow(PreferencesRepository.SearchHistory(emptyList()))
 
     override fun getBackupPrefsFlow(): Flow<PreferencesRepository.BackupPrefs> = backupPrefsFlow
 
     override fun getNotifsPrefsFlow(): Flow<PreferencesRepository.NotifsPrefs> = notifsPrefsFlow
+    override fun getRecentSearchesFlow(): Flow<PreferencesRepository.SearchHistory> = searchHistoryFlow
 
     override suspend fun setBackupEnabled(enabled: Boolean) {
         backupPrefsFlow.tryEmit(backupPrefsFlow.value.copy(isEnabled = enabled))
@@ -47,5 +49,14 @@ class FakePreferencesRepository : PreferencesRepository {
 
     override suspend fun setMemoriesEnabled(enabled: Boolean) {
         notifsPrefsFlow.tryEmit(notifsPrefsFlow.value.copy(isMemoriesEnabled = enabled))
+    }
+
+    override suspend fun insertRecentSearch(searchString: String) {
+        val existing = searchHistoryFlow.value.searches
+        searchHistoryFlow.tryEmit(searchHistoryFlow.value.copy(searches = existing.filter { !it.equals(searchString, ignoreCase = true) }.take(4)  + searchString))
+    }
+
+    override suspend fun clearRecentSearches() {
+        searchHistoryFlow.tryEmit(PreferencesRepository.SearchHistory(emptyList()))
     }
 }

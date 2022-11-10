@@ -8,7 +8,7 @@ interface LocationRepository {
 
     suspend fun add(coordinates: Coordinates, name: String): Long
 
-    suspend fun getAllProperties(): List<Location>
+    suspend fun getAll(): List<Location>
 
-    fun getAllPropertiesFlow(): Flow<List<Location>>
+    fun getAllFlow(): Flow<List<Location>>
 }

@@ -18,7 +18,9 @@ interface NavigationDestination {
 }
 
 const val ENTRIES_ROUTE = "entries"
+const val FAVORITES_ROUTE = "favorites"
 const val LIBRARY_ROUTE = "library"
+const val SEARCH_ROUTE = "search"
 const val SETTINGS_ROUTE = "settings"
 
 object EntriesListDestination : NavigationDestination {
@@ -32,8 +34,18 @@ object EntriesSingleDestination : NavigationDestination {
     const val dayIdArg = "dayId"
 }
 
+object FavoritesDestination : NavigationDestination {
+    override val route = FAVORITES_ROUTE
+    override val destination = "home"
+}
+
 object LibraryHomeDestination : NavigationDestination {
     override val route = LIBRARY_ROUTE
+    override val destination = "home"
+}
+
+object SearchDestination : NavigationDestination {
+    override val route = SEARCH_ROUTE
     override val destination = "home"
 }
 
@@ -56,9 +68,4 @@ object SettingsNotificationsDestination :
 object SettingsThemingDestination : NavigationDestination {
     override val route = SETTINGS_ROUTE
     override val destination = "theming"
-}
-
-object FavoritesDestination : NavigationDestination {
-    override val route = "favorites"
-    override val destination = "home"
 }

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recent_searches_header">Recent searches</string>
+    <string name="results_header">Results</string>
+    <string name="quick_results_header">Quick results</string>
+
+    <string name="search_bar_placeholder">Search entries</string>
+    <string name="search_button_msg">Search %s in entries</string>
+
+    <string name="search_no_results_msg">No results found.</string>
+    <string name="search_loading_msg">Searching entries</string>
+    <string name="search_error_msg">Search failed: please try again later.</string>
+
+    <string name="date_any_time">Any time</string>
+    <string name="date_at_least_one_week">Older than 1 week</string>
+    <string name="date_at_least_one_month">Older than 1 month</string>
+    <string name="date_at_least_six_months">Older than 6 months</string>
+    <string name="date_at_least_one_year">Older than 1 year</string>
+    <string name="date_custom_range">Custom range</string>
+
+    <string name="date_filter_label">Date</string>
+    <string name="location_filter_label">Locations</string>
+    <string name="tag_filter_label">Tags</string>
+
+    <string name="locations_load_error_msg">Failed to load list of locations.</string>
+    <string name="tags_load_error_msg">Failed to load list of tags.</string>
+
+    <string name="locations_filter_placeholder">Search locations</string>
+    <string name="tags_filter_placeholder">Search tags</string>
+
+    <plurals name="location_chip_count">
+        <item quantity="one">%d location</item>
+        <item quantity="other">%d locations</item>
+    </plurals>
+
+    <plurals name="tag_chip_count">
+        <item quantity="one">%d tag</item>
+        <item quantity="other">%d tags</item>
+    </plurals>
+
+    <string name="cd_filter_date">Filter by date range</string>
+    <string name="cd_filter_location">Filter by locations</string>
+    <string name="cd_filter_tag">Filter by tags</string>
+    <string name="cd_search_bar_back">Back</string>
+    <string name="cd_search_bar_clear">Clear</string>
+    <string name="cd_bottom_sheet">Bottom sheet for filter options</string>
+    <string name="cd_close_bottom_sheet">Close modal</string>
+    <string name="cd_search_action">Search</string>
+    <string name="cd_recent_search">Recent search: %s</string>
+    <string name="cd_bottom_sheet_tags_filter_text_field">Search tags input</string>
+    <string name="cd_bottom_sheet_locations_filter_text_field">Search locations input</string>
+
+    <string name="tt_search_bar_base">SearchBarBase</string>
+    <string name="tt_search_bar_text_field">SearchBarTextField</string>
+    <string name="tt_search_button">SearchButton</string>
+    <string name="tt_recent_search_button">Recent search: %s</string>
+
+</resources>

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 object FakeRepositoryData {
 
     // Aug 1/2 2021, Aug 1 2022
-    val dayIds = listOf<Long>(18840, 18841, 19205)
+    val dayIds = listOf<Long>(18840, 18841, 19205, 19206, 19207)
     const val locationId = 9999L
     const val tagId = 9999L
 
@@ -16,6 +16,18 @@ object FakeRepositoryData {
             coordinates = Coordinates(0.0, 0.0),
             name = "FakeLocation",
             lastUsedAt = 0
+        ),
+        Location(
+            id = locationId + 1,
+            coordinates = Coordinates(1.0, 1.0),
+            name = "NewFakeLocation",
+            lastUsedAt = 0
+        ),
+        Location(
+            id = locationId + 2,
+            coordinates = Coordinates(2.0, 2.0),
+            name = "AnotherFakeLocation",
+            lastUsedAt = 0
         )
     )
 
@@ -23,6 +35,16 @@ object FakeRepositoryData {
         Tag(
             id = tagId,
             name = "FakeTag",
+            lastUsedAt = 0
+        ),
+        Tag(
+            id = tagId + 1,
+            name = "NewFakeTag",
+            lastUsedAt = 0
+        ),
+        Tag(
+            id = tagId + 2,
+            name = "AnotherFakeTag",
             lastUsedAt = 0
         )
     )
@@ -74,6 +96,24 @@ object FakeRepositoryData {
             isFavorite = true,
             tags = emptyList(),
             location = null
+        ),
+        Day(
+            id = dayIds[3],
+            summary = "New fake summary",
+            createdAt = 0,
+            lastModifiedAt = 0,
+            isFavorite = false,
+            tags = listOf(ContentTag(tagSourceData[1])),
+            location = locationSourceData[1]
+        ),
+        Day(
+            id = dayIds[4],
+            summary = "Another fake summary ",
+            createdAt = 0,
+            lastModifiedAt = 0,
+            isFavorite = false,
+            tags = listOf(ContentTag(tagSourceData[2])),
+            location = locationSourceData[2]
         )
     )
 

@@ -1,8 +1,8 @@
 <resources>
     <string name="common_dialog_cancel">Cancel</string>
     <string name="common_dialog_ok">OK</string>
-    <string name="common_datepicker_error_range">Out of range</string>
-    <string name="tt_common_date_picker">DatePicker</string>
+    <string name="date_picker_range_error_msg">Out of range</string>
+    <string name="cd_date_picker_text_field">DatePicker</string>
 
     <string name="list_week_header">This week</string>
     <string name="year_no_results">No entries found.</string>

@@ -22,11 +22,11 @@ class FakeLocationRepository : LocationRepository {
         return lastUsedId
     }
 
-    override suspend fun getAllProperties(): List<Location> {
+    override suspend fun getAll(): List<Location> {
         return backingFlow.value
     }
 
-    override fun getAllPropertiesFlow(): Flow<List<Location>> {
+    override fun getAllFlow(): Flow<List<Location>> {
         return backingFlow
     }
 

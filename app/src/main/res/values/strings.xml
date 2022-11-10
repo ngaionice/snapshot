@@ -3,5 +3,5 @@
 
     <string name="common_dialog_cancel">Cancel</string>
     <string name="common_dialog_ok">OK</string>
-    <string name="common_datepicker_error_range">Out of range</string>
+    <string name="date_picker_range_error_msg">Out of range</string>
 </resources>

@@ -9,6 +9,8 @@ interface PreferencesRepository {
 
     fun getNotifsPrefsFlow(): Flow<NotifsPrefs>
 
+    fun getRecentSearchesFlow(): Flow<SearchHistory>
+
     suspend fun setBackupEnabled(enabled: Boolean)
 
     /**
@@ -22,6 +24,10 @@ interface PreferencesRepository {
     suspend fun setDailyReminders(enabled: Boolean, time: LocalTime)
 
     suspend fun setMemoriesEnabled(enabled: Boolean)
+
+    suspend fun insertRecentSearch(searchString: String)
+
+    suspend fun clearRecentSearches()
 
     /**
      * - `isEnabled`: is backup (manual or automatic) enabled
@@ -59,4 +65,9 @@ interface PreferencesRepository {
             )
         }
     }
+
+    /**
+     * - `searches`: list of recent searches; contains up to 5 items; more recent searches are closer to the end of the list
+     */
+    data class SearchHistory(val searches: List<String>)
 }

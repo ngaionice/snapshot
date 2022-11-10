@@ -7,8 +7,10 @@ import dev.ionice.snapshot.core.database.model.*
 import dev.ionice.snapshot.core.model.ContentTag
 import dev.ionice.snapshot.core.model.Day
 import dev.ionice.snapshot.core.model.Location
+import dev.ionice.snapshot.core.model.Tag
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.Instant
@@ -127,5 +129,43 @@ class OfflineDayRepository(
 
     override fun getListFlowForFavorites(): Flow<List<Day>> {
         return dayDao.getListFlowForFavorites().map { lst -> lst.map { it.toExternalModel() } }
+    }
+
+    override suspend fun search(
+        queryString: String,
+        startDayId: Long?,
+        endDayId: Long?,
+        isFavorite: Boolean?,
+        searchTagEntries: Boolean,
+        includedLocations: Set<Location>?,
+        includedTags: Set<Tag>?
+    ): List<Day> {
+        val getSummaryFlow = {
+            dayDao.searchBySummary(queryString, startDayId, endDayId, isFavorite)
+        }
+        val getTagEntryFlow = {
+            dayDao.searchByTagEntry(queryString, startDayId, endDayId, isFavorite)
+        }
+        val locationIds = includedLocations?.map { it.id } ?: emptyList()
+        val tagIds = includedTags?.map { it.id } ?: emptyList()
+        val locationFilter: (PopulatedDay) -> Boolean = { day ->
+            locationIds.isEmpty() || (day.location?.let { loc -> locationIds.contains(loc.id) }
+                ?: false)
+        }
+        val tagsFilter: (PopulatedDay) -> Boolean = { day ->
+            tagIds.isEmpty() || (day.tags.isNotEmpty() && day.tags.map { it.id }
+                .any { tagIds.contains(it) })
+        }
+        val combinedFilter: (PopulatedDay) -> Boolean = {
+            locationFilter(it) && tagsFilter(it)
+        }
+
+        val summaryRes = getSummaryFlow().first().filter(combinedFilter).toSet()
+        val tagEntryRes = if (searchTagEntries) getTagEntryFlow().first().filter(combinedFilter)
+            .toSet() else emptySet()
+
+        val out = summaryRes.toMutableList()
+        tagEntryRes.forEach { if (summaryRes.contains(it)) out.add(it) }
+        return out.map { it.toExternalModel() }.sortedByDescending { it.id }
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.ionice.snapshot.core.navigation.FavoritesDestination
 import dev.ionice.snapshot.core.navigation.Navigator
+import dev.ionice.snapshot.core.navigation.SearchDestination
 import dev.ionice.snapshot.core.navigation.SettingsHomeDestination
 import dev.ionice.snapshot.core.ui.DaysUiState
 import dev.ionice.snapshot.core.ui.LocationsUiState
@@ -39,7 +40,7 @@ fun LibraryRoute(
         onSelectAllTags = { /* TODO */ },
         onSelectFavorites = { navigator.navigateToDestination(FavoritesDestination) },
         onSelectRandom = { /* TODO */ },
-        onSelectSearch = { /* TODO */ },
+        onSelectSearch = { navigator.navigateToDestination(SearchDestination) },
         onSelectSettings = { navigator.navigateToDestination(SettingsHomeDestination) }
     )
 }
