@@ -145,13 +145,20 @@ private fun SearchContent(
     onSearch: (String) -> Unit,
     onSelectEntry: (Long) -> Unit
 ) {
+    val (lastSearch, setLastSearch) = rememberSaveable { mutableStateOf("") }
     Column {
         when (state) {
             SearchContentState.INPUT -> {
                 if (searchString.split(" ").any { it.isNotEmpty() && it[0] != '-' }) {
-                    SearchButton(searchString = searchString, onSearch = { onSearch(searchString) })
+                    SearchButton(searchString = searchString, onSearch = {
+                        onSearch(searchString)
+                        setLastSearch(searchString)
+                    })
                 } else {
-                    SearchHistory(recentSearches = recentSearches, onSearch = onSearch)
+                    SearchHistory(recentSearches = recentSearches, onSearch = {
+                        onSearch(it)
+                        setLastSearch(it)
+                    })
                 }
 
                 QuickResults(
@@ -170,7 +177,7 @@ private fun SearchContent(
                     }
                     is ResultsUiState.Success -> {
                         FullResults(
-                            searchString = searchString,
+                            searchString = lastSearch,
                             results = fullResults.data,
                             onSelectEntry = onSelectEntry
                         )
