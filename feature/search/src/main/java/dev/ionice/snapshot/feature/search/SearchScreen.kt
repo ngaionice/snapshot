@@ -11,6 +11,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
@@ -49,10 +50,10 @@ internal fun SearchScreen(
     onSelectEntry: (Long) -> Unit,
     onBack: () -> Unit
 ) {
-    val (hasSearched, setHasSearched) = remember { mutableStateOf(false) }
+    val (hasSearched, setHasSearched) = rememberSaveable { mutableStateOf(false) }
     val uiState = uiStateProvider()
     val (searchString, searchHistory, filters) = uiState
-    val (isSearchBarActive, setIsSearchBarActive) = remember { mutableStateOf(true) }
+    val (isSearchBarActive, setIsSearchBarActive) = rememberSaveable { mutableStateOf(true) }
 
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,

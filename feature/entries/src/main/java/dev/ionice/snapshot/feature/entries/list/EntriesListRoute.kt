@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -55,7 +56,7 @@ internal fun EntriesListScreen(
     onSelectSettings: () -> Unit,
     onChangeYear: (Int) -> Unit
 ) {
-    val (expandedWeek, setExpandedWeek) = remember { mutableStateOf(-1) }
+    val (expandedWeek, setExpandedWeek) = rememberSaveable { mutableStateOf(-1) }
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
     val cdAdd = stringResource(R.string.add_entry)
