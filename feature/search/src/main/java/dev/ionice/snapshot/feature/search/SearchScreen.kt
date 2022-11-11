@@ -148,7 +148,7 @@ private fun SearchContent(
     Column {
         when (state) {
             SearchContentState.INPUT -> {
-                if (searchString.length > 1) {
+                if (searchString.split(" ").any { it.isNotEmpty() && it[0] != '-' }) {
                     SearchButton(searchString = searchString, onSearch = { onSearch(searchString) })
                 } else {
                     SearchHistory(recentSearches = recentSearches, onSearch = onSearch)

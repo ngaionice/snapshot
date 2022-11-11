@@ -140,11 +140,14 @@ class OfflineDayRepository(
         includedLocations: Set<Location>?,
         includedTags: Set<Tag>?
     ): List<Day> {
+        val formattedQuery = queryString.split(" ").filter { it.isNotEmpty() }
+            .joinToString(" ") { if ((it[0] != '-' && it.length > 2) || it.length > 3) "$it*" else it }
+
         val getSummaryFlow = {
-            dayDao.searchBySummary(queryString, startDayId, endDayId, isFavorite)
+            dayDao.searchBySummary(formattedQuery, startDayId, endDayId, isFavorite)
         }
         val getTagEntryFlow = {
-            dayDao.searchByTagEntry(queryString, startDayId, endDayId, isFavorite)
+            dayDao.searchByTagEntry(formattedQuery, startDayId, endDayId, isFavorite)
         }
         val locationIds = includedLocations?.map { it.id } ?: emptyList()
         val tagIds = includedTags?.map { it.id } ?: emptyList()

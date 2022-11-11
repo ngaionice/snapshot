@@ -51,8 +51,7 @@ class SearchViewModel @Inject constructor(
             emptyList()
         } else {
             currentYearEntries.value.filter {
-                it.summary.contains(searchString, ignoreCase = true) &&
-                        quickResultFilter(filters, it)
+                quickResultFilter(searchString, filters, it)
             }
         }
         val (locations, tags) = when (filterSourcesResult) {
@@ -97,9 +96,10 @@ class SearchViewModel @Inject constructor(
         val dateFilter = currFilters.dateFilter.getDates()
         fullResultsFlow.update { ResultsUiState.Loading }
         viewModelScope.launch {
-            preferencesRepository.insertRecentSearch(searchStringFlow.value)
+            val searchString = searchStringFlow.value.trim()
+            preferencesRepository.insertRecentSearch(searchString)
             val data = dayRepository.search(
-                queryString = searchStringFlow.value,
+                queryString = searchString,
                 startDayId = dateFilter.first,
                 endDayId = dateFilter.second,
                 includedLocations = filtersFlow.value.locationFilters.ifEmpty { null },
@@ -183,7 +183,15 @@ sealed interface TagsUiState {
     data class Success(val data: List<Tag>) : TagsUiState
 }
 
-private fun quickResultFilter(filters: Filters, input: Day): Boolean {
+private fun quickResultFilter(searchString: String, filters: Filters, input: Day): Boolean {
+    val textFilter: (Day) -> Boolean = { day ->
+        val (included, excluded) = searchString.split(" ")
+            .partition { it.length >= 2 && it[0] != '-' }
+        included.any { day.summary.contains(it, ignoreCase = true) } &&
+                excluded
+                    .filter { it.length > 2 }
+                    .none { day.summary.contains(it.drop(1), ignoreCase = true) }
+    }
     val locationIds = filters.locationFilters.map { it.id }
     val tagIds = filters.tagFilters.map { it.id }
     val dateFilter: (Day) -> Boolean = { day ->
@@ -199,5 +207,5 @@ private fun quickResultFilter(filters: Filters, input: Day): Boolean {
     val tagFilter: (Day) -> Boolean = { day ->
         tagIds.isEmpty() || day.tags.any { tagIds.contains(it.tag.id) }
     }
-    return dateFilter(input) && locationFilter(input) && tagFilter(input)
+    return textFilter(input) && dateFilter(input) && locationFilter(input) && tagFilter(input)
 }

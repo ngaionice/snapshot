@@ -99,7 +99,9 @@ private fun ResultListItem(
     onClick: () -> Unit
 ) {
     ListItem(
-        modifier = Modifier.clickable(onClick = onClick).padding(horizontal = 8.dp),
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 8.dp),
         headlineText = {
             Text(date.format(if (showShortDate) Utils.shortDateFormatter else Utils.dateFormatter))
         },
@@ -117,9 +119,11 @@ private fun ResultListItem(
  * @param summary The summary to be extracted for display text. If it does not contain [searchString], an empty string will be returned.
  */
 private fun getSearchResultDisplayText(searchString: String, summary: String): String {
+    val firstValidToken =
+        searchString.split(" ").filter { it.isNotEmpty() && it[0] != '-' }.getOrNull(0)
 
-    val targetIdx = summary.indexOf(string = searchString, ignoreCase = true)
-    if (targetIdx == -1) return ""
+    val targetIdx =
+        firstValidToken?.let { summary.indexOf(string = it, ignoreCase = true) } ?: return ""
 
     // Get the index of the 2nd last word before the search term
     // Why 2nd last word? Copied from Gmail, they probably determined w/ research that the 2nd last word provides enough context
