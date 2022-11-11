@@ -5,7 +5,7 @@
     <string name="quick_results_header">Quick results</string>
 
     <string name="search_bar_placeholder">Search entries</string>
-    <string name="search_button_msg">Search %s in entries</string>
+    <string name="search_button_msg">Search \'%s\' in entries</string>
 
     <string name="search_no_results_msg">No results found.</string>
     <string name="search_loading_msg">Searching entries</string>
