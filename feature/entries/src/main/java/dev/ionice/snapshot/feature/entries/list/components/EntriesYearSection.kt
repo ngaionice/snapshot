@@ -30,6 +30,7 @@ import dev.ionice.snapshot.core.ui.components.PageSectionHeader
 import dev.ionice.snapshot.core.ui.components.PlaceholderText
 import dev.ionice.snapshot.core.ui.components.VerticalDivider
 import dev.ionice.snapshot.feature.entries.R
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
@@ -105,7 +106,7 @@ fun LazyListScope.getYearSectionContent(
                 return
             }
 
-            val weekFields = WeekFields.of(Utils.locale)
+            val weekFields = WeekFields.of(DayOfWeek.SUNDAY, 7)
 
             val map = entries.groupBy { day ->
                 val date = LocalDate.ofEpochDay(day.id)
