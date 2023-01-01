@@ -69,6 +69,7 @@ internal fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> U
 
 fun LazyListScope.getYearSectionContent(
     uiStateProvider: () -> DaysUiState,
+    yearProvider: () -> Int,
     expandedWeek: Int,
     setExpandedWeek: (Int) -> Unit,
     onSelectEntry: (Long) -> Unit
@@ -92,6 +93,7 @@ fun LazyListScope.getYearSectionContent(
             }
         }
         is DaysUiState.Success -> {
+            val year = yearProvider()
             val entries = uiState.data
 
             if (entries.isEmpty()) {
@@ -114,7 +116,8 @@ fun LazyListScope.getYearSectionContent(
                     .let { if (it == 53 && date.dayOfYear < 7) 0 else it }
             }
 
-            val maxWeek = LocalDate.now().get(weekFields.weekOfWeekBasedYear())
+            val today = LocalDate.now()
+            val maxWeek = if (today.year > year) LocalDate.ofYearDay(year, 1).range(weekFields.weekOfWeekBasedYear()).maximum.toInt() else today.get(weekFields.weekOfWeekBasedYear())
             (maxWeek downTo 0).forEach { week ->
                 map[week]?.let {
                     item {

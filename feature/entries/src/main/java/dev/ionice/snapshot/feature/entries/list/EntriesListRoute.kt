@@ -99,6 +99,7 @@ internal fun EntriesListScreen(
 
                 getYearSectionContent(
                     uiStateProvider = yearEntriesProvider,
+                    yearProvider = yearProvider,
                     expandedWeek = expandedWeek,
                     setExpandedWeek = setExpandedWeek,
                     onSelectEntry = onSelectEntry
