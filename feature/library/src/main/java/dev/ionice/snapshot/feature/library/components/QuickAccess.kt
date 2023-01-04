@@ -18,7 +18,7 @@ import dev.ionice.snapshot.core.ui.components.PageSectionContent
 internal fun QuickAccess(onSelectFavorites: () -> Unit, onSelectRandom: () -> Unit) {
     PageSectionContent {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

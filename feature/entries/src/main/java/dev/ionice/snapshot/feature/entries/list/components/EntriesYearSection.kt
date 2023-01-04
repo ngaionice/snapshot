@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.material.icons.filled.NavigateNext
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -20,7 +17,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.core.common.Utils
 import dev.ionice.snapshot.core.model.Day
@@ -117,7 +113,8 @@ fun LazyListScope.getYearSectionContent(
             }
 
             val today = LocalDate.now()
-            val maxWeek = if (today.year > year) LocalDate.ofYearDay(year, 1).range(weekFields.weekOfWeekBasedYear()).maximum.toInt() else today.get(weekFields.weekOfWeekBasedYear())
+            val maxWeek = if (today.year > year) LocalDate.ofYearDay(year, 1)
+                .range(weekFields.weekOfWeekBasedYear()).maximum.toInt() else today.get(weekFields.weekOfWeekBasedYear())
             (maxWeek downTo 0).forEach { week ->
                 map[week]?.let {
                     item {
@@ -140,6 +137,7 @@ fun LazyListScope.getYearSectionContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun YearSectionItem(
     days: List<Day>,
@@ -155,23 +153,22 @@ private fun YearSectionItem(
     val tt = stringResource(R.string.tt_year_item)
 
     Column {
-        Row(modifier = Modifier
-            .clickable { onSelectWeek() }
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp)
-            .semantics { testTag = tt }) {
-            Column {
-                Text(
-                    text = "Week $week",
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal)
-                )
+        ListItem(
+            modifier = Modifier
+                .clickable { onSelectWeek() }
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .semantics { testTag = tt },
+            headlineText = {
                 Text(
                     text = Utils.shortDateFormatter.format(startOfWeek) + " - " + Utils.shortDateFormatter.format(
                         endOfWeek
-                    ), style = MaterialTheme.typography.titleMedium
+                    )
                 )
-            }
-        }
+            },
+            overlineText = {
+                Text(text = "Week $week")
+            })
         AnimatedVisibility(visible = isExpanded) {
             Column {
                 days.forEach {
