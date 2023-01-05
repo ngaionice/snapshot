@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_entries_found">No entries found for this tag.</string>
+    <string name="entries_load_failure">Failed to load data for tag.</string>
+    <string name="entries_load_loading">Tags single entries loading</string>
+
+    <string name="list_load_failure">Failed to load tags.</string>
+    <string name="list_screen_header">Tags</string>
+    <string name="list_empty_placeholder">Start creating tags!</string>
+
+    <string name="cd_tag_entry">Snapshot entry for %1$s</string>
+    <string name="cd_list_loading">Tags list loading</string>
+</resources>

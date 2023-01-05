@@ -40,6 +40,10 @@ interface TagDao {
     @Query("select * from Tag where id = :id")
     suspend fun get(id: Long): PopulatedTag?
 
+    @Transaction
+    @Query("select * from Tag where id = :id")
+    fun getFlow(id: Long): Flow<PopulatedTag?>
+
     @Query("select * from Tag")
     suspend fun getAllEntities(): List<TagEntity>
 

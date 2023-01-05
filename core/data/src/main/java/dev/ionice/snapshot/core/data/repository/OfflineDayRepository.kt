@@ -131,6 +131,11 @@ class OfflineDayRepository(
         return dayDao.getListFlowForFavorites().map { lst -> lst.map { it.toExternalModel() } }
     }
 
+    override fun getListFlowByTag(tagId: Long): Flow<List<Day>> {
+        return dayDao.getListFlowByTagId(tagId)
+            .map { it.map { dayEntity -> dayEntity.toExternalModel() } }
+    }
+
     override suspend fun search(
         queryString: String,
         startDayId: Long?,

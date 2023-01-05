@@ -28,6 +28,8 @@ interface DayRepository {
 
     fun getListFlowForFavorites(): Flow<List<Day>>
 
+    fun getListFlowByTag(tagId: Long): Flow<List<Day>>
+
     suspend fun search(
         queryString: String,
         startDayId: Long? = null,

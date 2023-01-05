@@ -18,6 +18,7 @@ import dev.ionice.snapshot.feature.favorites.favoritesGraph
 import dev.ionice.snapshot.feature.library.libraryGraph
 import dev.ionice.snapshot.feature.search.searchGraph
 import dev.ionice.snapshot.feature.settings.settingsGraph
+import dev.ionice.snapshot.feature.tags.tagsGraph
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -45,5 +46,7 @@ fun SnapshotNavHost(
         favoritesGraph(navController = navController)
 
         searchGraph(navController = navController)
+
+        tagsGraph(navController = navController)
     }
 }

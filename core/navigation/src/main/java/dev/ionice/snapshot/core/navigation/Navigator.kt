@@ -7,6 +7,8 @@ interface Navigator {
 
     fun navigateToEntry(entryId: Long)
 
+    fun navigateToTag(tagId: Long)
+
     fun navigateToLocation()
 
     fun navigateToDestination(destination: NavigationDestination)
@@ -20,6 +22,10 @@ class NavigatorImpl(private val navController: NavHostController) : Navigator {
 
     override fun navigateToEntry(entryId: Long) {
         navController.navigate("${EntriesSingleDestination.route}/${EntriesSingleDestination.destination}/$entryId")
+    }
+
+    override fun navigateToTag(tagId: Long) {
+        navController.navigate("${TagsSingleDestination.route}/${TagsSingleDestination.destination}/$tagId")
     }
 
     override fun navigateToLocation() {

@@ -8,8 +8,9 @@ import kotlin.math.min
 class FakeTagRepository : dev.ionice.snapshot.core.data.repository.TagRepository {
     private val backingFlow = FakeRepositoryData.tagBackingFlow
     private var lastUsedId = -1L
-//    override suspend fun get(tagId: Long): PopulatedTag? =
-//        backingFlow.value.find { it.properties.id == tagId }
+    override fun getFlow(tagId: Long): Flow<Tag?> {
+        return backingFlow.map { it.find { tag -> tag.id == tagId } }
+    }
 
     override suspend fun add(name: String): Long {
         lastUsedId++

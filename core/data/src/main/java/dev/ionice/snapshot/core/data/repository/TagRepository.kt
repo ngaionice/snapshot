@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TagRepository {
 
-//    suspend fun get(tagId: Long): PopulatedTag?
+    fun getFlow(tagId: Long): Flow<Tag?>
 
     suspend fun add(name: String): Long
 

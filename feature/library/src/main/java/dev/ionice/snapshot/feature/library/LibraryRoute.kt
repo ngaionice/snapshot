@@ -11,11 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.ionice.snapshot.core.navigation.FavoritesDestination
-import dev.ionice.snapshot.core.navigation.Navigator
-import dev.ionice.snapshot.core.navigation.SearchDestination
-import dev.ionice.snapshot.core.navigation.SettingsHomeDestination
+import dev.ionice.snapshot.core.navigation.*
 import dev.ionice.snapshot.core.ui.DaysUiState
 import dev.ionice.snapshot.core.ui.LocationsUiState
 import dev.ionice.snapshot.core.ui.TagsUiState
@@ -23,6 +21,7 @@ import dev.ionice.snapshot.core.ui.components.PageSection
 import dev.ionice.snapshot.core.ui.components.TopAppBar
 import dev.ionice.snapshot.core.ui.screens.FunctionalityNotAvailableScreen
 import dev.ionice.snapshot.feature.library.components.QuickAccess
+import dev.ionice.snapshot.feature.library.components.Tags
 
 @Composable
 fun LibraryRoute(
@@ -36,8 +35,8 @@ fun LibraryRoute(
         locationProvider = { uiState.locationsUiState },
         tagsProvider = { uiState.tagsUiState },
         onSelectEntry = navigator::navigateToEntry,
-        onSelectTag = { /* TODO */ },
-        onSelectAllTags = { /* TODO */ },
+        onSelectTag = { navigator.navigateToTag(it) },
+        onSelectAllTags = { navigator.navigateToDestination(TagsListDestination) },
         onSelectFavorites = { navigator.navigateToDestination(FavoritesDestination) },
         onSelectRandom = { /* TODO */ },
         onSelectSearch = { navigator.navigateToDestination(SearchDestination) },
@@ -66,13 +65,19 @@ private fun LibraryScreen(
         topBar = {
             TopAppBar {
                 IconButton(onClick = onSelectSettings) {
-                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = stringResource(R.string.cd_topbar_settings)
+                    )
                 }
             }
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onSelectSearch) {
-                Icon(imageVector = Icons.Outlined.Search, contentDescription = "Search")
+                Icon(
+                    imageVector = Icons.Outlined.Search,
+                    contentDescription = stringResource(R.string.cd_search)
+                )
             }
         }
 
@@ -84,6 +89,11 @@ private fun LibraryScreen(
 //                .verticalScroll(scrollState)
         ) {
             QuickAccess(onSelectFavorites = onSelectFavorites, onSelectRandom = onSelectRandom)
+            Tags(
+                tagsProvider = tagsProvider,
+                onSelectTag = onSelectTag,
+                onSelectViewAll = onSelectAllTags
+            )
             PageSection(title = "Other features") {
                 FunctionalityNotAvailableScreen("Coming soon!")
             }

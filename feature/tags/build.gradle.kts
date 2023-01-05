@@ -6,3 +6,7 @@ plugins {
 android {
     namespace = "dev.ionice.snapshot.feature.tags"
 }
+
+dependencies {
+    implementation(libs.accompanist.placeholderMaterial)
+}

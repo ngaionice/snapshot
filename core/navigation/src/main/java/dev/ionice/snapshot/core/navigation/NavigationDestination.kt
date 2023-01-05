@@ -22,6 +22,7 @@ const val FAVORITES_ROUTE = "favorites"
 const val LIBRARY_ROUTE = "library"
 const val SEARCH_ROUTE = "search"
 const val SETTINGS_ROUTE = "settings"
+const val TAGS_ROUTE = "tags"
 
 object EntriesListDestination : NavigationDestination {
     override val route = ENTRIES_ROUTE
@@ -68,4 +69,15 @@ object SettingsNotificationsDestination :
 object SettingsThemingDestination : NavigationDestination {
     override val route = SETTINGS_ROUTE
     override val destination = "theming"
+}
+
+object TagsListDestination : NavigationDestination {
+    override val route = TAGS_ROUTE
+    override val destination = "list"
+}
+
+object TagsSingleDestination : NavigationDestination {
+    override val route = TAGS_ROUTE
+    override val destination = "single"
+    const val tagIdArg = "tagId"
 }

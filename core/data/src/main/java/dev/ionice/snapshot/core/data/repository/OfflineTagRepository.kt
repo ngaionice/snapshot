@@ -13,9 +13,9 @@ class OfflineTagRepository(
     private val dispatcher: CoroutineDispatcher, private val tagDao: TagDao
 ) : TagRepository {
 
-//    override suspend fun get(tagId: Long): PopulatedTag? {
-//        return withContext(dispatcher) { tagDao.get(tagId) }
-//    }
+    override fun getFlow(tagId: Long): Flow<Tag?> {
+        return tagDao.getFlow(tagId).map { it?.properties?.toExternalModel() }
+    }
 
     override suspend fun add(name: String): Long {
         return withContext(dispatcher) {

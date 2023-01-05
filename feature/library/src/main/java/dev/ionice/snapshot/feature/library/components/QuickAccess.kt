@@ -10,9 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.core.ui.components.CardButton
 import dev.ionice.snapshot.core.ui.components.PageSectionContent
+import dev.ionice.snapshot.feature.library.R
 
 @Composable
 internal fun QuickAccess(onSelectFavorites: () -> Unit, onSelectRandom: () -> Unit) {
@@ -23,24 +25,24 @@ internal fun QuickAccess(onSelectFavorites: () -> Unit, onSelectRandom: () -> Un
             verticalAlignment = Alignment.CenterVertically
         ) {
             CardButton(
-                label = "Favorites",
+                label = stringResource(R.string.qa_label_favorites),
                 onClick = onSelectFavorites,
                 modifier = Modifier
                     .weight(1f)
-                    .testTag("LibraryQuickAccessFavorites"),
+                    .testTag(stringResource(R.string.tt_qa_favorites)),
                 leadingIcon = Icons.Outlined.FavoriteBorder,
-                contentDescription = "Favorites",
+                contentDescription = stringResource(R.string.cd_qa_label_favorites),
             )
 
             CardButton(
-                label = "Random",
+                label = stringResource(R.string.qa_label_random),
                 onClick = onSelectRandom,
                 modifier = Modifier
                     .weight(1f)
-                    .testTag("LibraryQuickAccessRandom"),
+                    .testTag(stringResource(R.string.tt_qa_random)),
                 enabled = false,
                 leadingIcon = Icons.Outlined.Casino,
-                contentDescription = "Random",
+                contentDescription = stringResource(R.string.cd_qa_label_random),
             )
         }
     }

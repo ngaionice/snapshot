@@ -3,4 +3,19 @@
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tags</item>
     </plurals>
+
+    <string name="qa_label_favorites">Favorites</string>
+    <string name="qa_label_random">Random</string>
+
+    <string name="tags_header">Tags</string>
+    <string name="tags_view_all">View all</string>
+    <string name="tags_load_failure">Failed to load tags.</string>
+
+    <string name="cd_topbar_settings">Settings</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_qa_label_favorites">Favorites</string>
+    <string name="cd_qa_label_random">Random</string>
+
+    <string name="tt_qa_favorites">LibraryQuickAccessFavorites</string>
+    <string name="tt_qa_random">LibraryQuickAccessRandom</string>
 </resources>

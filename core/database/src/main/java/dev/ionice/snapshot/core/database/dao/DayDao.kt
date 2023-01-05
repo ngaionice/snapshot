@@ -79,4 +79,13 @@ interface DayDao {
     @Transaction
     @Query("select * from Day where isFavorite = 1 order by id desc")
     fun getListFlowForFavorites(): Flow<List<PopulatedDay>>
+
+    @Transaction
+    @Query("""
+        select d.*
+        from Day d join TagEntry te on d.id = te.dayId 
+        where tagId = :tagId 
+        order by id desc
+    """)
+    fun getListFlowByTagId(tagId: Long): Flow<List<PopulatedDay>>
 }

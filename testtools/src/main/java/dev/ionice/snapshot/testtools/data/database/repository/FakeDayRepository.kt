@@ -65,6 +65,9 @@ class FakeDayRepository : DayRepository {
     override fun getListFlowForFavorites(): Flow<List<Day>> =
         backingFlow.map { it.filter { day -> day.isFavorite } }
 
+    override fun getListFlowByTag(tagId: Long): Flow<List<Day>> =
+        backingFlow.map { it.filter { day -> day.tags.any { tag -> tag.tag.id == tagId } } }
+
     override suspend fun search(
         queryString: String,
         startDayId: Long?,
