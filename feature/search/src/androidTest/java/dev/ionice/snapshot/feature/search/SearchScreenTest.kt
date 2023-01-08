@@ -156,7 +156,7 @@ class SearchScreenTest {
         getCdNode(dev.ionice.snapshot.core.ui.R.string.cd_date_range_end_text_field).performTextInput(
             "20011011"
         )
-        getTextNode(dev.ionice.snapshot.core.ui.R.string.common_dialog_ok).performClick()
+        getTextNode(dev.ionice.snapshot.core.ui.R.string.button_ok).performClick()
 
         assertThat(filters.dateFilter).isEqualTo(
             DateFilter.Custom(

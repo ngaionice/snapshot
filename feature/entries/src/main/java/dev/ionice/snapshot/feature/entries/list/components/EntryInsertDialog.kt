@@ -28,19 +28,19 @@ internal fun EntryInsertDialog(onDismiss: () -> Unit, onAddEntry: (Long) -> Unit
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Select date", style = MaterialTheme.typography.labelSmall)
+            Text(stringResource(R.string.dialog_title), style = MaterialTheme.typography.labelSmall)
         },
         confirmButton = {
             TextButton(
                 onClick = { onAddEntry(date.toEpochDay()) },
                 enabled = errorMessage.isEmpty(),
                 modifier = Modifier.semantics { testTag = ttConfirm }) {
-                Text("OK")
+                Text(stringResource(dev.ionice.snapshot.core.ui.R.string.button_ok))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(dev.ionice.snapshot.core.ui.R.string.button_cancel))
             }
         },
         text = {

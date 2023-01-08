@@ -16,8 +16,8 @@ import dev.ionice.snapshot.core.navigation.TAGS_ROUTE
 import dev.ionice.snapshot.core.navigation.TagsListDestination
 import dev.ionice.snapshot.core.navigation.TagsSingleDestination
 import dev.ionice.snapshot.core.ui.animationDurationMs
-import dev.ionice.snapshot.feature.tags.list.TagsListRoute
-import dev.ionice.snapshot.feature.tags.single.TagsSingleRoute
+import dev.ionice.snapshot.feature.tags.screens.TagsListRoute
+import dev.ionice.snapshot.feature.tags.screens.TagsSingleRoute
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.tagsGraph(navController: NavHostController) {

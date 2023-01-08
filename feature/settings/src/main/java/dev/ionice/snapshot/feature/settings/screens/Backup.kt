@@ -343,8 +343,8 @@ private fun FrequencyPickerDialog(
                 }
             }
         },
-        confirmButton = { Button(onClick = { onSelection(current) }) { Text(stringResource(R.string.common_dialog_ok)) } },
-        dismissButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.common_dialog_cancel)) } })
+        confirmButton = { Button(onClick = { onSelection(current) }) { Text(stringResource(dev.ionice.snapshot.core.ui.R.string.button_ok)) } },
+        dismissButton = { TextButton(onClick = onClose) { Text(stringResource(dev.ionice.snapshot.core.ui.R.string.button_cancel)) } })
 
 }
 

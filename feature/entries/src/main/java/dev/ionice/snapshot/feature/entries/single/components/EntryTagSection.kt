@@ -229,11 +229,11 @@ private fun TagInsertionDialog(
             onClick = onConfirm,
             enabled = (selectedTag != null || inputValue.isNotEmpty()) && queued == null
         ) {
-            Text(stringResource(R.string.common_dialog_ok))
+            Text(stringResource(dev.ionice.snapshot.core.ui.R.string.button_ok))
         }
     }, dismissButton = {
         TextButton(onClick = onClose) {
-            Text(stringResource(R.string.common_dialog_cancel))
+            Text(stringResource(dev.ionice.snapshot.core.ui.R.string.button_cancel))
         }
     }, text = {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

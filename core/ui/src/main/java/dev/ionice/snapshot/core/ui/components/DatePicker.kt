@@ -34,7 +34,7 @@ fun DatePicker(
     contentDescription: String? = null
 ) {
     val (dateString, setDateString) = remember { mutableStateOf(date?.format(formatter) ?: "") }
-    val errorMessage = stringResource(R.string.date_picker_range_error_msg)
+    val errorMessage = stringResource(R.string.msg_date_picker_range_error)
     val onValueChange: (String) -> Unit = {
         val cleaned = trimAndClean(it)
         setDateString(cleaned)

@@ -1,4 +1,4 @@
-package dev.ionice.snapshot.feature.tags.list
+package dev.ionice.snapshot.feature.tags.screens
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.clickable

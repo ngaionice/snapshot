@@ -49,9 +49,6 @@
     <string name="snackbar_restore_success">Restore successful, restarting app in a moment</string>
     <string name="snackbar_restore_failure">Restore failed</string>
 
-    <string name="common_dialog_cancel">Cancel</string>
-    <string name="common_dialog_ok">OK</string>
-
     <string name="tt_settings_row_placeholder">SettingsRowPlaceholder</string>
     <string name="tt_settings_notifs_main_toggle">SettingsNotifsMainToggle</string>
     <string name="tt_settings_notifs_reminders_toggle">SettingsNotifsRemindersToggle</string>

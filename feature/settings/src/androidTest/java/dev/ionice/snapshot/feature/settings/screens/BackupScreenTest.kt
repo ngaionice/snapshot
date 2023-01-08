@@ -182,7 +182,7 @@ class BackupScreenTest {
             .performClick()
         composeTestRule.onNodeWithText(getString(R.string.settings_auto_backup_freq_daily))
             .performClick()
-        composeTestRule.onNodeWithText(getString(R.string.common_dialog_ok)).performClick()
+        composeTestRule.onNodeWithText(getString(dev.ionice.snapshot.core.ui.R.string.button_ok)).performClick()
 
         // Assert
         composeTestRule.onNodeWithText(getString(R.string.settings_auto_backup_frequency))
@@ -227,7 +227,7 @@ class BackupScreenTest {
         composeTestRule.onNodeWithTag(getString(R.string.tt_common_time_picker_digit_min))
             .performTextInput("30")
 
-        composeTestRule.onNodeWithText(getString(R.string.common_dialog_ok)).performClick()
+        composeTestRule.onNodeWithText(getString(dev.ionice.snapshot.core.ui.R.string.button_ok)).performClick()
 
         // Assert
         composeTestRule.onNodeWithText(getString(R.string.settings_auto_backup_time))

@@ -39,14 +39,14 @@ fun DateRangePickerDialog(
         onDismissRequest = onCancel,
         dismissButton = {
             TextButton(onClick = onCancel) {
-                Text(stringResource(id = R.string.common_dialog_cancel))
+                Text(stringResource(id = R.string.button_cancel))
             }
         },
         confirmButton = {
             TextButton(
                 enabled = actualRange != null,
                 onClick = { onConfirm(actualRange!!.first, actualRange.second) }) {
-                Text(stringResource(id = R.string.common_dialog_ok))
+                Text(stringResource(id = R.string.button_ok))
             }
         },
         title = {

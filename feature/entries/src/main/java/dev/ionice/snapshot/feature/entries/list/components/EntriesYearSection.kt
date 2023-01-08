@@ -49,7 +49,7 @@ internal fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> U
                 onClick = { onChangeYear(year - 1) },
                 modifier = Modifier.semantics { testTag = ttPrev }) {
                 Icon(
-                    imageVector = Icons.Filled.NavigateBefore, contentDescription = "Previous year"
+                    imageVector = Icons.Filled.NavigateBefore, contentDescription = stringResource(R.string.cd_list_year_prev_year)
                 )
             }
             IconButton(
@@ -57,7 +57,7 @@ internal fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> U
                 enabled = year < LocalDate.now().year,
                 modifier = Modifier.semantics { testTag = ttNext }
             ) {
-                Icon(imageVector = Icons.Filled.NavigateNext, contentDescription = "Next year")
+                Icon(imageVector = Icons.Filled.NavigateNext, contentDescription = stringResource(R.string.cd_list_year_next_year))
             }
         }
     }
@@ -84,7 +84,7 @@ fun LazyListScope.getYearSectionContent(
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Failed to load data for the selected year.")
+                    Text(stringResource(R.string.list_year_msg_data_load_fail))
                 }
             }
         }

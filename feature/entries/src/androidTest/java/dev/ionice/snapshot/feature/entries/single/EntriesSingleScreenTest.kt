@@ -58,7 +58,7 @@ class EntriesSingleScreenTest {
 
             summarySection = getString(R.string.tt_single_summary)
 
-            dialogOk = getString(R.string.common_dialog_ok)
+            dialogOk = getString(dev.ionice.snapshot.core.ui.R.string.button_ok)
         }
     }
 

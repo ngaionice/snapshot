@@ -58,7 +58,7 @@ internal fun WeekSection(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Failed to load data for the past week.")
+                Text(stringResource(R.string.list_week_msg_data_load_fail))
             }
             return@PageSection
         }
@@ -128,7 +128,7 @@ internal fun WeekSectionItem(day: Day, onClick: () -> Unit, modifier: Modifier =
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = day.tags.size.toString(), color = contentColor)
-                    Icon(imageVector = Icons.Filled.Tag, contentDescription = "Tags")
+                    Icon(imageVector = Icons.Filled.Tag, contentDescription = null)
                 }
             }
         }
@@ -179,7 +179,7 @@ internal fun WeekSectionAddEntryItem(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Add day",
+                    contentDescription = null,
                     tint = contentColor
                 )
             }

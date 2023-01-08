@@ -14,7 +14,7 @@ import dev.ionice.snapshot.core.ui.R
 fun FunctionalityNotAvailableScreen(message: String? = null) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         Text(
-            text = message ?: stringResource(R.string.common_functionality_soon),
+            text = message ?: stringResource(R.string.msg_functionality_soon),
             style = MaterialTheme.typography.bodyMedium
         )
     }

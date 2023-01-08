@@ -54,9 +54,9 @@ class EntriesListScreenTest {
             yearHeaderPrev = getString(R.string.tt_year_header_prev)
             yearHeaderNext = getString(R.string.tt_year_header_next)
             addButton = getString(R.string.add_entry)
-            dialogTextField = getString(R.string.cd_date_picker_text_field)
+            dialogTextField = getString(dev.ionice.snapshot.core.ui.R.string.cd_date_picker_text_field)
             dialogConfirm = getString(R.string.tt_dialog_confirm)
-            dialogError = getString(R.string.date_picker_range_error_msg)
+            dialogError = getString(dev.ionice.snapshot.core.ui.R.string.msg_date_picker_range_error)
         }
     }
 
@@ -233,7 +233,7 @@ class EntriesListScreenTest {
         }
 
         composeTestRule.onNodeWithTag(addButton).performClick()
-        val textField = composeTestRule.onNodeWithTag(dialogTextField)
+        val textField = composeTestRule.onNodeWithContentDescription(dialogTextField)
         textField.performTextClearance()
         textField.performTextInput("20220101")
         composeTestRule.onNodeWithTag(dialogConfirm).performClick()
@@ -255,7 +255,7 @@ class EntriesListScreenTest {
             )
         }
         composeTestRule.onNodeWithTag(addButton).performClick()
-        val textField = composeTestRule.onNodeWithTag(dialogTextField)
+        val textField = composeTestRule.onNodeWithContentDescription(dialogTextField)
         textField.performTextClearance()
         textField.performTextInput("99990101")
         composeTestRule.onNodeWithText(dialogError).assertIsDisplayed()

@@ -1,9 +1,4 @@
 <resources>
-    <string name="common_dialog_cancel">Cancel</string>
-    <string name="common_dialog_ok">OK</string>
-    <string name="date_picker_range_error_msg">Out of range</string>
-    <string name="cd_date_picker_text_field">DatePicker</string>
-
     <string name="list_week_header">This week</string>
     <string name="year_no_results">No entries found.</string>
     <string name="add_entry">Add entry</string>
@@ -27,6 +22,15 @@
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tags</item>
     </plurals>
+
+    <string name="dialog_title">Select date</string>
+
+    <string name="list_week_msg_data_load_fail">Failed to load data for the past week.</string>
+    <string name="list_year_msg_data_load_fail">Failed to load data for the selected year.</string>
+
+    <string name="cd_list_year_prev_year">Go to previous year</string>
+    <string name="cd_list_year_next_year">Go to next year</string>
+    <string name="cd_top_bar_button_settings">Go to settings</string>
 
     <string name="tt_week_item">WeekSectionItem</string>
     <string name="tt_week_item_placeholder">WeekSectionItemPlaceholder</string>

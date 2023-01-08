@@ -65,7 +65,10 @@ internal fun EntriesListScreen(
         topBar = {
             TopAppBar {
                 IconButton(onClick = onSelectSettings) {
-                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = stringResource(R.string.cd_top_bar_button_settings)
+                    )
                 }
             }
         },
