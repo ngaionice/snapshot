@@ -137,12 +137,12 @@ private fun SuccessScreen(
                         }
                     if (content != null) {
                         ListItem(
-                            headlineText = headlineText,
-                            supportingText = { Text(text = content) },
+                            headlineContent = headlineText,
+                            supportingContent = { Text(text = content) },
                             modifier = itemModifier
                         )
                     } else {
-                        ListItem(headlineText = headlineText, modifier = itemModifier)
+                        ListItem(headlineContent = headlineText, modifier = itemModifier)
                     }
                 }
             }

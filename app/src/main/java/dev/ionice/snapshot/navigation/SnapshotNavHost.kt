@@ -1,6 +1,5 @@
 package dev.ionice.snapshot.navigation
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -10,7 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.AnimatedNavHost
+import androidx.navigation.compose.NavHost
 import dev.ionice.snapshot.core.navigation.EntriesListDestination
 import dev.ionice.snapshot.core.ui.animationDurationMs
 import dev.ionice.snapshot.feature.entries.entriesGraph
@@ -20,13 +19,12 @@ import dev.ionice.snapshot.feature.search.searchGraph
 import dev.ionice.snapshot.feature.settings.settingsGraph
 import dev.ionice.snapshot.feature.tags.tagsGraph
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SnapshotNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    AnimatedNavHost(
+    NavHost(
         navController = navController,
         startDestination = EntriesListDestination.route,
         enterTransition = { fadeIn(tween(animationDurationMs)) },

@@ -8,7 +8,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.accompanist.flowlayout)
+//    implementation(libs.accompanist.flowlayout)
     implementation(libs.accompanist.placeholderMaterial)
 
     implementation(libs.androidx.compose.material.iconsExtended)

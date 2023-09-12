@@ -1,32 +1,30 @@
 package dev.ionice.snapshot.feature.entries
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.navigation
 import dev.ionice.snapshot.core.navigation.ENTRIES_ROUTE
 import dev.ionice.snapshot.core.navigation.EntriesListDestination
 import dev.ionice.snapshot.core.navigation.EntriesSingleDestination
-import dev.ionice.snapshot.core.ui.animationDurationMs
 import dev.ionice.snapshot.core.navigation.NavigatorImpl
+import dev.ionice.snapshot.core.ui.animationDurationMs
 import dev.ionice.snapshot.feature.entries.list.EntriesListRoute
 import dev.ionice.snapshot.feature.entries.single.EntriesSingleRoute
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.entriesGraph(navController: NavHostController) {
     navigation(
         route = ENTRIES_ROUTE,
         startDestination = "${EntriesListDestination.route}/${EntriesListDestination.destination}",
         enterTransition = {
             slideIntoContainer(
-                AnimatedContentScope.SlideDirection.Left, tween(
+                AnimatedContentTransitionScope.SlideDirection.Left, tween(
                     animationDurationMs
                 )
             )
@@ -35,7 +33,7 @@ fun NavGraphBuilder.entriesGraph(navController: NavHostController) {
         popEnterTransition = { fadeIn(tween(animationDurationMs)) },
         popExitTransition = {
             slideOutOfContainer(
-                AnimatedContentScope.SlideDirection.Right, tween(
+                AnimatedContentTransitionScope.SlideDirection.Right, tween(
                     animationDurationMs
                 )
             )

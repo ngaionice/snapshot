@@ -19,5 +19,4 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
 
     implementation(libs.accompanist.placeholderMaterial)
-    implementation(libs.accompanist.systemuicontroller)
 }

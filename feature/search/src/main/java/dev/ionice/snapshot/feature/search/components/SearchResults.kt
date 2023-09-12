@@ -102,10 +102,10 @@ private fun ResultListItem(
         modifier = Modifier
             .clickable(onClick = onClick)
             .padding(horizontal = 8.dp),
-        headlineText = {
+        headlineContent = {
             Text(date.format(if (showShortDate) Utils.shortDateFormatter else Utils.dateFormatter))
         },
-        supportingText = {
+        supportingContent = {
             Text(
                 text = getSearchResultDisplayText(searchString, summary),
                 overflow = TextOverflow.Ellipsis,

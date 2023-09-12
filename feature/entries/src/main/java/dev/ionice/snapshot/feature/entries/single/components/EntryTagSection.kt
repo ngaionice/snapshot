@@ -2,7 +2,9 @@ package dev.ionice.snapshot.feature.entries.single.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -18,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.flowlayout.FlowRow
 import dev.ionice.snapshot.core.model.ContentTag
 import dev.ionice.snapshot.core.model.Tag
 import dev.ionice.snapshot.core.ui.TagsUiState
@@ -96,7 +97,7 @@ internal fun EntryTagSection(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun TagDisplay(
     editing: Boolean,
@@ -110,8 +111,8 @@ private fun TagDisplay(
         return
     }
     val tt = stringResource(R.string.tt_single_tags_display)
-    FlowRow(mainAxisSpacing = 8.dp,
-        crossAxisSpacing = 8.dp,
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.semantics { testTag = tt }) {
         selectedTags.forEach {
             InputChip(selected = displayedTagId == it.tag.id && editing,
@@ -142,7 +143,6 @@ private fun TagInserter(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TagEditor(
     tagName: String,

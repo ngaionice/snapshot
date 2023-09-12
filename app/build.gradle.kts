@@ -25,6 +25,10 @@ android {
             proguardFiles (getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -40,7 +44,7 @@ dependencies {
     implementation(project(":feature:settings"))
     implementation(project(":feature:tags"))
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation(libs.androidx.core.ktx)
 
     // Compose
     implementation(libs.androidx.compose.ui.tooling.preview)
@@ -50,10 +54,6 @@ dependencies {
 
     // Navigation for Compose
     implementation(libs.androidx.navigation.compose)
-
-    // Accompanist for various UI functionality
-    implementation(libs.accompanist.navigationAnimation)
-    implementation(libs.accompanist.systemuicontroller)
 
     // Co-routines
     implementation(libs.kotlinx.coroutines.android)

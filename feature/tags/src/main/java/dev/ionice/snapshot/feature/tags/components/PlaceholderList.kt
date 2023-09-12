@@ -38,7 +38,7 @@ private fun PlaceholderListItem(
     headlineTextModifier: Modifier,
     supportingTextModifier: Modifier
 ) {
-    ListItem(headlineText = {
+    ListItem(headlineContent = {
         Text(
             "",
             modifier = headlineTextModifier
@@ -48,7 +48,7 @@ private fun PlaceholderListItem(
                     shape = MaterialTheme.shapes.medium
                 )
         )
-    }, supportingText = {
+    }, supportingContent = {
         Text(
             "",
             modifier = supportingTextModifier

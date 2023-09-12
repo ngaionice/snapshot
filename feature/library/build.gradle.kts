@@ -9,7 +9,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.accompanist.pager)
+    implementation(libs.androidx.compose.foundation)
 
     implementation(libs.androidx.compose.material.iconsExtended)
 }

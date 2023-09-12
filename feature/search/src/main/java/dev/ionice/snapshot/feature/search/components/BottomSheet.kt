@@ -57,7 +57,7 @@ internal fun FiltersBottomSheet(
     ) {
         Column {
             ListItem(
-                headlineText = {
+                headlineContent = {
                     Text(
                         when (contentType) {
                             FilterType.DATE -> stringResource(R.string.date_filter_label)

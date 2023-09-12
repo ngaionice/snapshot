@@ -159,14 +159,14 @@ private fun YearSectionItem(
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
                 .semantics { testTag = tt },
-            headlineText = {
+            headlineContent = {
                 Text(
                     text = Utils.shortDateFormatter.format(startOfWeek) + " - " + Utils.shortDateFormatter.format(
                         endOfWeek
                     )
                 )
             },
-            overlineText = {
+            overlineContent = {
                 Text(text = "Week $week")
             })
         AnimatedVisibility(visible = isExpanded) {

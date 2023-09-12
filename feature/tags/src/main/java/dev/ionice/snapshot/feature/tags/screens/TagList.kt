@@ -71,7 +71,7 @@ internal fun TagsListScreen(uiState: TagsUiState, onSelectTag: (Tag) -> Unit, on
                         uiState.tagsList.sortedBy { it.name }.forEach {
                             item {
                                 ListItem(
-                                    headlineText = { Text(it.name) },
+                                    headlineContent = { Text(it.name) },
                                     modifier = Modifier
                                         .clickable { onSelectTag(it) }
                                         .fillMaxWidth()
