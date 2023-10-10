@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ManageSearch
+import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +31,7 @@ internal fun SearchButton(searchString: String, onSearch: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Icon(
-            imageVector = Icons.Filled.ManageSearch,
+            imageVector = Icons.AutoMirrored.Filled.ManageSearch,
             contentDescription = stringResource(R.string.cd_search_action)
         )
         Text(text = stringResource(R.string.search_button_msg, searchString))

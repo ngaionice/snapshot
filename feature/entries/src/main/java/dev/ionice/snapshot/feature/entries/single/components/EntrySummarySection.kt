@@ -1,10 +1,10 @@
 package dev.ionice.snapshot.feature.entries.single.components
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -20,61 +20,37 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import dev.ionice.snapshot.core.ui.components.PageSectionContent
+import dev.ionice.snapshot.core.ui.components.SnapBasicTextField
 import dev.ionice.snapshot.feature.entries.R
 
 @Composable
 internal fun EntrySummarySection(editing: Boolean, text: String, onTextChange: (String) -> Unit) {
-    val focusRequester = remember { FocusRequester() }
-    val (textFieldValue, setTextFieldValue) = remember { mutableStateOf(TextFieldValue(text)) }
+  val focusRequester = remember { FocusRequester() }
+  val (textFieldValue, setTextFieldValue) = remember { mutableStateOf(TextFieldValue(text)) }
 
-    val tt = stringResource(R.string.tt_single_summary)
+  val tt = stringResource(R.string.tt_single_summary)
 
-    LaunchedEffect(key1 = text) {
-        setTextFieldValue(textFieldValue.copy(text = text))
+  LaunchedEffect(key1 = text) { setTextFieldValue(textFieldValue.copy(text = text)) }
+
+  LaunchedEffect(key1 = editing) {
+    if (editing) focusRequester.requestFocus()
+    setTextFieldValue(textFieldValue.copy(selection = TextRange(textFieldValue.text.length)))
+  }
+
+  PageSectionContent {
+    Box(modifier = Modifier.padding(horizontal = 24.dp)) {
+      SnapBasicTextField(
+        value = textFieldValue,
+        onValueChange = {
+          setTextFieldValue(it)
+          onTextChange(it.text)
+        },
+        textStyle =
+        MaterialTheme.typography.bodyLarge.copy(color = LocalContentColor.current),
+        cursorBrush = SolidColor(LocalContentColor.current),
+        enabled = editing,
+        modifier =
+        Modifier.fillMaxWidth().focusRequester(focusRequester).semantics { testTag = tt })
     }
-
-    LaunchedEffect(key1 = editing) {
-        if (editing) focusRequester.requestFocus()
-        setTextFieldValue(textFieldValue.copy(selection = TextRange(textFieldValue.text.length)))
-    }
-
-    PageSectionContent {
-        Box(modifier = Modifier.padding(horizontal = 24.dp)) {
-            if (editing) {
-                Column {
-                    BasicTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester)
-                            .semantics { testTag = tt },
-                        value = textFieldValue,
-                        onValueChange = {
-                            // update this text manually first so it doesn't show text that is too long for a split second
-                            // but source of truth is still from text param
-                            val newText = if (it.text.length <= 140) it.text else text
-                            setTextFieldValue(it.copy(text = newText))
-                            onTextChange(newText)
-                        },
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(color = LocalContentColor.current),
-                        cursorBrush = SolidColor(LocalContentColor.current)
-                    )
-                    Row(
-                        modifier = Modifier
-                            .padding(vertical = 8.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Text(
-                            text = (140 - text.length).toString(),
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-                }
-            } else {
-                Text(
-                    text = text.ifBlank { stringResource(R.string.single_summary_placeholder) },
-                    modifier = Modifier.semantics { testTag = tt })
-            }
-        }
-    }
+  }
 }

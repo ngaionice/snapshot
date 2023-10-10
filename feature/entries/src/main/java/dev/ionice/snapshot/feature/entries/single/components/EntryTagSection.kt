@@ -150,7 +150,7 @@ private fun TagEditor(
     onContentChange: (String) -> Unit,
     onDelete: () -> Unit
 ) {
-    Divider()
+    HorizontalDivider()
     Text(text = "#$tagName", style = MaterialTheme.typography.titleMedium)
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -172,7 +172,7 @@ private fun TagsContentDisplay(
 ) {
     val rendered = selectedTags.filter { !it.content.isNullOrEmpty() }
     if (rendered.isNotEmpty()) {
-        Divider()
+        HorizontalDivider()
         rendered.forEach {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -237,7 +237,7 @@ private fun TagInsertionDialog(
         }
     }, text = {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            TabRow(selectedTabIndex = tabIndex) {
+            SecondaryTabRow(selectedTabIndex = tabIndex) {
                 Tab(selected = tabIndex == 0, onClick = {
                     setTabIndex(0)
                     setSelectedTag(null)

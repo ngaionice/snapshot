@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -78,7 +78,7 @@ internal fun SearchBar(
                 })
             }
             if (isActive) {
-                Divider()
+                HorizontalDivider()
             }
         }
     }
@@ -121,7 +121,7 @@ private fun SearchBarBase(
 private fun LeadingIcon(onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(
-            Icons.Filled.ArrowBack,
+            Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription = stringResource(R.string.cd_search_bar_back)
         )
     }

@@ -75,7 +75,7 @@ internal fun FiltersBottomSheet(
                     )
                 }
             )
-            Divider()
+            HorizontalDivider()
             Column(modifier = Modifier.padding(vertical = 12.dp)) {
                 when (contentType) {
                     FilterType.DATE -> {
@@ -320,7 +320,7 @@ private fun SearchableFilterOptions(
                 cursorBrush = SolidColor(LocalContentColor.current)
             )
         }
-        Divider(color = MaterialTheme.colorScheme.outline)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
         LazyColumn(modifier = Modifier.fillMaxHeight()) {
             displayedOptions.forEach {
                 item {

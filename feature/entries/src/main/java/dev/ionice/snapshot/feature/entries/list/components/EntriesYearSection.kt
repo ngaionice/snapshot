@@ -6,8 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NavigateBefore
-import androidx.compose.material.icons.filled.NavigateNext
+import androidx.compose.material.icons.automirrored.filled.NavigateBefore
+import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -49,7 +49,7 @@ internal fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> U
                 onClick = { onChangeYear(year - 1) },
                 modifier = Modifier.semantics { testTag = ttPrev }) {
                 Icon(
-                    imageVector = Icons.Filled.NavigateBefore, contentDescription = stringResource(R.string.cd_list_year_prev_year)
+                    imageVector = Icons.AutoMirrored.Filled.NavigateBefore, contentDescription = stringResource(R.string.cd_list_year_prev_year)
                 )
             }
             IconButton(
@@ -57,7 +57,7 @@ internal fun YearSectionHeader(yearProvider: () -> Int, onChangeYear: (Int) -> U
                 enabled = year < LocalDate.now().year,
                 modifier = Modifier.semantics { testTag = ttNext }
             ) {
-                Icon(imageVector = Icons.Filled.NavigateNext, contentDescription = stringResource(R.string.cd_list_year_next_year))
+                Icon(imageVector = Icons.AutoMirrored.Filled.NavigateNext, contentDescription = stringResource(R.string.cd_list_year_next_year))
             }
         }
     }
